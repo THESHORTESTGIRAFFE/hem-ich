@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Flag an Issue{% endblock %}
+{% block page_title %}Flag an Issue{% endblock %}
+
+{% block content %}
+<div style="max-width:640px">
+  <p style="color:var(--text-muted);font-size:0.84rem;margin-bottom:22px">
+    Use this form to report a problem with any piece of equipment. A technician or the chief engineer will be notified and will follow up.
+  </p>
+
+  <div class="card" style="border-color:rgba(245,158,11,.25)">
+    <div class="card-header" style="border-color:rgba(245,158,11,.2)">
+      <h2>🚩 New Issue Report</h2>
+    </div>
+    <div class="card-body">
+      <form method="POST" action="{{ url_for('flag_issue') }}">
+        <div class="form-grid" style="grid-template-columns:1fr">
+
+          <div class="form-group">
+            <label>Equipment *</label>
+            <select name="equipment_id" class="form-control" required>
+              <option value="">Select equipment…</option>
+              {% for eq in all_equipment %}
+              <option value="{{ eq['id'] }}" {{ 'selected' if preselect == eq['id'] }}>
+                {{ eq['name'] }} — {{ eq['asset_tag'] }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Issue Title *</label>
+            <input type="text" name="title" class="form-control" required
+              placeholder="e.g. Unusual noise during operation, Display flickering">
+          </div>
+
+          <div class="form-group">
+            <label>Severity</label>
+            <div style="display:flex;gap:10px;margin-top:4px">
+              {% for sev, desc, color in [
+                ('Low',    'Minor — not impacting operation',      'var(--accent)'),
+                ('Medium', 'Moderate — monitor closely',           'var(--warn)'),
+                ('High',   'Critical — equipment may be unsafe',   'var(--danger)')
+              ] %}
+              <label style="flex:1;cursor:pointer">
+                <input type="radio" name="severity" value="{{ sev }}" {{ 'checked' if sev == 'Medium' }}
+                  style="display:none" class="sev-radio">
+                <div class="sev-option" data-sev="{{ sev }}"
+                  style="border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center;transition:all .15s">
+                  <div style="font-weight:700;font-size:0.82rem;color:{{ color }}">{{ sev }}</div>
+                  <div style="font-size:0.7rem;color:var(--text-muted);margin-top:2px">{{ desc }}</div>
+                </div>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea name="description" class="form-control" rows="5" required
+              placeholder="Describe what you observed in as much detail as possible. Include when it started, how often it occurs, and any other relevant context…"></textarea>
+          </div>
+
+        </div>
+
+        <div style="margin-top:8px;padding:12px 14px;background:rgba(0,201,167,.05);border:1px solid rgba(0,201,167,.15);border-radius:8px;font-size:0.8rem;color:var(--text-muted)">
+          💡 The more detail you provide, the faster a technician can resolve the issue.
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px">
+          <a href="{{ url_for('intern_dashboard') if session.role == 'intern' else url_for('issue_list') }}" class="btn btn-ghost">Cancel</a>
+          <button type="submit" class="btn btn-primary">🚩 Submit Flag</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+gsap.from('.card', { y: 20, opacity: 0, duration: 0.45, ease: 'power2.out' });
+
+// Severity selector highlight
+document.querySelectorAll('.sev-radio').forEach(radio => {
+  radio.addEventListener('change', function() {
+    document.querySelectorAll('.sev-option').forEach(el => {
+      el.style.background = '';
+      el.style.borderColor = 'var(--border)';
+    });
+    const option = this.closest('label').querySelector('.sev-option');
+    const sev = option.dataset.sev;
+    const colors = { Low: 'rgba(0,201,167,.12)', Medium: 'rgba(245,158,11,.12)', High: 'rgba(239,68,68,.12)' };
+    const borders = { Low: 'var(--accent)', Medium: 'var(--warn)', High: 'var(--danger)' };
+    option.style.background = colors[sev];
+    option.style.borderColor = borders[sev];
+  });
+});
+
+// Trigger highlight on page load for checked radio
+document.querySelectorAll('.sev-radio:checked').forEach(r => r.dispatchEvent(new Event('change')));
+</script>
+{% endblock %}

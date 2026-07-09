@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+{% block title %}Cost Analytics{% endblock %}
+{% block page_title %}Cost Analytics{% endblock %}
+
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; margin-bottom:24px; }
+.kpi-card {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:12px;
+  padding:20px; position:relative; overflow:hidden;
+}
+.kpi-card .glow { position:absolute; top:-20px; right:-20px; width:90px; height:90px; border-radius:50%; opacity:.1; filter:blur(24px); }
+.kpi-card .kpi-label { font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.07em; }
+.kpi-card .kpi-val   { font-size:1.9rem; font-weight:700; margin-top:8px; line-height:1; }
+.kpi-card .kpi-sub   { font-size:0.72rem; color:var(--text-muted); margin-top:5px; }
+
+.chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.chart-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.chart-card .chart-header { padding:14px 18px; border-bottom:1px solid var(--border); font-size:0.88rem; font-weight:600; }
+.chart-card .chart-body   { padding:18px; }
+canvas { max-height:240px; }
+
+.top-table-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); font-size:0.82rem; }
+.top-table-row:last-child { border-bottom:none; }
+.rank-num { font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--text-muted); width:22px; text-align:right; flex-shrink:0; }
+.cost-bar-outer { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+.cost-bar-inner { height:100%; border-radius:3px; background:var(--accent); transition:width .6s ease; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- KPI row -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="glow" style="background:var(--accent)"></div>
+    <div class="kpi-label">Total Asset Value</div>
+    <div class="kpi-val" style="color:var(--accent); font-size:1.5rem">
+      ${{ '{:,.0f}'.format(kpis['total_asset_value'] or 0) }}
+    </div>
+    <div class="kpi-sub">Across {{ kpis['total_assets'] }} active assets</div>
+  </div>
+  <div class="kpi-card">
+    <div class="glow" style="background:var(--accent-2)"></div>
+    <div class="kpi-label">Avg. Asset Value</div>
+    <div class="kpi-val" style="color:var(--accent-2); font-size:1.5rem">
+      ${{ '{:,.0f}'.format(kpis['avg_asset_value'] or 0) }}
+    </div>
+    <div class="kpi-sub">Per equipment item</div>
+  </div>
+  <div class="kpi-card">
+    <div class="glow" style="background:var(--warn)"></div>
+    <div class="kpi-label">Total Maintenance Spend</div>
+    <div class="kpi-val" style="color:var(--warn); font-size:1.5rem">
+      ${{ '{:,.0f}'.format(total_maint_cost['total'] or 0) }}
+    </div>
+    <div class="kpi-sub">All recorded maintenance</div>
+  </div>
+  <div class="kpi-card">
+    <div class="glow" style="background:var(--success)"></div>
+    <div class="kpi-label">Departments Covered</div>
+    <div class="kpi-val" style="color:var(--success)">{{ by_dept|length }}</div>
+    <div class="kpi-sub">With registered equipment</div>
+  </div>
+</div>
+
+<!-- Charts row 1 -->
+<div class="chart-grid">
+  <div class="chart-card">
+    <div class="chart-header">💰 Asset Value by Department</div>
+    <div class="chart-body"><canvas id="deptValueChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-header">🔬 Asset Value by Category</div>
+    <div class="chart-body"><canvas id="catValueChart"></canvas></div>
+  </div>
+</div>
+
+<!-- Charts row 2 -->
+<div class="chart-grid">
+  <div class="chart-card">
+    <div class="chart-header">🔧 Monthly Maintenance Spend (Last 12 months)</div>
+    <div class="chart-body"><canvas id="maintMonthChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-header">⚙️ Maintenance Cost by Type</div>
+    <div class="chart-body"><canvas id="maintTypeChart"></canvas></div>
+  </div>
+</div>
+
+<!-- Bottom row -->
+<div class="chart-grid">
+  <!-- Top 10 most expensive -->
+  <div class="chart-card">
+    <div class="chart-header">🏆 Top 10 Highest-Value Equipment</div>
+    <div class="chart-body">
+      {% set max_cost = top_equipment[0]['purchase_cost'] if top_equipment else 1 %}
+      {% for eq in top_equipment %}
+      <div class="top-table-row">
+        <span class="rank-num">{{ loop.index }}</span>
+        <div style="flex:2;min-width:0">
+          <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}"
+             style="color:var(--text);text-decoration:none;font-weight:600;font-size:0.82rem;
+                    display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ eq['name'] }}</a>
+          <div style="font-size:0.7rem;color:var(--text-muted)">{{ eq['department'] or '—' }} · {{ eq['asset_tag'] }}</div>
+        </div>
+        <div class="cost-bar-outer">
+          <div class="cost-bar-inner" style="width:{{ ((eq['purchase_cost'] / max_cost) * 100)|int }}%"></div>
+        </div>
+        <div style="font-size:0.8rem;font-weight:700;color:var(--accent);white-space:nowrap;min-width:70px;text-align:right">
+          ${{ '{:,.0f}'.format(eq['purchase_cost']) }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Condition value breakdown -->
+  <div class="chart-card">
+    <div class="chart-header">📊 Asset Value by Condition</div>
+    <div class="chart-body">
+      <canvas id="condValueChart" style="max-height:180px"></canvas>
+      <div style="margin-top:16px">
+        {% for row in by_condition %}
+        <div class="top-table-row">
+          <span class="badge {{ cond_badge(row['condition']) }}" style="min-width:72px;text-align:center">{{ row['condition'] }}</span>
+          <span style="color:var(--text-dim);font-size:0.8rem">{{ row['count'] }} items</span>
+          <div style="flex:1"></div>
+          <span style="font-size:0.82rem;font-weight:600;color:var(--text)">${{ '{:,.0f}'.format(row['total_value']) }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const PALETTE = ['#00c9a7','#0ea5e9','#f59e0b','#ef4444','#a855f7','#22c55e','#fb923c','#06b6d4','#ec4899','#84cc16'];
+const gridColor = '#1f2d45';
+const tickColor = '#64748b';
+const baseScales = {
+  x: { ticks:{ color:tickColor, font:{size:10} }, grid:{ color:gridColor } },
+  y: { ticks:{ color:tickColor, font:{size:10}, callback: v => '$'+v.toLocaleString() }, grid:{ color:gridColor } }
+};
+
+// Asset value by dept
+new Chart(document.getElementById('deptValueChart'), {
+  type: 'bar',
+  data: {
+    labels: {{ by_dept | map(attribute='department') | list | tojson }},
+    datasets:[{ label:'Asset Value ($)',
+      data: {{ by_dept | map(attribute='total_value') | list | tojson }},
+      backgroundColor: PALETTE, borderRadius: 5 }]
+  },
+  options: { plugins:{legend:{display:false}}, scales: baseScales }
+});
+
+// Asset value by category (doughnut)
+new Chart(document.getElementById('catValueChart'), {
+  type: 'doughnut',
+  data: {
+    labels: {{ by_cat | map(attribute='category') | list | tojson }},
+    datasets:[{ data: {{ by_cat | map(attribute='total_value') | list | tojson }},
+      backgroundColor: PALETTE, borderWidth: 0, hoverOffset: 8 }]
+  },
+  options: {
+    cutout: '60%',
+    plugins:{ legend:{ position:'right', labels:{ color:'#94a3b8', font:{size:11}, padding:10 } } }
+  }
+});
+
+// Monthly maintenance spend (line)
+new Chart(document.getElementById('maintMonthChart'), {
+  type: 'line',
+  data: {
+    labels: {{ maint_by_month | map(attribute='month') | list | tojson }},
+    datasets:[{
+      label:'Maintenance Cost ($)',
+      data: {{ maint_by_month | map(attribute='total_cost') | list | tojson }},
+      borderColor:'#00c9a7', backgroundColor:'rgba(0,201,167,.08)',
+      fill: true, tension: 0.4, pointBackgroundColor:'#00c9a7', pointRadius:4
+    }]
+  },
+  options: {
+    plugins:{ legend:{ display:false } },
+    scales: {
+      x: { ticks:{ color:tickColor, font:{size:10} }, grid:{ color:gridColor } },
+      y: { ticks:{ color:tickColor, font:{size:10}, callback: v=>'$'+v.toLocaleString() }, grid:{ color:gridColor } }
+    }
+  }
+});
+
+// Maintenance by type (horizontal bar)
+new Chart(document.getElementById('maintTypeChart'), {
+  type: 'bar',
+  data: {
+    labels: {{ maint_by_type | map(attribute='maintenance_type') | list | tojson }},
+    datasets:[{ label:'Total Cost ($)',
+      data: {{ maint_by_type | map(attribute='total_cost') | list | tojson }},
+      backgroundColor: PALETTE, borderRadius:5 }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins:{ legend:{ display:false } },
+    scales: {
+      x: { ticks:{ color:tickColor, font:{size:10}, callback:v=>'$'+v.toLocaleString() }, grid:{ color:gridColor } },
+      y: { ticks:{ color:tickColor, font:{size:10} }, grid:{ color:gridColor } }
+    }
+  }
+});
+
+// Condition value doughnut
+new Chart(document.getElementById('condValueChart'), {
+  type: 'doughnut',
+  data: {
+    labels: {{ by_condition | map(attribute='condition') | list | tojson }},
+    datasets:[{ data: {{ by_condition | map(attribute='total_value') | list | tojson }},
+      backgroundColor:['#22c55e','#0ea5e9','#f59e0b','#f97316','#ef4444'],
+      borderWidth:0, hoverOffset:6 }]
+  },
+  options: { cutout:'55%', plugins:{ legend:{ display:false } } }
+});
+
+// Animate KPI counters
+document.querySelectorAll('.kpi-val').forEach(el => {
+  const raw = el.textContent.replace(/[$,]/g,'').trim();
+  const target = parseFloat(raw);
+  if(isNaN(target)) return;
+  gsap.from({ val:0 }, {
+    val: target, duration:1.4, ease:'power2.out', delay:0.2,
+    onUpdate() {
+      const v = Math.round(this.targets()[0].val);
+      el.textContent = el.textContent.startsWith('$') ? '$'+v.toLocaleString() : v.toLocaleString();
+    }
+  });
+});
+
+// Animate cost bars
+gsap.from('.cost-bar-inner', { width:'0%', duration:0.8, stagger:0.06, ease:'power2.out', delay:0.3 });
+gsap.from('.kpi-card', { y:20, opacity:0, duration:0.4, stagger:0.08, ease:'power2.out' });
+gsap.from('.chart-card', { y:20, opacity:0, duration:0.4, stagger:0.06, ease:'power2.out', delay:0.1 });
+</script>
+{% endblock %}

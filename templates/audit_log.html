@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Audit Trail{% endblock %}
+{% block page_title %}Audit Trail{% endblock %}
+
+{% block head %}
+<style>
+.audit-action {
+  display:inline-block; font-family:'JetBrains Mono',monospace;
+  font-size:0.72rem; font-weight:600; padding:2px 8px; border-radius:4px;
+  background:rgba(0,201,167,.08); color:var(--accent);
+}
+.filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+.filter-bar input, .filter-bar select {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:8px;
+  color:var(--text); padding:7px 12px; font-size:0.82rem; font-family:'Inter',sans-serif;
+}
+.filter-bar input:focus, .filter-bar select:focus { outline:none; border-color:var(--accent); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:16px;color:var(--text-muted);font-size:0.83rem">
+  Complete record of all actions performed in the system. <strong style="color:var(--text)">{{ total }}</strong> entries total.
+</div>
+
+<form method="GET" class="filter-bar">
+  <input type="text"  name="action"    placeholder="Filter by action…"  value="{{ action }}">
+  <select name="user_id">
+    <option value="">All Users</option>
+    {% for u in users %}
+    <option value="{{ u['id'] }}" {{ 'selected' if user_id == u['id']|string }}>{{ u['full_name'] }}</option>
+    {% endfor %}
+  </select>
+  <input type="date" name="date_from" value="{{ date_from }}" title="From date">
+  <input type="date" name="date_to"   value="{{ date_to }}"   title="To date">
+  <button type="submit" class="btn btn-ghost">Filter</button>
+  <a href="{{ url_for('audit_log') }}" class="btn btn-ghost">Clear</a>
+</form>
+
+<div class="card">
+  {% if logs %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Timestamp</th><th>User</th><th>Role</th>
+          <th>Action</th><th>Target</th><th>Details</th><th>IP</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-muted);white-space:nowrap">
+            {{ log['timestamp'][:19] if log['timestamp'] else '—' }}
+          </td>
+          <td style="font-weight:600;font-size:0.83rem">{{ log['user_name'] or 'System' }}</td>
+          <td>
+            {% if log['user_role'] %}
+            {% set role_map={'chief_engineer':'badge-teal','technician':'badge-blue','intern':'badge-gray'} %}
+            <span class="badge {{ role_map.get(log['user_role'],'badge-gray') }}" style="font-size:0.65rem">
+              {{ log['user_role'].replace('_',' ') }}
+            </span>
+            {% endif %}
+          </td>
+          <td><span class="audit-action">{{ log['action'] }}</span></td>
+          <td style="font-size:0.8rem;color:var(--text-dim)">{{ log['target_name'] or '—' }}</td>
+          <td style="font-size:0.78rem;color:var(--text-muted);max-width:220px">{{ log['details'] or '—' }}</td>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text-muted)">{{ log['ip_address'] or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!-- Pagination -->
+  {% if total_pages > 1 %}
+  <div style="padding:14px 16px;border-top:1px solid var(--border)">
+    <div class="pagination">
+      {% if page > 1 %}
+      <a href="{{ url_for('audit_log', page=page-1, action=action, user_id=user_id, date_from=date_from, date_to=date_to) }}">← Prev</a>
+      {% endif %}
+      {% for p in range(1, total_pages+1) %}
+        {% if p == page %}
+          <span class="current">{{ p }}</span>
+        {% elif p == 1 or p == total_pages or (p >= page-2 and p <= page+2) %}
+          <a href="{{ url_for('audit_log', page=p, action=action, user_id=user_id, date_from=date_from, date_to=date_to) }}">{{ p }}</a>
+        {% elif p == page-3 or p == page+3 %}
+          <span>…</span>
+        {% endif %}
+      {% endfor %}
+      {% if page < total_pages %}
+      <a href="{{ url_for('audit_log', page=page+1, action=action, user_id=user_id, date_from=date_from, date_to=date_to) }}">Next →</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% else %}
+  <div class="empty"><div class="emoji">📋</div><p>No audit records match the current filters.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

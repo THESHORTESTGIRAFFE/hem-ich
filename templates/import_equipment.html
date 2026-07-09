@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Bulk CSV Import{% endblock %}
+{% block page_title %}Bulk CSV Import{% endblock %}
+
+{% block content %}
+<div style="max-width:700px">
+  <p style="color:var(--text-muted);font-size:0.84rem;margin-bottom:22px">
+    Import multiple equipment records at once from a CSV spreadsheet. Only the Chief Engineer can perform bulk imports.
+  </p>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header"><h2>📋 CSV Format Guide</h2></div>
+    <div class="card-body">
+      <p style="font-size:0.83rem;color:var(--text-dim);margin-bottom:12px">
+        Your CSV must have a header row. Only <code style="color:var(--accent);background:var(--bg-raised);padding:1px 5px;border-radius:4px">name</code> is required. All other columns are optional.
+      </p>
+      <div style="overflow-x:auto;margin-bottom:14px">
+        <table style="font-size:0.75rem">
+          <thead>
+            <tr>
+              {% for col in ['name*','manufacturer','model','serial_number','category','department','location','country_of_origin','donor_name','state','condition','purchase_date','purchase_cost','warranty_expiry','next_maintenance','notes'] %}
+              <th style="white-space:nowrap">{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ventilator X</td><td>Draeger</td><td>VX200</td><td>DRG-001</td>
+              <td>Respiratory</td><td>ICU</td><td>Ward 2</td><td>Germany</td>
+              <td>GIZ</td><td>Active</td><td>Good</td><td>2023-01-15</td>
+              <td>12500</td><td>2026-01-15</td><td>2025-07-01</td><td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:10px">
+        <a href="/api/csv-template" class="btn btn-ghost btn-sm">⬇ Download Template CSV</a>
+      </div>
+      <div style="margin-top:12px;font-size:0.78rem;color:var(--text-muted)">
+        <strong>Valid states:</strong> Active, Under Maintenance, In Storage<br>
+        <strong>Valid conditions:</strong> Excellent, Good, Fair, Poor, Critical<br>
+        <strong>Date format:</strong> YYYY-MM-DD<br>
+        <strong>Duplicate serials</strong> will be skipped with a warning.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>📤 Upload CSV File</h2></div>
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data" id="import-form">
+        <div class="form-group" style="margin-bottom:16px">
+          <label>CSV File *</label>
+          <input type="file" name="csv_file" class="form-control" accept=".csv" required id="csv-input">
+          <div id="file-info" style="margin-top:6px;font-size:0.75rem;color:var(--text-muted);display:none"></div>
+        </div>
+        <div style="padding:12px 14px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:8px;font-size:0.8rem;color:#fca5a5;margin-bottom:16px">
+          ⚠️ This action cannot be undone. Equipment will be registered immediately. Review your CSV carefully before importing.
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px">
+          <a href="{{ url_for('equipment_list') }}" class="btn btn-ghost">Cancel</a>
+          <button type="submit" class="btn btn-primary" id="import-btn">📤 Import Equipment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+gsap.from('.card', { y:20, opacity:0, duration:0.4, stagger:0.1, ease:'power2.out' });
+
+document.getElementById('csv-input').addEventListener('change', function() {
+  const info = document.getElementById('file-info');
+  if (this.files[0]) {
+    const size = (this.files[0].size / 1024).toFixed(1);
+    info.textContent = `✅ ${this.files[0].name} (${size} KB)`;
+    info.style.display = 'block';
+    info.style.color = 'var(--success)';
+  }
+});
+
+document.getElementById('import-form').addEventListener('submit', function() {
+  const btn = document.getElementById('import-btn');
+  btn.textContent = 'Importing…';
+  btn.disabled = true;
+});
+</script>
+{% endblock %}

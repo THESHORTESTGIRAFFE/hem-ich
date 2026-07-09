@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Issue Flags{% endblock %}
+{% block page_title %}Issue Flags{% endblock %}
+
+{% block head %}
+<style>
+.issue-card {
+  background: var(--bg-raised); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 18px; margin-bottom: 10px;
+  transition: border-color 0.15s;
+}
+.issue-card:hover { border-color: var(--border-hl); }
+.issue-card.sev-High   { border-left: 3px solid var(--danger); }
+.issue-card.sev-Medium { border-left: 3px solid var(--warn); }
+.issue-card.sev-Low    { border-left: 3px solid var(--accent); }
+.issue-header { display:flex; align-items:flex-start; gap:10px; margin-bottom:8px; }
+.issue-title  { font-weight:600; font-size:0.9rem; flex:1; }
+.issue-desc   { font-size:0.82rem; color:var(--text-dim); line-height:1.55; margin-bottom:8px; }
+.issue-meta   { font-size:0.73rem; color:var(--text-muted); display:flex; gap:12px; flex-wrap:wrap; }
+.issue-actions { margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+.resolve-form { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.resolve-form select, .resolve-form input {
+  background: var(--bg-card); border:1px solid var(--border); border-radius:7px;
+  color:var(--text); padding:5px 10px; font-size:0.8rem; font-family:'Inter',sans-serif;
+}
+.resolve-form select:focus, .resolve-form input:focus { outline:none; border-color:var(--accent); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div style="display:flex;gap:8px;margin-bottom:20px;align-items:center;flex-wrap:wrap">
+  {% for s in ['','Open','In Progress','Resolved','Closed'] %}
+  <a href="{{ url_for('issue_list', status=s) }}"
+     class="btn {{ 'btn-primary' if status==s else 'btn-ghost' }} btn-sm">
+    {{ s or 'All' }}
+  </a>
+  {% endfor %}
+  <div style="margin-left:auto">
+    <a href="{{ url_for('flag_issue') }}" class="btn btn-ghost btn-sm">🚩 New Flag</a>
+  </div>
+</div>
+
+{% if flags %}
+  {% for flag in flags %}
+  <div class="issue-card sev-{{ flag['severity'] }}">
+    <div class="issue-header">
+      <div class="issue-title">{{ flag['title'] }}</div>
+      {% set sev_c={'High':'badge-red','Medium':'badge-amber','Low':'badge-teal'} %}
+      <span class="badge {{ sev_c.get(flag['severity'],'badge-gray') }}">{{ flag['severity'] }}</span>
+      {% set st_c={'Open':'badge-amber','In Progress':'badge-blue','Resolved':'badge-green','Closed':'badge-gray'} %}
+      <span class="badge {{ st_c.get(flag['status'],'badge-gray') }}">{{ flag['status'] }}</span>
+    </div>
+
+    <div class="issue-desc">{{ flag['description'] }}</div>
+
+    {% if flag['resolution'] %}
+    <div style="background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.15);border-radius:7px;padding:8px 12px;font-size:0.8rem;color:#86efac;margin-bottom:8px">
+      <strong>Resolution:</strong> {{ flag['resolution'] }}
+    </div>
+    {% endif %}
+
+    <div class="issue-meta">
+      <span>🔬 <a href="{{ url_for('equipment_detail', eq_id=flag['equipment_id']) }}" style="color:var(--accent);text-decoration:none">{{ flag['eq_name'] }}</a> · {{ flag['asset_tag'] }}</span>
+      <span>👤 Raised by {{ flag['raiser_name'] }}</span>
+      {% if flag['assignee_name'] %}<span>🔧 Assigned to {{ flag['assignee_name'] }}</span>{% endif %}
+      <span>🕒 {{ flag['created_at']|fmtdatetime }}</span>
+      {% if flag['updated_at'] != flag['created_at'] %}<span>✏️ Updated {{ flag['updated_at']|fmtdatetime }}</span>{% endif %}
+    </div>
+
+    {% if session.role in ['chief_engineer','technician'] and flag['status'] != 'Closed' %}
+    <div class="issue-actions">
+      <form method="POST" action="{{ url_for('update_issue', issue_id=flag['id']) }}" class="resolve-form">
+        <select name="status">
+          {% for s in ['Open','In Progress','Resolved','Closed'] %}
+          <option value="{{ s }}" {{ 'selected' if flag['status']==s }}>{{ s }}</option>
+          {% endfor %}
+        </select>
+        <select name="assigned_to">
+          <option value="">Unassigned</option>
+          {% for tech in technicians %}
+          <option value="{{ tech['id'] }}" {{ 'selected' if flag['assigned_to_id']==tech['id'] }}>{{ tech['full_name'] }}</option>
+          {% endfor %}
+        </select>
+        <input type="text" name="resolution" placeholder="Resolution note (optional)…" style="flex:1;min-width:180px"
+               value="{{ flag['resolution'] or '' }}">
+        <button type="submit" class="btn btn-ghost btn-sm">Update</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="empty" style="padding:64px">
+    <div class="emoji">🚩</div>
+    <p>No issue flags {{ 'with status "'+status+'"' if status else '' }}.</p>
+  </div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+gsap.from('.issue-card', { y: 16, opacity: 0, duration: 0.35, stagger: 0.07, ease: 'power2.out', delay: 0.1 });
+</script>
+{% endblock %}

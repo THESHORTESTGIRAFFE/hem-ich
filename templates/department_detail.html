@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}{{ dept }} Department{% endblock %}
+{% block page_title %}{{ dept }}{% endblock %}
+
+{% block head %}
+<style>
+.maint-row { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); font-size:0.82rem; }
+.maint-row:last-child { border-bottom:none; }
+.days-chip { font-family:'JetBrains Mono',monospace; font-size:0.68rem; font-weight:700; padding:2px 8px; border-radius:5px; white-space:nowrap; }
+.over-chip { background:rgba(239,68,68,.15); color:#fca5a5; }
+.soon-chip { background:rgba(245,158,11,.12); color:#fcd34d; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+  <div>
+    <a href="{{ url_for('department_overview') }}" style="font-size:0.78rem;color:var(--text-muted);text-decoration:none">← All Departments</a>
+    <h1 style="font-size:1.4rem;font-weight:700;margin-top:4px">🏥 {{ dept }}</h1>
+  </div>
+  <div style="display:flex;gap:8px">
+    <a href="{{ url_for('qr_batch') }}?{% for e in equipment %}ids={{ e['id'] }}&{% endfor %}"
+       class="btn btn-ghost" target="_blank">🏷️ Print Dept. Labels</a>
+  </div>
+</div>
+
+<!-- Stats row -->
+<div class="stat-grid" style="margin-bottom:20px">
+  <div class="stat-card teal"><div class="glow"></div>
+    <div class="label">Total Assets</div><div class="value">{{ stats.total }}</div></div>
+  <div class="stat-card green"><div class="glow"></div>
+    <div class="label">Active</div><div class="value">{{ stats.active }}</div></div>
+  <div class="stat-card red"><div class="glow"></div>
+    <div class="label">Overdue Checks</div><div class="value">{{ stats.overdue }}</div></div>
+  <div class="stat-card amber"><div class="glow"></div>
+    <div class="label">Open Flags</div><div class="value">{{ stats.open_flags }}</div></div>
+  {% if session.role != 'intern' %}
+  <div class="stat-card blue"><div class="glow"></div>
+    <div class="label">Total Asset Value</div>
+    <div class="value" style="font-size:1.3rem">${{ '{:,.0f}'.format(stats.value) }}</div></div>
+  {% endif %}
+</div>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
+  <!-- Equipment list -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+    <div class="card">
+      <div class="card-header"><h2>Equipment in {{ dept }}</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Asset</th><th>Category</th><th>Location</th><th>State</th><th>Condition</th><th>Next Maint.</th><th></th></tr></thead>
+          <tbody>
+            {% for eq in equipment %}
+            <tr>
+              <td>
+                <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" style="font-weight:600;color:var(--accent);text-decoration:none">{{ eq['name'] }}</a>
+                <div style="font-size:0.7rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace">{{ eq['asset_tag'] }}</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.8rem">{{ eq['category'] or '—' }}</td>
+              <td style="color:var(--text-dim);font-size:0.8rem">{{ eq['location'] or '—' }}</td>
+              <td><span class="badge {{ state_badge(eq['state']) }}">{{ eq['state'] }}</span></td>
+              <td><span class="badge {{ cond_badge(eq['condition']) }}">{{ eq['condition'] }}</span></td>
+              <td style="font-size:0.78rem">
+                {% if eq['next_maintenance'] %}
+                  {% if is_overdue(eq['next_maintenance']) %}
+                    <span style="color:var(--danger)">{{ eq['next_maintenance']|fmtdate }}</span>
+                  {% else %}{{ eq['next_maintenance']|fmtdate }}{% endif %}
+                {% else %}—{% endif %}
+              </td>
+              <td><a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="btn btn-ghost btn-sm">→</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right column -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+
+    <!-- Upcoming/overdue maintenance -->
+    <div class="card">
+      <div class="card-header"><h2>📅 Maintenance Due (30d)</h2></div>
+      <div class="card-body" style="padding:0 16px">
+        {% if maint_due %}
+          {% for eq in maint_due %}
+          <div class="maint-row">
+            {% if is_overdue(eq['next_maintenance']) %}
+            <span class="days-chip over-chip">OVERDUE</span>
+            {% else %}
+            <span class="days-chip soon-chip">{{ eq['next_maintenance']|fmtdate }}</span>
+            {% endif %}
+            <div style="flex:1;min-width:0">
+              <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" style="font-weight:600;color:var(--text);text-decoration:none;font-size:0.82rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ eq['name'] }}</a>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+        <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.82rem">✅ All clear for 30 days</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Open flags -->
+    {% if flags %}
+    <div class="card">
+      <div class="card-header"><h2>🚩 Open Flags</h2></div>
+      <div class="card-body" style="padding:0 16px">
+        {% for flag in flags %}
+        <div style="padding:10px 0;border-bottom:1px solid var(--border);font-size:0.82rem">
+          <div style="font-weight:600;margin-bottom:2px">{{ flag['title'] }}</div>
+          <div style="font-size:0.73rem;color:var(--text-muted)">
+            {{ flag['eq_name'] }} · {{ flag['raiser_name'] }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

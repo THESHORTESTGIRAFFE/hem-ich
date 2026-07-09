@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}Disposal Requests{% endblock %}
+{% block page_title %}Disposal Requests{% endblock %}
+
+{% block head %}
+<style>
+.modal-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.6);
+  z-index:200; place-items:center;
+}
+.modal-overlay.open { display:grid; }
+.modal-box {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:14px; padding:28px; width:480px; max-width:92vw;
+}
+.modal-box h3 { font-size:1rem; font-weight:700; margin-bottom:16px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+  {% for s in ['','Pending','Approved','Completed','Rejected'] %}
+  <a href="{{ url_for('disposal_list', status=s) }}"
+     class="btn {{ 'btn-primary' if status==s else 'btn-ghost' }} btn-sm">
+    {{ s or 'All' }}
+  </a>
+  {% endfor %}
+</div>
+
+<div class="card">
+  {% if records %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Equipment</th><th>Requested By</th><th>Method</th><th>Reason</th>
+            <th>Date</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for rec in records %}
+        <tr>
+          <td>
+            <a href="{{ url_for('equipment_detail', eq_id=rec['equipment_id']) }}"
+               style="color:var(--accent);text-decoration:none;font-weight:600">{{ rec['eq_name'] }}</a>
+            <div style="font-size:0.72rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace">{{ rec['asset_tag'] }}</div>
+          </td>
+          <td style="color:var(--text-dim)">{{ rec['req_name'] or '—' }}</td>
+          <td><span class="badge badge-purple">{{ rec['method'] or '—' }}</span></td>
+          <td style="font-size:0.8rem;color:var(--text-dim);max-width:200px">
+            {{ rec['reason'][:70] }}{% if rec['reason']|length > 70 %}…{% endif %}
+          </td>
+          <td style="font-size:0.8rem">{{ rec['request_date']|fmtdate }}</td>
+          <td>
+            {% set ds_map={'Pending':'badge-amber','Approved':'badge-blue','Completed':'badge-green','Rejected':'badge-red'} %}
+            <span class="badge {{ ds_map.get(rec['status'],'badge-gray') }}">{{ rec['status'] }}</span>
+            {% if rec['completion_date'] %}
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:2px">{{ rec['completion_date']|fmtdate }}</div>
+            {% endif %}
+          </td>
+          <td>
+            {% if session.role == 'chief_engineer' %}
+              {% if rec['status'] == 'Pending' %}
+              <div style="display:flex;gap:5px">
+                <form method="POST" action="{{ url_for('approve_disposal', rec_id=rec['id']) }}">
+                  <input type="hidden" name="action" value="approve">
+                  <button class="btn btn-primary btn-sm">✓ Approve</button>
+                </form>
+                <form method="POST" action="{{ url_for('approve_disposal', rec_id=rec['id']) }}">
+                  <input type="hidden" name="action" value="reject">
+                  <button class="btn btn-danger btn-sm">✗ Reject</button>
+                </form>
+              </div>
+              {% elif rec['status'] == 'Approved' %}
+              <button class="btn btn-ghost btn-sm" onclick="openComplete({{ rec['id'] }}, '{{ rec['method'] or '' }}', '{{ rec['eq_name'] }}')">
+                ✅ Mark Complete
+              </button>
+              {% else %}—{% endif %}
+            {% else %}—{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty"><div class="emoji">🗑️</div><p>No disposal requests found.</p></div>
+  {% endif %}
+</div>
+
+<!-- Completion modal -->
+<div class="modal-overlay" id="completeModal">
+  <div class="modal-box">
+    <h3>✅ Complete Disposal</h3>
+    <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:18px" id="modal-eq-name"></p>
+    <form method="POST" id="completeForm">
+      <div class="form-group" style="margin-bottom:14px">
+        <label style="font-size:0.75rem;font-weight:600;color:var(--text-dim)">Final Disposal Method</label>
+        <select name="method" class="form-control" id="modal-method">
+          <option value="Decommission">Decommission — End of life</option>
+          <option value="Donate">Donated to another facility</option>
+          <option value="Sell">Sold / Auctioned</option>
+          <option value="Scrap">Scrapped / Recycled</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:18px">
+        <label style="font-size:0.75rem;font-weight:600;color:var(--text-dim)">Final Sign-off Notes</label>
+        <textarea name="notes" class="form-control" rows="3"
+          placeholder="Confirmation details, recipient organisation, certificate number…"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button type="button" class="btn btn-ghost" onclick="closeComplete()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Confirm Completion</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openComplete(id, method, name) {
+  document.getElementById('completeForm').action = `/disposal/${id}/complete`;
+  document.getElementById('modal-eq-name').textContent = name;
+  const sel = document.getElementById('modal-method');
+  if (method) [...sel.options].forEach(o => { if(o.value===method) o.selected=true; });
+  const overlay = document.getElementById('completeModal');
+  overlay.classList.add('open');
+  gsap.from('.modal-box', { scale: 0.92, opacity: 0, duration: 0.25, ease: 'back.out(1.5)' });
+}
+function closeComplete() {
+  document.getElementById('completeModal').classList.remove('open');
+}
+document.getElementById('completeModal').addEventListener('click', function(e) {
+  if(e.target === this) closeComplete();
+});
+</script>
+{% endblock %}

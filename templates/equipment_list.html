@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Equipment{% endblock %}
+{% block page_title %}Equipment Registry{% endblock %}
+
+{% block head %}
+<style>
+.filters { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+.filters input, .filters select {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:8px;
+  color:var(--text); padding:7px 12px; font-size:0.82rem; font-family:'Inter',sans-serif;
+}
+.filters input:focus, .filters select:focus { outline:none; border-color:var(--accent); }
+.filters input { width:240px; }
+.asset-tag { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--accent); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+  <div style="color:var(--text-muted);font-size:0.83rem">{{ equipment|length }} records found</div>
+  {% if session.role in ['chief_engineer','technician'] %}
+  <a href="{{ url_for('receive_equipment') }}" class="btn btn-primary">+ Receive Equipment</a>
+  {% endif %}
+</div>
+
+<form method="GET" class="filters">
+  <input type="text" name="q" placeholder="🔍  Search by name, tag, serial…" value="{{ q }}">
+  <select name="state">
+    <option value="">All States</option>
+    {% for s in ['Active','Under Maintenance','Pending Disposal','Disposed','In Storage'] %}
+    <option value="{{ s }}" {{ 'selected' if state==s }}>{{ s }}</option>
+    {% endfor %}
+  </select>
+  <select name="category">
+    <option value="">All Categories</option>
+    {% for c in categories %}
+    <option value="{{ c }}" {{ 'selected' if cat==c }}>{{ c }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-ghost">Filter</button>
+  <a href="{{ url_for('equipment_list') }}" class="btn btn-ghost">Clear</a>
+</form>
+
+<div class="card">
+  {% if equipment %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Asset Tag</th><th>Name</th><th>Manufacturer</th><th>Category</th>
+          <th>Location</th><th>State</th><th>Condition</th><th>Next Maint.</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for eq in equipment %}
+        <tr>
+          <td><span class="asset-tag">{{ eq['asset_tag'] }}</span></td>
+          <td>
+            <div style="font-weight:600">{{ eq['name'] }}</div>
+            {% if eq['model'] %}<div style="font-size:0.73rem;color:var(--text-muted)">{{ eq['model'] }}</div>{% endif %}
+          </td>
+          <td style="color:var(--text-dim)">{{ eq['manufacturer'] or '—' }}</td>
+          <td style="color:var(--text-dim)">{{ eq['category'] or '—' }}</td>
+          <td style="color:var(--text-dim)">{{ eq['location'] or '—' }}</td>
+          <td><span class="badge {{ state_badge(eq['state']) }}">{{ eq['state'] }}</span></td>
+          <td><span class="badge {{ cond_badge(eq['condition']) }}">{{ eq['condition'] }}</span></td>
+          <td>
+            {% if eq['next_maintenance'] %}
+              {% if is_overdue(eq['next_maintenance']) %}
+                <span class="badge badge-red pulse">{{ eq['next_maintenance']|fmtdate }}</span>
+              {% else %}
+                <span style="font-size:0.8rem">{{ eq['next_maintenance']|fmtdate }}</span>
+              {% endif %}
+            {% else %}—{% endif %}
+          </td>
+          <td><a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="btn btn-ghost btn-sm">View →</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="emoji">🔬</div>
+    <p>No equipment found. <a href="{{ url_for('receive_equipment') }}" style="color:var(--accent)">Receive the first item</a>.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

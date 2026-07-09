@@ -1,0 +1,22 @@
+# Ingutsheni Central | HEM — Git Ignore
+
+# ── NEVER commit these ────────────────────────────────────────────
+.env               # Contains SECRET_KEY and DB path — keep off version control
+.env.bak
+
+# ── Generated at runtime ──────────────────────────────────────────
+biomedical.db      # SQLite database — contains patient/equipment data
+hem.log            # Application log
+uploads/           # Uploaded attachment files
+
+# ── Python cache ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual environment ───────────────────────────────────────────
+venv/
+.venv/
+env/

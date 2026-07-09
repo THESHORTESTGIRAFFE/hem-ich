@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Log Maintenance — {{ eq.name }}{% endblock %}
+{% block page_title %}Log Maintenance{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:20px">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent)">{{ eq.asset_tag }}</div>
+  <h2 style="font-size:1.2rem;font-weight:700;margin-top:2px">{{ eq.name }}</h2>
+  <div style="color:var(--text-muted);font-size:0.83rem">{{ eq.manufacturer }} · {{ eq.location or 'No location set' }}</div>
+</div>
+
+<form method="POST" id="maint-form">
+  <div class="card">
+    <div class="card-header"><h2>🔧 Maintenance Details</h2></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Maintenance Type *</label>
+          <select name="maintenance_type" class="form-control" required>
+            <option value="Routine">Routine</option>
+            <option value="Preventive">Preventive</option>
+            <option value="Corrective">Corrective</option>
+            <option value="Calibration">Calibration</option>
+            <option value="Emergency">Emergency</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Outcome *</label>
+          <select name="outcome" class="form-control" required>
+            <option value="Resolved">Resolved</option>
+            <option value="Pending">Pending — needs follow-up</option>
+            <option value="Escalated">Escalated — requires specialist</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Scheduled Date</label>
+          <input type="date" name="scheduled_date" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Completed Date</label>
+          <input type="date" name="completed_date" class="form-control" value="{{ today }}">
+        </div>
+        <div class="form-group">
+          <label>Next Due Date</label>
+          <input type="date" name="next_due" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Cost (USD)</label>
+          <input type="number" name="cost" class="form-control" step="0.01" placeholder="0.00">
+        </div>
+        <div class="form-group form-span-2">
+          <label>Description of Work Performed *</label>
+          <textarea name="description" class="form-control" rows="4" required placeholder="Describe what was done in detail…"></textarea>
+        </div>
+        <div class="form-group form-span-2">
+          <label>Findings / Observations</label>
+          <textarea name="findings" class="form-control" rows="3" placeholder="Any issues found, parts replaced, readings taken…"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Equipment State Update</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="form-group" style="max-width:320px">
+        <label>Update Equipment State After Maintenance</label>
+        <select name="update_state" class="form-control">
+          <option value="">— Keep current state ({{ eq.state }}) —</option>
+          <option value="Active">Active — Ready for use</option>
+          <option value="Under Maintenance">Under Maintenance — Still being worked on</option>
+          <option value="In Storage">In Storage</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+    <a href="{{ url_for('equipment_detail', eq_id=eq.id) }}" class="btn btn-ghost">Cancel</a>
+    <button type="submit" class="btn btn-blue" id="submit-btn">🔧 Save Maintenance Record</button>
+  </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+gsap.from('.card', { y:20, opacity:0, duration:0.4, stagger:0.1, ease:'power2.out' });
+document.getElementById('maint-form').addEventListener('submit', function() {
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+});
+</script>
+{% endblock %}

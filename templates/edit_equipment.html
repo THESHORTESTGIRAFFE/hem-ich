@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Edit — {{ eq['name'] }}{% endblock %}
+{% block page_title %}Edit Equipment{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+  <div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent)">{{ eq['asset_tag'] }}</div>
+    <h2 style="font-size:1.15rem;font-weight:700">{{ eq['name'] }}</h2>
+  </div>
+  <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="btn btn-ghost">← Cancel</a>
+</div>
+
+<form method="POST">
+  <div class="card">
+    <div class="card-header"><h2>Equipment Details</h2></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="form-group form-span-2">
+          <label>Name *</label>
+          <input type="text" name="name" class="form-control" value="{{ eq['name'] }}" required>
+        </div>
+        <div class="form-group">
+          <label>Manufacturer</label>
+          <input type="text" name="manufacturer" class="form-control" value="{{ eq['manufacturer'] or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Model</label>
+          <input type="text" name="model" class="form-control" value="{{ eq['model'] or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select name="category" class="form-control">
+            {% for cat in ['Respiratory','Monitoring','Imaging','Emergency','Infusion','Cardiology','Sterilization','Surgical','Laboratory','Diagnostic','Other'] %}
+            <option value="{{ cat }}" {{ 'selected' if eq['category']==cat }}>{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <input type="text" name="department" class="form-control" value="{{ eq['department'] or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" name="location" class="form-control" value="{{ eq['location'] or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Country of Origin</label>
+          <input type="text" name="country_of_origin" class="form-control" value="{{ eq['country_of_origin'] or '' }}">
+        </div>
+        <div class="form-group">
+          <label>Donor / Source</label>
+          <input type="text" name="donor_name" class="form-control" value="{{ eq['donor_name'] or '' }}">
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <select name="state" class="form-control">
+            {% for s in ['Active','Under Maintenance','In Storage','Disposed'] %}
+            <option value="{{ s }}" {{ 'selected' if eq['state']==s }}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Condition</label>
+          <select name="condition" class="form-control">
+            {% for c in ['Excellent','Good','Fair','Poor','Critical'] %}
+            <option value="{{ c }}" {{ 'selected' if eq['condition']==c }}>{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Warranty Expiry</label>
+          <input type="date" name="warranty_expiry" class="form-control" value="{{ eq['warranty_expiry']|dateiso }}">
+        </div>
+        <div class="form-group">
+          <label>Next Maintenance Due</label>
+          <input type="date" name="next_maintenance" class="form-control" value="{{ eq['next_maintenance']|dateiso }}">
+        </div>
+        <div class="form-group form-span-2">
+          <label>Notes</label>
+          <textarea name="notes" class="form-control" rows="3">{{ eq['notes'] or '' }}</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
+    <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="btn btn-ghost">Cancel</a>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </div>
+</form>
+{% endblock %}

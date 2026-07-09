@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Equipment Report — {{ eq['name'] }}</title>
+  <style>
+    @page { margin: 20mm 18mm; }
+    @media print {
+      .no-print { display: none !important; }
+      body { font-size: 11pt; }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a2e; background: #fff; padding: 24px; }
+
+    .header { display: flex; justify-content: space-between; align-items: flex-start;
+              border-bottom: 3px solid #00c9a7; padding-bottom: 16px; margin-bottom: 20px; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo .icon { width: 36px; height: 36px; border-radius: 8px;
+                  background: linear-gradient(135deg,#00c9a7,#0ea5e9);
+                  display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo .brand { font-size: 1.2rem; font-weight: 700; color: #0b0f1a; }
+    .logo .sub   { font-size: 0.7rem; color: #64748b; }
+    .report-meta { text-align: right; font-size: 0.75rem; color: #64748b; }
+
+    h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+    .asset-tag { font-family: 'Courier New', monospace; font-size: 0.8rem; color: #00c9a7;
+                 background: #f0fdf4; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+
+    .section { margin-bottom: 22px; }
+    .section-title { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+                     color: #64748b; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; margin-bottom: 10px; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px; }
+    .field .key { font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; }
+    .field .val { font-size: 0.88rem; font-weight: 500; margin-top: 2px; }
+
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 0.7rem; font-weight: 600; }
+    .badge-green  { background: #dcfce7; color: #166534; }
+    .badge-amber  { background: #fef9c3; color: #713f12; }
+    .badge-red    { background: #fee2e2; color: #991b1b; }
+    .badge-blue   { background: #dbeafe; color: #1e3a8a; }
+    .badge-gray   { background: #f1f5f9; color: #475569; }
+    .badge-teal   { background: #ccfbf1; color: #134e4a; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    th { background: #f8fafc; padding: 7px 10px; text-align: left; font-size: 0.68rem;
+         text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; border-bottom: 2px solid #e2e8f0; }
+    td { padding: 8px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+
+    .sig-box { border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin-top: 20px; }
+    .sig-row { display: flex; gap: 40px; }
+    .sig-field { flex: 1; }
+    .sig-field .sig-label { font-size: 0.7rem; color: #94a3b8; margin-bottom: 24px; }
+    .sig-field .sig-line  { border-top: 1px solid #cbd5e1; font-size: 0.7rem; color: #94a3b8; padding-top: 4px; }
+
+    .print-btn { position: fixed; top: 20px; right: 20px; background: #00c9a7; color: #fff;
+                 border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;
+                 font-size: 0.88rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,201,167,.3); }
+  </style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+
+<div class="header">
+  <div>
+    <div class="logo">
+      <div class="icon">🏥</div>
+      <div>
+        <div class="brand">Ingutsheni Central | HEM</div>
+        <div class="sub">Health Equipment Maintenance</div>
+      </div>
+    </div>
+  </div>
+  <div class="report-meta">
+    <div><strong>Equipment Lifecycle Report</strong></div>
+    <div>Generated: {{ now.strftime('%d %B %Y, %H:%M UTC') }}</div>
+    <div>Document is official if stamped and signed</div>
+  </div>
+</div>
+
+<!-- Title -->
+<div style="margin-bottom:20px">
+  <span class="asset-tag">{{ eq['asset_tag'] }}</span>
+  <h1 style="margin-top:6px">{{ eq['name'] }}</h1>
+  <div style="font-size:0.85rem;color:#64748b;margin-top:2px">{{ eq['manufacturer'] }} {{ eq['model'] }}</div>
+  <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+    {% set state_c={'Active':'badge-green','Under Maintenance':'badge-amber','Disposed':'badge-red','In Storage':'badge-gray','Pending Disposal':'badge-amber'} %}
+    <span class="badge {{ state_c.get(eq['state'],'badge-gray') }}">{{ eq['state'] }}</span>
+    {% set cond_c={'Excellent':'badge-teal','Good':'badge-green','Fair':'badge-amber','Poor':'badge-red','Critical':'badge-red'} %}
+    <span class="badge {{ cond_c.get(eq['condition'],'badge-gray') }}">{{ eq['condition'] }} Condition</span>
+  </div>
+</div>
+
+<!-- Core Details -->
+<div class="section">
+  <div class="section-title">Equipment Identity</div>
+  <div class="grid">
+    <div class="field"><div class="key">Serial Number</div><div class="val">{{ eq['serial_number'] or '—' }}</div></div>
+    <div class="field"><div class="key">Category</div><div class="val">{{ eq['category'] or '—' }}</div></div>
+    <div class="field"><div class="key">Department</div><div class="val">{{ eq['department'] or '—' }}</div></div>
+    <div class="field"><div class="key">Location</div><div class="val">{{ eq['location'] or '—' }}</div></div>
+    <div class="field"><div class="key">Country of Origin</div><div class="val">{{ eq['country_of_origin'] or '—' }}</div></div>
+    <div class="field"><div class="key">Donor / Source</div><div class="val">{{ eq['donor_name'] or 'Direct Purchase' }}</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Financial & Warranty</div>
+  <div class="grid">
+    <div class="field"><div class="key">Purchase Date</div><div class="val">{{ eq['purchase_date']|fmtdate }}</div></div>
+    <div class="field"><div class="key">Purchase Cost</div><div class="val">{{ eq['purchase_cost']|currency }}</div></div>
+    <div class="field"><div class="key">Warranty Expiry</div><div class="val">{{ eq['warranty_expiry']|fmtdate }}</div></div>
+    <div class="field"><div class="key">Received By</div><div class="val">{{ eq['received_by_name'] or '—' }}</div></div>
+    <div class="field"><div class="key">Date Registered</div><div class="val">{{ eq['created_at']|fmtdate }}</div></div>
+    <div class="field"><div class="key">Last Updated</div><div class="val">{{ eq['updated_at']|fmtdatetime }}</div></div>
+  </div>
+</div>
+
+{% if eq['notes'] %}
+<div class="section">
+  <div class="section-title">Notes</div>
+  <div style="font-size:0.85rem;color:#475569;line-height:1.6">{{ eq['notes'] }}</div>
+</div>
+{% endif %}
+
+<!-- Maintenance history -->
+<div class="section">
+  <div class="section-title">Maintenance History ({{ maintenance|length }} records)</div>
+  {% if maintenance %}
+  <table>
+    <thead>
+      <tr><th>Date</th><th>Type</th><th>Performed By</th><th>Description</th><th>Outcome</th><th>Cost</th></tr>
+    </thead>
+    <tbody>
+      {% for rec in maintenance %}
+      <tr>
+        <td style="white-space:nowrap">{{ (rec['completed_date'] or rec['created_at'])|fmtdate }}</td>
+        <td>{{ rec['maintenance_type'] }}</td>
+        <td>{{ rec['tech_name'] or '—' }}</td>
+        <td>{{ rec['description'][:80] }}{% if rec['description']|length > 80 %}…{% endif %}</td>
+        <td>
+          {% set out_c={'Resolved':'badge-green','Pending':'badge-amber','Escalated':'badge-red'} %}
+          <span class="badge {{ out_c.get(rec['outcome'],'badge-gray') }}">{{ rec['outcome'] }}</span>
+        </td>
+        <td>{{ rec['cost']|currency }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="font-size:0.82rem;color:#94a3b8">No maintenance records on file.</p>
+  {% endif %}
+</div>
+
+<!-- Disposal -->
+{% if disposal %}
+<div class="section">
+  <div class="section-title">Disposal Record</div>
+  <div class="grid">
+    <div class="field"><div class="key">Status</div><div class="val">{{ disposal['status'] }}</div></div>
+    <div class="field"><div class="key">Method</div><div class="val">{{ disposal['method'] or '—' }}</div></div>
+    <div class="field"><div class="key">Requested</div><div class="val">{{ disposal['request_date']|fmtdate }}</div></div>
+    <div class="field"><div class="key">Requested By</div><div class="val">{{ disposal['req_name'] or '—' }}</div></div>
+    <div class="field"><div class="key">Approved By</div><div class="val">{{ disposal['appr_name'] or '—' }}</div></div>
+    <div class="field"><div class="key">Completion</div><div class="val">{{ disposal['completion_date']|fmtdate }}</div></div>
+  </div>
+  {% if disposal['reason'] %}
+  <div style="margin-top:8px;font-size:0.82rem;color:#64748b"><strong>Reason:</strong> {{ disposal['reason'] }}</div>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- Attachments -->
+{% if attachments %}
+<div class="section">
+  <div class="section-title">Attachments ({{ attachments|length }})</div>
+  <div style="font-size:0.8rem;color:#64748b">
+    {% for att in attachments %}
+    <div style="padding:3px 0">• {{ att['original_name'] }} — {{ att['uploader'] or '—' }}, {{ att['created_at']|fmtdate }}</div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Sign-off -->
+<div class="sig-box">
+  <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:.07em;color:#94a3b8;margin-bottom:12px">Official Sign-off</div>
+  <div class="sig-row">
+    <div class="sig-field">
+      <div class="sig-label">Chief Engineer</div>
+      <div class="sig-line">Name &amp; Signature</div>
+    </div>
+    <div class="sig-field">
+      <div class="sig-label">Date</div>
+      <div class="sig-line">DD / MM / YYYY</div>
+    </div>
+    <div class="sig-field">
+      <div class="sig-label">Stamp</div>
+      <div class="sig-line">Department Stamp</div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;font-size:0.68rem;color:#94a3b8;text-align:center">
+  Ingutsheni Central | HEM Health Equipment Maintenance · Confidential · {{ eq['asset_tag'] }} · {{ now.strftime('%Y') }}
+</div>
+
+</body>
+</html>

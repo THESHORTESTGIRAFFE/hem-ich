@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Ingutsheni Central | HEM{% endblock %} — HEM Inventory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    :root {
+      --bg:        #0b0f1a;
+      --bg-card:   #111827;
+      --bg-raised: #1a2234;
+      --border:    #1f2d45;
+      --border-hl: #2a3f60;
+      --accent:    #00c9a7;
+      --accent-2:  #0ea5e9;
+      --warn:      #f59e0b;
+      --danger:    #ef4444;
+      --success:   #22c55e;
+      --text:      #e2e8f0;
+      --text-muted:#64748b;
+      --text-dim:  #94a3b8;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── Sidebar ─────────────────────────────── */
+    .sidebar {
+      width: 240px; min-height: 100vh;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 100;
+    }
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo .mark {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar-logo .icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid; place-items: center;
+      font-size: 16px;
+    }
+    .sidebar-logo .brand { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
+    .sidebar-logo .sub   { font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px; }
+
+    .sidebar-user {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-user .name  { font-size: 0.8rem; font-weight: 600; }
+    .sidebar-user .role  {
+      font-size: 0.68rem; font-family: var(--font-mono);
+      color: var(--accent); margin-top: 2px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    .nav-section { padding: 12px 12px 4px; font-size: 0.63rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .sidebar nav { flex: 1; padding: 8px 12px; overflow-y: auto; }
+    .sidebar nav a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 7px;
+      color: var(--text-dim); text-decoration: none;
+      font-size: 0.84rem; font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+      margin-bottom: 2px;
+    }
+    .sidebar nav a:hover, .sidebar nav a.active {
+      background: var(--bg-raised); color: var(--text);
+    }
+    .sidebar nav a.active { color: var(--accent); }
+    .sidebar nav a .icon { font-size: 15px; width: 18px; text-align: center; }
+    .sidebar nav a .badge {
+      margin-left: auto; background: var(--danger);
+      color: #fff; font-size: 0.65rem; font-weight: 700;
+      padding: 1px 6px; border-radius: 99px;
+    }
+
+    .sidebar-footer {
+      padding: 14px 12px;
+      border-top: 1px solid var(--border);
+    }
+    .sidebar-footer a {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text-muted); font-size: 0.82rem;
+      text-decoration: none;
+      padding: 7px 10px; border-radius: 7px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .sidebar-footer a:hover { color: var(--danger); background: rgba(239,68,68,.08); }
+
+    /* ── Main content ───────────────────────── */
+    .main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    .topbar {
+      height: 56px; background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 28px;
+      gap: 16px; position: sticky; top: 0; z-index: 90;
+    }
+    .topbar .page-title { font-size: 0.95rem; font-weight: 600; }
+    .topbar .spacer { flex: 1; }
+    .topbar .time-badge {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      color: var(--text-muted); background: var(--bg-raised);
+      padding: 4px 10px; border-radius: 6px;
+    }
+
+    .content { padding: 28px; flex: 1; }
+
+    /* ── Flash messages ──────────────────────── */
+    .flashes { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .flash {
+      padding: 10px 16px; border-radius: 8px; font-size: 0.84rem;
+      border-left: 3px solid transparent;
+    }
+    .flash.success { background: rgba(34,197,94,.1);  border-color: var(--success); color: #86efac; }
+    .flash.danger  { background: rgba(239,68,68,.1);  border-color: var(--danger);  color: #fca5a5; }
+    .flash.warning { background: rgba(245,158,11,.1); border-color: var(--warn);    color: #fcd34d; }
+    .flash.info    { background: rgba(14,165,233,.1); border-color: var(--accent-2);color: #7dd3fc; }
+
+    /* ── Cards ──────────────────────────────── */
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    .card-header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .card-header h2 { font-size: 0.9rem; font-weight: 600; }
+    .card-header .hdr-actions { margin-left: auto; display: flex; gap: 8px; }
+    .card-body { padding: 20px; }
+
+    /* ── Stat cards ─────────────────────────── */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 20px;
+      position: relative; overflow: hidden;
+    }
+    .stat-card .label  { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .stat-card .value  { font-size: 2rem; font-weight: 700; margin-top: 6px; line-height: 1; }
+    .stat-card .sub    { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+    .stat-card .glow   {
+      position: absolute; top: -20px; right: -20px;
+      width: 80px; height: 80px; border-radius: 50%;
+      opacity: 0.12; filter: blur(20px);
+    }
+    .stat-card.green .value  { color: var(--success); }
+    .stat-card.green .glow   { background: var(--success); }
+    .stat-card.blue  .value  { color: var(--accent-2); }
+    .stat-card.blue  .glow   { background: var(--accent-2); }
+    .stat-card.amber .value  { color: var(--warn); }
+    .stat-card.amber .glow   { background: var(--warn); }
+    .stat-card.red   .value  { color: var(--danger); }
+    .stat-card.red   .glow   { background: var(--danger); }
+    .stat-card.teal  .value  { color: var(--accent); }
+    .stat-card.teal  .glow   { background: var(--accent); }
+
+    /* ── Table ──────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    thead th {
+      padding: 10px 14px; text-align: left; font-size: 0.7rem;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
+      color: var(--text-muted); background: var(--bg-raised);
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--bg-raised); }
+    tbody td { padding: 11px 14px; vertical-align: middle; }
+
+    /* ── Badges ─────────────────────────────── */
+    .badge {
+      display: inline-block; padding: 2px 9px; border-radius: 99px;
+      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.04em;
+    }
+    .badge-green  { background: rgba(34,197,94,.12);  color: #86efac; }
+    .badge-blue   { background: rgba(14,165,233,.12); color: #7dd3fc; }
+    .badge-amber  { background: rgba(245,158,11,.12); color: #fcd34d; }
+    .badge-red    { background: rgba(239,68,68,.12);  color: #fca5a5; }
+    .badge-purple { background: rgba(168,85,247,.12); color: #d8b4fe; }
+    .badge-gray   { background: rgba(100,116,139,.12);color: #94a3b8; }
+    .badge-teal   { background: rgba(0,201,167,.12);  color: #5eead4; }
+
+    /* ── Buttons ─────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 16px; border-radius: 8px; border: none;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:hover  { opacity: 0.85; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--accent);   color: #0b0f1a; }
+    .btn-blue    { background: var(--accent-2); color: #fff; }
+    .btn-danger  { background: var(--danger);   color: #fff; }
+    .btn-ghost   { background: var(--bg-raised); color: var(--text-dim); border: 1px solid var(--border); }
+    .btn-sm      { padding: 4px 10px; font-size: 0.75rem; }
+
+    /* ── Forms ──────────────────────────────── */
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-dim); }
+    .form-control {
+      background: var(--bg-raised); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 8px 12px;
+      font-size: 0.84rem; font-family: 'Inter', sans-serif;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .form-control:focus { outline: none; border-color: var(--accent); }
+    .form-control option { background: var(--bg-card); }
+    textarea.form-control { resize: vertical; min-height: 80px; }
+    .form-span-2 { grid-column: span 2; }
+
+    /* ── Section divider ────────────────────── */
+    .section-label {
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-muted); margin: 20px 0 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── Empty state ────────────────────────── */
+    .empty { padding: 48px; text-align: center; color: var(--text-muted); }
+    .empty .emoji { font-size: 2.5rem; }
+    .empty p { margin-top: 8px; font-size: 0.85rem; }
+
+    /* ── Mobile ─────────────────────────────── */
+    .hamburger {
+      display:none; background:none; border:none;
+      color:var(--text); cursor:pointer; font-size:1.2rem; padding:4px 8px;
+    }
+    @media(max-width:768px) {
+      .sidebar { transform:translateX(-100%); transition:transform 0.25s ease; z-index:200; }
+      .sidebar.open { transform:translateX(0); box-shadow:4px 0 24px rgba(0,0,0,.4); }
+      .main { margin-left:0; }
+      .hamburger { display:block; }
+      .topbar .page-title { font-size:0.85rem; }
+      .stat-grid { grid-template-columns:repeat(2,1fr); }
+      .charts-row { grid-template-columns:1fr; }
+      .form-grid  { grid-template-columns:1fr; }
+      .form-span-2{ grid-column:span 1; }
+      .detail-grid{ grid-template-columns:repeat(2,1fr); }
+      .eq-browser { grid-template-columns:1fr; }
+      /* Card tables → stack on mobile */
+      .table-wrap table thead { display:none; }
+      .table-wrap table tr {
+        display:flex; flex-direction:column; padding:10px 14px;
+        border-bottom:1px solid var(--border);
+      }
+      .table-wrap table td {
+        padding:2px 0; border:none; display:flex; gap:6px;
+      }
+      .table-wrap table td::before {
+        content: attr(data-label);
+        font-size:0.65rem; color:var(--text-muted); text-transform:uppercase;
+        letter-spacing:.05em; min-width:80px; flex-shrink:0; margin-top:1px;
+      }
+      .mobile-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:199; }
+      .mobile-overlay.open { display:block; }
+    }
+
+    /* ── Notification bell ──────────────────── */
+    .notif-btn {
+      position:relative; background:none; border:none; color:var(--text-dim);
+      cursor:pointer; font-size:1.1rem; padding:4px 8px; border-radius:6px;
+      transition:background .15s;
+    }
+    .notif-btn:hover { background:var(--bg-raised); }
+    .notif-count {
+      position:absolute; top:0; right:0; background:var(--danger);
+      color:#fff; font-size:0.55rem; font-weight:700;
+      padding:1px 4px; border-radius:99px; min-width:14px; text-align:center;
+      display:none;
+    }
+    .notif-panel {
+      position:absolute; top:52px; right:20px; width:320px;
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,.4);
+      z-index:300; display:none; overflow:hidden;
+    }
+    .notif-panel.open { display:block; }
+    .notif-header { padding:12px 16px; border-bottom:1px solid var(--border); font-size:0.8rem; font-weight:700; }
+    .notif-item {
+      display:flex; gap:10px; padding:10px 16px; border-bottom:1px solid var(--border);
+      text-decoration:none; color:var(--text); transition:background .1s; font-size:0.8rem;
+    }
+    .notif-item:last-child { border-bottom:none; }
+    .notif-item:hover { background:var(--bg-raised); }
+    .notif-item .ni-icon { font-size:1rem; flex-shrink:0; margin-top:1px; }
+    .notif-item .ni-title { font-weight:600; }
+    .notif-item .ni-sub   { font-size:0.72rem; color:var(--text-muted); }
+    .notif-empty { padding:24px; text-align:center; color:var(--text-muted); font-size:0.83rem; }
+
+    /* ── Inline edit ───────────────────────── */
+    .inline-edit-val { cursor:pointer; border-bottom:1px dashed var(--border); }
+    .inline-edit-val:hover { border-color:var(--accent); color:var(--accent); }
+    .inline-edit-form { display:none; gap:6px; align-items:center; }
+    .inline-edit-form.active { display:flex; }
+    .inline-edit-form select, .inline-edit-form input {
+      background:var(--bg-raised); border:1px solid var(--accent); border-radius:6px;
+      color:var(--text); padding:3px 8px; font-size:0.82rem; font-family:'Inter',sans-serif;
+    }
+    .pagination { display: flex; gap: 6px; margin-top: 16px; justify-content: flex-end; }
+    .pagination a, .pagination span {
+      padding: 5px 12px; border-radius: 7px; font-size: 0.8rem;
+      background: var(--bg-raised); color: var(--text-dim);
+      text-decoration: none; border: 1px solid var(--border);
+    }
+    .pagination a:hover { color: var(--text); background: var(--border); }
+    .pagination .current { background: var(--accent); color: #0b0f1a; border-color: var(--accent); font-weight: 700; }
+
+    /* ── Pulse animation ────────────────────── */
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+    .pulse { animation: pulse 2s infinite; }
+
+    /* ── Detail grid ────────────────────────── */
+    .detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .detail-item .key   { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .detail-item .val   { font-size: 0.9rem; margin-top: 4px; font-weight: 500; }
+    .detail-item .val.mono { font-family: var(--font-mono); font-size: 0.82rem; }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<!-- Notification panel -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-header">🔔 Notifications</div>
+  <div id="notifList"><div class="notif-empty">Loading…</div></div>
+</div>
+<!-- Mobile overlay -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+
+{% if session.user_id %}
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="mark">
+      <div class="icon">🏥</div>
+      <div>
+        <div class="brand">Ingutsheni Central | HEM</div>
+        <div class="sub">Inventory System</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="name">{{ session.full_name }}</div>
+    <div class="role">{{ session.role | replace('_', ' ') }}</div>
+  </div>
+
+  <nav>
+    {% if session.role == 'intern' %}
+      <div class="nav-section">Overview</div>
+      <a href="{{ url_for('intern_dashboard') }}" class="{{ 'active' if request.endpoint == 'intern_dashboard' }}">
+        <span class="icon">📊</span> My Dashboard
+      </a>
+      <div class="nav-section">Equipment</div>
+      <a href="{{ url_for('equipment_list') }}" class="{{ 'active' if request.endpoint == 'equipment_list' }}">
+        <span class="icon">🔬</span> Browse Equipment
+      </a>
+      <div class="nav-section">Issues</div>
+      <a href="{{ url_for('flag_issue') }}" class="{{ 'active' if request.endpoint == 'flag_issue' }}">
+        <span class="icon">🚩</span> Flag an Issue
+      </a>
+      <a href="{{ url_for('issue_list') }}" class="{{ 'active' if request.endpoint == 'issue_list' }}">
+        <span class="icon">📌</span> My Flags
+      </a>
+    {% else %}
+      <div class="nav-section">Overview</div>
+      <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">
+        <span class="icon">📊</span> Dashboard
+      </a>
+
+      <div class="nav-section">Equipment</div>
+      <a href="{{ url_for('equipment_list') }}" class="{{ 'active' if request.endpoint == 'equipment_list' }}">
+        <span class="icon">🔬</span> All Equipment
+      </a>
+      {% if session.role in ['chief_engineer', 'technician'] %}
+      <a href="{{ url_for('receive_equipment') }}" class="{{ 'active' if request.endpoint == 'receive_equipment' }}">
+        <span class="icon">📦</span> Receive Equipment
+      </a>
+      {% endif %}
+      {% if session.role == 'chief_engineer' %}
+      <a href="{{ url_for('import_equipment') }}" class="{{ 'active' if request.endpoint == 'import_equipment' }}">
+        <span class="icon">📤</span> Bulk Import
+      </a>
+      {% endif %}
+
+      <div class="nav-section">Operations</div>
+      <a href="{{ url_for('maintenance_list') }}" class="{{ 'active' if request.endpoint == 'maintenance_list' }}">
+        <span class="icon">🔧</span> Maintenance
+      </a>
+      <a href="{{ url_for('maintenance_schedule') }}" class="{{ 'active' if request.endpoint == 'maintenance_schedule' }}">
+        <span class="icon">📅</span> Schedule
+      </a>
+      <a href="{{ url_for('disposal_list') }}" class="{{ 'active' if request.endpoint == 'disposal_list' }}">
+        <span class="icon">🗑️</span> Disposal
+        {% if pending_disposal_count and pending_disposal_count > 0 %}<span class="badge">{{ pending_disposal_count }}</span>{% endif %}
+      </a>
+      <a href="{{ url_for('issue_list') }}" class="{{ 'active' if request.endpoint == 'issue_list' }}">
+        <span class="icon">🚩</span> Issue Flags
+        {% if open_issues_count and open_issues_count > 0 %}<span class="badge" style="background:var(--warn)">{{ open_issues_count }}</span>{% endif %}
+      </a>
+      <a href="{{ url_for('department_overview') }}" class="{{ 'active' if 'department' in request.endpoint }}">
+        <span class="icon">🏥</span> Departments
+      </a>
+      {% if session.role == 'chief_engineer' %}
+      <a href="{{ url_for('analytics') }}" class="{{ 'active' if request.endpoint == 'analytics' }}">
+        <span class="icon">📈</span> Cost Analytics
+      </a>
+      {% endif %}
+
+      {% if session.role == 'chief_engineer' %}
+      <div class="nav-section">Administration</div>
+      <a href="{{ url_for('audit_log') }}" class="{{ 'active' if request.endpoint == 'audit_log' }}">
+        <span class="icon">📋</span> Audit Trail
+      </a>
+      <a href="{{ url_for('user_list') }}" class="{{ 'active' if 'user' in request.endpoint }}">
+        <span class="icon">👥</span> Users
+      </a>
+      {% endif %}
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="{{ url_for('logout') }}">
+      <span>⏻</span> Sign Out
+    </a>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <header class="topbar">
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="page-title">{% block page_title %}{% endblock %}</div>
+    <div class="spacer"></div>
+    <div class="time-badge" id="clock"></div>
+    <!-- Notification Bell -->
+    <button class="notif-btn" id="notifBtn" onclick="toggleNotif()">
+      🔔<span class="notif-count" id="notifCount"></span>
+    </button>
+    <!-- Profile link -->
+    <a href="{{ url_for('profile') }}" style="font-size:0.78rem;color:var(--text-muted);text-decoration:none;
+       padding:4px 10px;border-radius:6px;background:var(--bg-raised);border:1px solid var(--border)">
+      👤 {{ session.full_name.split()[0] }}
+    </a>
+  </header>
+
+  <div class="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flashes" id="flashes">
+          {% for cat, msg in messages %}
+            <div class="flash {{ cat }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+{% else %}
+  {% block login_content %}{% endblock %}
+{% endif %}
+
+<script>
+// Clock
+function tick() {
+  const el = document.getElementById('clock');
+  if (el) el.textContent = new Date().toLocaleString('en-US', { weekday:'short', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+tick(); setInterval(tick, 1000);
+
+// Mobile sidebar
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('mobileOverlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('open');
+}
+
+// Notifications
+let notifOpen = false;
+async function toggleNotif() {
+  const panel = document.getElementById('notifPanel');
+  notifOpen = !notifOpen;
+  panel.classList.toggle('open', notifOpen);
+  if (notifOpen) {
+    gsap.from(panel, { y: -10, opacity: 0, duration: 0.2, ease: 'power2.out' });
+    await loadNotifs();
+  }
+}
+document.addEventListener('click', e => {
+  if (notifOpen && !e.target.closest('#notifBtn') && !e.target.closest('#notifPanel')) {
+    notifOpen = false;
+    document.getElementById('notifPanel').classList.remove('open');
+  }
+});
+async function loadNotifs() {
+  try {
+    const res  = await fetch('/api/notifications');
+    const data = await res.json();
+    const list = document.getElementById('notifList');
+    const count = document.getElementById('notifCount');
+    if (!data.length) {
+      list.innerHTML = '<div class="notif-empty">✅ All clear — no alerts.</div>';
+      count.style.display = 'none';
+      return;
+    }
+    const colorMap = { danger:'#ef4444', warn:'#f59e0b', purple:'#a855f7', blue:'#0ea5e9' };
+    list.innerHTML = data.map(n => `
+      <a class="notif-item" href="${n.url}">
+        <div class="ni-icon">${n.icon}</div>
+        <div>
+          <div class="ni-title" style="color:${colorMap[n.color]||'inherit'}">${n.title}</div>
+          <div class="ni-sub">${n.sub||''}</div>
+        </div>
+      </a>`).join('');
+    count.textContent = data.length > 9 ? '9+' : data.length;
+    count.style.display = 'block';
+  } catch(e) { /* silent */ }
+}
+// Poll notifications every 60s
+loadNotifs(); setInterval(loadNotifs, 60000);
+
+// GSAP entrance animations
+gsap.registerPlugin(ScrollTrigger);
+document.addEventListener('DOMContentLoaded', () => {
+  gsap.from('#sidebar nav a', { x:-20, opacity:0, duration:0.4, stagger:0.05, ease:'power2.out', delay:0.1 });
+  gsap.from('.stat-card',     { y:24, opacity:0, duration:0.5, stagger:0.08, ease:'power3.out', delay:0.2 });
+  gsap.from('.card',          { y:20, opacity:0, duration:0.45, stagger:0.07, ease:'power2.out', delay:0.15 });
+  gsap.from('.flash',         { x:20, opacity:0, duration:0.3, stagger:0.06, ease:'power2.out' });
+  gsap.from('tbody tr', {
+    scrollTrigger:{ trigger:'table', start:'top 85%' },
+    y:10, opacity:0, duration:0.25, stagger:0.03, ease:'power1.out'
+  });
+});
+
+// Inline edit helpers (used on equipment detail)
+function showInlineEdit(field) {
+  document.getElementById('display-'+field).style.display = 'none';
+  document.getElementById('edit-'+field).classList.add('active');
+}
+function hideInlineEdit(field) {
+  document.getElementById('display-'+field).style.display = '';
+  document.getElementById('edit-'+field).classList.remove('active');
+}
+</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

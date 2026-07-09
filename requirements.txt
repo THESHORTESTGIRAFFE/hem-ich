@@ -1,0 +1,12 @@
+# Ingutsheni Central | HEM — Python dependencies
+# Install with:  pip install -r requirements.txt
+
+# Core web framework
+Flask==3.1.0
+
+# Password hashing & WSGI utilities (ships with Flask)
+Werkzeug==3.1.3
+
+# Production WSGI server — pure Python, no C compiler needed
+# Serves on all network interfaces so other machines can connect
+waitress==3.0.1

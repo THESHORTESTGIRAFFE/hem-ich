@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Request Disposal — {{ eq.name }}{% endblock %}
+{% block page_title %}Request Disposal{% endblock %}
+{% block content %}
+<div style="margin-bottom:20px">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--danger)">{{ eq.asset_tag }}</div>
+  <h2 style="font-size:1.2rem;font-weight:700;margin-top:2px">{{ eq.name }}</h2>
+  <div style="color:var(--text-muted);font-size:0.83rem">This request will be sent to the Chief Engineer for approval.</div>
+</div>
+
+<div class="card" style="border-color:rgba(239,68,68,.3)">
+  <div class="card-header" style="border-color:rgba(239,68,68,.3)">
+    <h2>🗑️ Disposal Request</h2>
+  </div>
+  <div class="card-body">
+    <form method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Disposal Method *</label>
+          <select name="method" class="form-control" required>
+            <option value="Decommission">Decommission — End of life</option>
+            <option value="Donate">Donate to another facility</option>
+            <option value="Sell">Sell / Auction</option>
+            <option value="Scrap">Scrap / Recycle</option>
+          </select>
+        </div>
+        <div class="form-group form-span-2">
+          <label>Reason for Disposal *</label>
+          <textarea name="reason" class="form-control" rows="4" required
+            placeholder="Explain why this equipment should be disposed of (beyond repair, obsolete, end of warranty period, etc.)…"></textarea>
+        </div>
+        <div class="form-group form-span-2">
+          <label>Additional Notes</label>
+          <textarea name="notes" class="form-control" rows="3"
+            placeholder="Any additional context for the chief engineer…"></textarea>
+        </div>
+      </div>
+      <div style="margin-top:20px;padding:12px 16px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:8px;font-size:0.82rem;color:#fca5a5">
+        ⚠️ This action will flag the equipment as <strong>Pending Disposal</strong> and notify the Chief Engineer. The equipment cannot be returned to service without rejection of this request.
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px">
+        <a href="{{ url_for('equipment_detail', eq_id=eq.id) }}" class="btn btn-ghost">Cancel</a>
+        <button type="submit" class="btn btn-danger">Submit Disposal Request</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

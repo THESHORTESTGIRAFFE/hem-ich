@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Batch QR Labels — Ingutsheni Central | HEM</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    @page { margin: 8mm; size: A4; }
+    @media print { .no-print { display: none !important; } body { background: #fff; } }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; padding: 20px; }
+
+    .toolbar {
+      display: flex; gap: 10px; align-items: center; margin-bottom: 20px;
+      padding: 14px 18px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+    }
+    .toolbar h2 { font-size: 0.95rem; font-weight: 700; flex: 1; }
+    .btn {
+      padding: 8px 16px; border-radius: 7px; border: none; cursor: pointer;
+      font-size: 0.8rem; font-weight: 600; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .btn-primary { background: #00c9a7; color: #fff; }
+    .btn-ghost   { background: #f1f5f9; color: #475569; }
+
+    .label-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .label-card {
+      background: #fff; border: 1.5px solid #1a1a2e;
+      border-radius: 8px; padding: 10px; display: flex; gap: 10px;
+      align-items: flex-start; page-break-inside: avoid;
+    }
+    .label-org  { font-size: 0.55rem; text-transform: uppercase; letter-spacing:.1em; color:#64748b; margin-bottom:2px; }
+    .label-name { font-size: 0.78rem; font-weight: 700; color: #0f172a; line-height: 1.2; margin-bottom: 4px; }
+    .label-tag  { display: inline-block; font-family: monospace; font-size: 0.7rem; font-weight: 700; background: #00c9a7; color: #fff; padding: 1px 6px; border-radius: 3px; margin-bottom: 5px; }
+    .label-row  { font-size: 0.6rem; color: #475569; margin-bottom: 2px; }
+    .label-row .lk { color: #94a3b8; }
+    .label-row .lv { font-weight: 600; color: #1e293b; }
+    .scan-hint  { font-size: 0.52rem; color: #94a3b8; text-align: center; margin-top: 4px; }
+    .count-badge {
+      background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px;
+      padding: 4px 10px; font-size: 0.78rem; color: #475569;
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <h2>🏷️ Batch QR Labels</h2>
+  <span class="count-badge">{{ equipment|length }} labels</span>
+  <a href="{{ url_for('equipment_list') }}" class="btn btn-ghost">← Equipment List</a>
+  <button class="btn btn-primary" onclick="window.print()">🖨️ Print All</button>
+</div>
+
+<div class="label-grid">
+  {% for eq in equipment %}
+  <div class="label-card">
+    <div style="flex-shrink:0">
+      <div id="qr-{{ eq['id'] }}"></div>
+      <div class="scan-hint">Scan to view</div>
+    </div>
+    <div style="flex:1;min-width:0">
+      <div class="label-org">Ingutsheni Central | HEM</div>
+      <div class="label-name">{{ eq['name'] }}</div>
+      <div class="label-tag">{{ eq['asset_tag'] }}</div>
+      <div class="label-row"><span class="lk">Dept: </span><span class="lv">{{ eq['department'] or '—' }}</span></div>
+      <div class="label-row"><span class="lk">Loc: </span><span class="lv">{{ eq['location'] or '—' }}</span></div>
+      <div class="label-row"><span class="lk">S/N: </span><span class="lv">{{ eq['serial_number'] or '—' }}</span></div>
+      <div class="label-row"><span class="lk">State: </span><span class="lv">{{ eq['state'] }}</span></div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+const baseUrl = '{{ request.host_url }}';
+{% for eq in equipment %}
+new QRCode(document.getElementById('qr-{{ eq["id"] }}'), {
+  text: baseUrl + 'equipment/{{ eq["id"] }}',
+  width: 70, height: 70,
+  colorDark: '#0f172a', colorLight: '#ffffff',
+  correctLevel: QRCode.CorrectLevel.M
+});
+{% endfor %}
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}Departments{% endblock %}
+{% block page_title %}Department Overview{% endblock %}
+
+{% block head %}
+<style>
+.dept-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:16px; }
+
+.dept-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; overflow:hidden; text-decoration:none;
+  color:inherit; display:block; transition:border-color .15s, transform .1s;
+}
+.dept-card:hover { border-color:var(--border-hl); transform:translateY(-2px); }
+
+.dept-card-top {
+  padding:18px 20px 14px; border-bottom:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:flex-start;
+}
+.dept-name { font-size:1rem; font-weight:700; }
+.dept-total { font-size:1.8rem; font-weight:700; color:var(--accent); line-height:1; }
+.dept-total-label { font-size:0.68rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.06em; margin-top:2px; }
+
+.dept-stats { display:grid; grid-template-columns:repeat(4,1fr); }
+.dept-stat {
+  padding:12px 14px; border-right:1px solid var(--border); text-align:center;
+}
+.dept-stat:last-child { border-right:none; }
+.dept-stat .ds-val   { font-size:1.1rem; font-weight:700; }
+.dept-stat .ds-label { font-size:0.65rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em; margin-top:2px; }
+
+.dept-footer {
+  padding:10px 20px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+}
+.dept-bar-wrap {
+  flex:1; height:5px; background:var(--border); border-radius:3px; overflow:hidden;
+}
+.dept-bar { height:100%; border-radius:3px; background:var(--accent); }
+
+.alert-dot {
+  width:8px; height:8px; border-radius:50%; flex-shrink:0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px">
+  <p style="color:var(--text-muted);font-size:0.84rem">Equipment inventory broken down by hospital department.</p>
+  <div style="display:flex;gap:8px">
+    <a href="{{ url_for('qr_batch') }}" class="btn btn-ghost">🏷️ Print All QR Labels</a>
+    {% if session.role == 'chief_engineer' %}
+    <a href="{{ url_for('analytics') }}" class="btn btn-ghost">📈 Cost Analytics</a>
+    {% endif %}
+  </div>
+</div>
+
+{% if unassigned > 0 %}
+<div style="margin-bottom:16px;padding:12px 16px;background:rgba(245,158,11,.08);
+            border:1px solid rgba(245,158,11,.2);border-radius:9px;font-size:0.83rem;color:#fcd34d;
+            display:flex;align-items:center;gap:10px">
+  ⚠️ <strong>{{ unassigned }}</strong> active equipment items have no department assigned.
+  <a href="{{ url_for('equipment_list') }}" style="color:var(--accent);margin-left:auto">Review →</a>
+</div>
+{% endif %}
+
+<div class="dept-grid">
+  {% for dept in departments %}
+  {% set has_critical = dept['overdue'] > 0 or dept['critical_count'] > 0 %}
+  <a href="{{ url_for('department_detail', dept=dept['department']) }}" class="dept-card"
+     style="{{ 'border-color:rgba(239,68,68,.35)' if dept['overdue'] > 0 else '' }}">
+
+    <div class="dept-card-top">
+      <div>
+        {% if dept['overdue'] > 0 %}
+        <div style="font-size:0.7rem;color:var(--danger);font-weight:600;margin-bottom:4px">⚠ {{ dept['overdue'] }} overdue</div>
+        {% endif %}
+        <div class="dept-name">{{ dept['department'] }}</div>
+        {% if session.role != 'intern' %}
+        <div style="font-size:0.73rem;color:var(--text-muted);margin-top:4px">
+          Asset value: <strong style="color:var(--text)">${{ '{:,.0f}'.format(dept['total_value']) }}</strong>
+        </div>
+        {% endif %}
+      </div>
+      <div style="text-align:right">
+        <div class="dept-total">{{ dept['total'] }}</div>
+        <div class="dept-total-label">assets</div>
+      </div>
+    </div>
+
+    <div class="dept-stats">
+      <div class="dept-stat">
+        <div class="ds-val" style="color:var(--success)">{{ dept['active'] }}</div>
+        <div class="ds-label">Active</div>
+      </div>
+      <div class="dept-stat">
+        <div class="ds-val" style="color:var(--warn)">{{ dept['under_maint'] }}</div>
+        <div class="ds-label">In Maint.</div>
+      </div>
+      <div class="dept-stat">
+        <div class="ds-val" style="color:{{ 'var(--danger)' if dept['overdue'] > 0 else 'var(--text-muted)' }}">{{ dept['overdue'] }}</div>
+        <div class="ds-label">Overdue</div>
+      </div>
+      <div class="dept-stat">
+        <div class="ds-val" style="color:{{ 'var(--danger)' if dept['critical_count'] > 0 else 'var(--text-muted)' }}">{{ dept['critical_count'] }}</div>
+        <div class="ds-label">Critical</div>
+      </div>
+    </div>
+
+    <div class="dept-footer">
+      <div class="dept-bar-wrap">
+        <div class="dept-bar" style="width:{{ ((dept['active'] / dept['total']) * 100)|int if dept['total'] else 0 }}%"></div>
+      </div>
+      <span style="font-size:0.72rem;color:var(--text-muted);white-space:nowrap">
+        {{ ((dept['active'] / dept['total']) * 100)|int if dept['total'] else 0 }}% active
+      </span>
+      <span style="font-size:0.72rem;color:var(--accent)">View →</span>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+{% if not departments %}
+<div class="empty" style="padding:64px">
+  <div class="emoji">🏥</div>
+  <p>No departments found. Assign departments to equipment records first.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+gsap.from('.dept-card', { y:20, opacity:0, duration:0.4, stagger:0.07, ease:'power2.out', delay:0.1 });
+</script>
+{% endblock %}

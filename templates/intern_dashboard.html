@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% block title %}Intern Dashboard{% endblock %}
+{% block page_title %}Intern Dashboard{% endblock %}
+
+{% block head %}
+<style>
+.welcome-bar {
+  background: linear-gradient(135deg, var(--bg-card) 0%, #0f1f38 100%);
+  border: 1px solid var(--border-hl);
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.welcome-bar .orb {
+  position: absolute; right: -40px; top: -40px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: var(--accent); opacity: 0.05; filter: blur(40px);
+}
+.welcome-bar .avatar {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  display: grid; place-items: center; font-size: 22px; flex-shrink: 0;
+}
+.welcome-bar h2 { font-size: 1.1rem; font-weight: 700; }
+.welcome-bar p  { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+
+.schedule-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  font-size: 0.83rem;
+}
+.schedule-item:last-child { border-bottom: none; }
+.schedule-item .days-badge {
+  min-width: 52px; text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; font-weight: 700;
+  padding: 3px 8px; border-radius: 6px;
+  flex-shrink: 0;
+}
+.days-overdue { background: rgba(239,68,68,.15); color: #fca5a5; }
+.days-soon    { background: rgba(245,158,11,.12); color: #fcd34d; }
+.days-ok      { background: rgba(0,201,167,.1);   color: #5eead4; }
+
+.eq-browser { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 12px; }
+.eq-card {
+  background: var(--bg-raised); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px; text-decoration: none; color: inherit;
+  transition: border-color 0.15s, transform 0.1s;
+  display: block;
+}
+.eq-card:hover { border-color: var(--border-hl); transform: translateY(-1px); }
+.eq-card .eq-name  { font-weight: 600; font-size: 0.88rem; margin-bottom: 4px; }
+.eq-card .eq-tag   { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent); }
+.eq-card .eq-meta  { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+.flag-item {
+  padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem;
+}
+.flag-item:last-child { border-bottom: none; }
+.flag-title { font-weight: 600; margin-bottom: 3px; }
+.flag-meta  { font-size: 0.73rem; color: var(--text-muted); }
+
+.sev-badge-High   { background: rgba(239,68,68,.12);  color: #fca5a5; }
+.sev-badge-Medium { background: rgba(245,158,11,.12); color: #fcd34d; }
+.sev-badge-Low    { background: rgba(0,201,167,.1);   color: #5eead4; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Welcome bar -->
+<div class="welcome-bar" id="welcome-bar">
+  <div class="orb"></div>
+  <div class="avatar">👋</div>
+  <div>
+    <h2>Welcome, {{ session.full_name }}</h2>
+    <p>Here's your read-only view of the HEM inventory. Spot something wrong? Flag it for a technician.</p>
+  </div>
+  <div style="margin-left:auto;flex-shrink:0">
+    <a href="{{ url_for('flag_issue') }}" class="btn btn-primary">🚩 Flag an Issue</a>
+  </div>
+</div>
+
+<!-- Mini stats -->
+<div class="stat-grid" style="margin-bottom:24px">
+  <div class="stat-card green"><div class="glow"></div>
+    <div class="label">Active Equipment</div>
+    <div class="value">{{ stats.total_active }}</div>
+    <div class="sub">In service</div>
+  </div>
+  <div class="stat-card red"><div class="glow"></div>
+    <div class="label">Overdue Maintenance</div>
+    <div class="value">{{ stats.overdue_count }}</div>
+    <div class="sub">Need attention</div>
+  </div>
+  <div class="stat-card amber"><div class="glow"></div>
+    <div class="label">Due This Month</div>
+    <div class="value">{{ stats.upcoming_count }}</div>
+    <div class="sub">Next 30 days</div>
+  </div>
+  <div class="stat-card blue"><div class="glow"></div>
+    <div class="label">My Open Flags</div>
+    <div class="value">{{ stats.my_open_flags }}</div>
+    <div class="sub">Awaiting resolution</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+
+  <!-- Overdue -->
+  <div class="card">
+    <div class="card-header">
+      <h2>⚠️ Overdue Maintenance</h2>
+    </div>
+    <div class="card-body" style="padding:0 20px">
+      {% if overdue %}
+        {% for eq in overdue %}
+        <div class="schedule-item">
+          <span class="days-badge days-overdue">OVERDUE</span>
+          <div style="flex:1">
+            <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" style="font-weight:600;color:var(--text);text-decoration:none">{{ eq['name'] }}</a>
+            <div style="font-size:0.73rem;color:var(--text-muted)">{{ eq['location'] or '—' }} · Was due {{ eq['next_maintenance']|fmtdate }}</div>
+          </div>
+          <a href="{{ url_for('flag_issue', equipment_id=eq['id']) }}" class="btn btn-danger btn-sm">Flag</a>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty" style="padding:24px"><div class="emoji">✅</div><p>No overdue maintenance.</p></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Upcoming -->
+  <div class="card">
+    <div class="card-header">
+      <h2>📅 Upcoming Maintenance (30 days)</h2>
+    </div>
+    <div class="card-body" style="padding:0 20px">
+      {% if upcoming %}
+        {% for eq in upcoming %}
+        <div class="schedule-item">
+          <span class="days-badge days-soon">{{ eq['next_maintenance']|fmtdate }}</span>
+          <div style="flex:1">
+            <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" style="font-weight:600;color:var(--text);text-decoration:none">{{ eq['name'] }}</a>
+            <div style="font-size:0.73rem;color:var(--text-muted)">{{ eq['department'] or '—' }} · {{ eq['location'] or '—' }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty" style="padding:24px"><div class="emoji">📅</div><p>Nothing due in the next 30 days.</p></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- My issue flags -->
+{% if my_flags %}
+<div class="card" style="margin-bottom:20px">
+  <div class="card-header">
+    <h2>📌 My Flagged Issues</h2>
+    <div class="hdr-actions">
+      <a href="{{ url_for('issue_list') }}" class="btn btn-ghost btn-sm">View all</a>
+    </div>
+  </div>
+  <div class="card-body">
+    {% for flag in my_flags[:5] %}
+    <div class="flag-item">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+        <span class="flag-title">{{ flag['title'] }}</span>
+        <span class="badge sev-badge-{{ flag['severity'] }}">{{ flag['severity'] }}</span>
+        {% set st_map={'Open':'badge-amber','In Progress':'badge-blue','Resolved':'badge-green','Closed':'badge-gray'} %}
+        <span class="badge {{ st_map.get(flag['status'],'badge-gray') }}">{{ flag['status'] }}</span>
+      </div>
+      <div class="flag-meta">
+        {{ flag['eq_name'] }} · {{ flag['asset_tag'] }} · Raised {{ flag['created_at']|fmtdatetime }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Equipment browser -->
+<div class="card">
+  <div class="card-header">
+    <h2>🔬 Equipment Browser</h2>
+    <div class="hdr-actions">
+      <a href="{{ url_for('equipment_list') }}" class="btn btn-ghost btn-sm">Full list →</a>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="eq-browser">
+      {% for eq in equipment %}
+      <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="eq-card">
+        <div class="eq-name">{{ eq['name'] }}</div>
+        <div class="eq-tag">{{ eq['asset_tag'] }}</div>
+        <div class="eq-meta">
+          <span class="badge {{ state_badge(eq['state']) }}" style="font-size:0.65rem">{{ eq['state'] }}</span>
+          <span class="badge {{ cond_badge(eq['condition']) }}" style="font-size:0.65rem">{{ eq['condition'] }}</span>
+          {% if eq['location'] %}<span style="color:var(--text-muted)">📍 {{ eq['location'] }}</span>{% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+gsap.from('#welcome-bar', { y: -20, opacity: 0, duration: 0.5, ease: 'power3.out' });
+gsap.from('.stat-card', { y: 24, opacity: 0, duration: 0.5, stagger: 0.08, ease: 'power3.out', delay: 0.15 });
+gsap.from('.card', { y: 20, opacity: 0, duration: 0.4, stagger: 0.07, ease: 'power2.out', delay: 0.2 });
+gsap.from('.eq-card', {
+  scrollTrigger: { trigger: '.eq-browser', start: 'top 85%' },
+  y: 12, opacity: 0, duration: 0.3, stagger: 0.04, ease: 'power2.out'
+});
+
+// Counter animation
+document.querySelectorAll('.stat-card .value').forEach(el => {
+  const target = parseInt(el.textContent);
+  if (isNaN(target)) return;
+  el.textContent = '0';
+  gsap.to({ val: 0 }, {
+    val: target, duration: 1, ease: 'power2.out', delay: 0.3,
+    onUpdate() { el.textContent = Math.round(this.targets()[0].val); }
+  });
+});
+</script>
+{% endblock %}

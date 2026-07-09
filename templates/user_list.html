@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Users{% endblock %}
+{% block page_title %}User Management{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:flex-end;margin-bottom:18px">
+  <a href="{{ url_for('add_user') }}" class="btn btn-primary">+ Add User</a>
+</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Email</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td style="font-weight:600">{{ u['full_name'] }}</td>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--accent)">{{ u['username'] }}</td>
+          <td>
+            {% set role_map={'chief_engineer':'badge-teal','technician':'badge-blue','intern':'badge-gray'} %}
+            <span class="badge {{ role_map.get(u['role'],'badge-gray') }}">{{ u['role'].replace('_',' ') }}</span>
+          </td>
+          <td style="color:var(--text-muted);font-size:0.82rem">{{ u['email'] or '—' }}</td>
+          <td>
+            <span class="badge {{ 'badge-green' if u['is_active'] else 'badge-red' }}">
+              {{ 'Active' if u['is_active'] else 'Inactive' }}
+            </span>
+          </td>
+          <td style="font-size:0.8rem;color:var(--text-muted)">{{ u['created_at']|fmtdate }}</td>
+          <td>
+            {% if u['id'] != session.user_id %}
+            <div style="display:flex;gap:5px">
+              <form method="POST" action="{{ url_for('toggle_user', uid=u['id']) }}">
+                <button class="btn btn-ghost btn-sm">{{ 'Deactivate' if u['is_active'] else 'Activate' }}</button>
+              </form>
+              <form method="POST" action="{{ url_for('reset_password', uid=u['id']) }}" style="display:inline-flex">
+                <input type="password" name="password" placeholder="New pass" style="width:100px;font-size:0.75rem;padding:2px 5px" required>
+                <button class="btn btn-primary btn-sm">Reset</button>
+              </form>
+            </div>
+            {% else %}
+            <span style="font-size:0.75rem;color:var(--text-muted)">(you)</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

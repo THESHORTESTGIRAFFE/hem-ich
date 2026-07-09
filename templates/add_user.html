@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Add User{% endblock %}
+{% block page_title %}Add User{% endblock %}
+{% block content %}
+<div style="max-width:560px">
+  <div class="card">
+    <div class="card-header"><h2>👤 New User Account</h2></div>
+    <div class="card-body">
+      <form method="POST">
+        <div class="form-grid" style="grid-template-columns:1fr 1fr">
+          <div class="form-group form-span-2">
+            <label>Full Name *</label>
+            <input type="text" name="full_name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Username *</label>
+            <input type="text" name="username" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Role *</label>
+            <select name="role" class="form-control" required>
+              <option value="intern">Intern</option>
+              <option value="technician">Technician</option>
+              <option value="chief_engineer">Chief Engineer</option>
+            </select>
+          </div>
+          <div class="form-group form-span-2">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control">
+          </div>
+          <div class="form-group form-span-2">
+            <label>Password *</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
+          <a href="{{ url_for('user_list') }}" class="btn btn-ghost">Cancel</a>
+          <button type="submit" class="btn btn-primary">Create User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

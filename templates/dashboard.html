@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block head %}
+<style>
+.overdue-row td:first-child { border-left: 3px solid var(--danger); }
+.activity-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); font-size:0.82rem; }
+.activity-item:last-child { border-bottom:none; }
+.activity-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); flex-shrink:0; margin-top:5px; }
+.activity-action { font-weight:600; color:var(--text); }
+.activity-meta   { color:var(--text-muted); font-size:0.75rem; margin-top:2px; }
+.charts-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+canvas { max-height:200px; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="stat-grid" id="stat-grid">
+  <div class="stat-card teal"><div class="glow"></div>
+    <div class="label">Total Equipment</div><div class="value">{{ stats.total }}</div><div class="sub">Assets registered</div>
+  </div>
+  <div class="stat-card green"><div class="glow"></div>
+    <div class="label">Active</div><div class="value">{{ stats.active }}</div><div class="sub">In service</div>
+  </div>
+  <div class="stat-card amber"><div class="glow"></div>
+    <div class="label">Under Maintenance</div><div class="value">{{ stats.maintenance }}</div><div class="sub">Being serviced</div>
+  </div>
+  <div class="stat-card red"><div class="glow"></div>
+    <div class="label">Overdue Checks</div><div class="value">{{ stats.overdue }}</div><div class="sub">Maintenance past due</div>
+  </div>
+  <div class="stat-card blue"><div class="glow"></div>
+    <div class="label">Disposed</div><div class="value">{{ stats.disposed }}</div><div class="sub">Decommissioned</div>
+  </div>
+  {% if session.role == 'chief_engineer' %}
+  <div class="stat-card amber"><div class="glow"></div>
+    <div class="label">Pending Disposal</div><div class="value">{{ stats.pending_disposal }}</div><div class="sub">Awaiting approval</div>
+  </div>
+  <div class="stat-card red"><div class="glow"></div>
+    <div class="label">Open Issues</div><div class="value">{{ stats.open_flags }}</div><div class="sub">Flagged by interns</div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="charts-row">
+  <div class="card" style="margin-top:0">
+    <div class="card-header"><h2>Equipment by State</h2></div>
+    <div class="card-body"><canvas id="stateChart"></canvas></div>
+  </div>
+  <div class="card" style="margin-top:0">
+    <div class="card-header"><h2>Equipment by Condition</h2></div>
+    <div class="card-body"><canvas id="condChart"></canvas></div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+  <div class="card">
+    <div class="card-header">
+      <h2>⚠️ Overdue Maintenance</h2>
+      <div class="hdr-actions"><a href="{{ url_for('equipment_list', state='Active') }}" class="btn btn-ghost btn-sm">View all</a></div>
+    </div>
+    {% if overdue_equip %}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Equipment</th><th>Due Date</th><th></th></tr></thead>
+        <tbody>
+          {% for eq in overdue_equip %}
+          <tr class="overdue-row">
+            <td>
+              <div style="font-weight:600">{{ eq['name'] }}</div>
+              <div style="font-size:0.73rem;color:var(--text-muted)">{{ eq['asset_tag'] }}</div>
+            </td>
+            <td><span class="badge badge-red">{{ eq['next_maintenance']|fmtdate }}</span></td>
+            <td><a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="btn btn-ghost btn-sm">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty"><div class="emoji">✅</div><p>No overdue maintenance.</p></div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Recent Activity</h2>
+      {% if session.role == 'chief_engineer' %}
+      <div class="hdr-actions"><a href="{{ url_for('audit_log') }}" class="btn btn-ghost btn-sm">Full audit trail</a></div>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      {% for log in recent %}
+      <div class="activity-item">
+        <div class="activity-dot"></div>
+        <div>
+          <div class="activity-action">{{ log['action'].replace('_',' ') }}</div>
+          {% if log['target_name'] %}<div style="color:var(--text-dim);font-size:0.8rem">{{ log['target_name'] }}</div>{% endif %}
+          <div class="activity-meta">
+            {{ log['user_name'] or 'System' }} &middot; {{ log['timestamp']|fmtdatetime }}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% if open_flags %}
+<div class="card" style="margin-top:16px">
+  <div class="card-header">
+    <h2>🚩 Open Issue Flags</h2>
+    <div class="hdr-actions">
+      <a href="{{ url_for('issue_list', status='Open') }}" class="btn btn-ghost btn-sm">Manage all</a>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Equipment</th><th>Title</th><th>Severity</th><th>Raised By</th><th>When</th><th></th></tr></thead>
+      <tbody>
+        {% for flag in open_flags %}
+        <tr>
+          <td>
+            <a href="{{ url_for('equipment_detail', eq_id=flag['equipment_id']) }}" style="color:var(--accent);text-decoration:none;font-weight:600">{{ flag['eq_name'] }}</a>
+            <div style="font-size:0.72rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace">{{ flag['asset_tag'] }}</div>
+          </td>
+          <td style="font-size:0.83rem">{{ flag['title'] }}</td>
+          <td>
+            {% set sev_c={'High':'badge-red','Medium':'badge-amber','Low':'badge-teal'} %}
+            <span class="badge {{ sev_c.get(flag['severity'],'badge-gray') }}">{{ flag['severity'] }}</span>
+          </td>
+          <td style="font-size:0.82rem;color:var(--text-dim)">{{ flag['raiser_name'] }}</td>
+          <td style="font-size:0.8rem;color:var(--text-muted)">{{ flag['created_at']|fmtdatetime }}</td>
+          <td><a href="{{ url_for('issue_list', status='Open') }}" class="btn btn-ghost btn-sm">Review →</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+const COLORS = ['#00c9a7','#0ea5e9','#f59e0b','#ef4444','#a855f7','#22c55e','#fb923c'];
+fetch('/api/stats').then(r=>r.json()).then(data => {
+  new Chart(document.getElementById('stateChart'), {
+    type: 'doughnut',
+    data: { labels: data.by_state.map(d=>d.label),
+            datasets:[{ data: data.by_state.map(d=>d.value), backgroundColor: COLORS, borderWidth:0, hoverOffset:6 }] },
+    options: { plugins:{ legend:{ position:'right', labels:{ color:'#94a3b8', font:{family:'Inter',size:11}, padding:14 } } }, cutout:'65%' }
+  });
+  new Chart(document.getElementById('condChart'), {
+    type: 'bar',
+    data: { labels: data.by_condition.map(d=>d.label),
+            datasets:[{ label:'Units', data: data.by_condition.map(d=>d.value), backgroundColor: COLORS, borderRadius:5 }] },
+    options: { plugins:{legend:{display:false}}, scales:{ x:{ticks:{color:'#64748b'},grid:{color:'#1f2d45'}}, y:{ticks:{color:'#64748b'},grid:{color:'#1f2d45'}} } }
+  });
+});
+document.querySelectorAll('.stat-card .value').forEach(el => {
+  const target = parseInt(el.textContent);
+  if(isNaN(target)) return;
+  el.textContent = '0';
+  gsap.to({ val:0 }, { val: target, duration: 1.2, ease:'power2.out', delay:0.3,
+    onUpdate() { el.textContent = Math.round(this.targets()[0].val); } });
+});
+</script>
+{% endblock %}

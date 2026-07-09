@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>QR Label — {{ eq['asset_tag'] }}</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    @page { margin: 10mm; size: A4; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; }
+      .label-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; padding: 24px; color: #1a1a2e; }
+
+    .toolbar {
+      display: flex; gap: 10px; align-items: center; margin-bottom: 24px;
+      padding: 14px 18px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+    }
+    .toolbar h2 { font-size: 0.95rem; font-weight: 700; flex: 1; }
+    .btn {
+      padding: 8px 18px; border-radius: 7px; border: none; cursor: pointer;
+      font-size: 0.82rem; font-weight: 600; text-decoration: none; display: inline-flex;
+      align-items: center; gap: 6px; transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn-primary { background: #00c9a7; color: #fff; }
+    .btn-ghost   { background: #f1f5f9; color: #475569; }
+
+    /* Label styles */
+    .label-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 16px; max-width: 960px; margin: 0 auto;
+    }
+
+    .label-card {
+      background: #fff; border: 2px solid #1a1a2e;
+      border-radius: 10px; padding: 18px; display: flex; gap: 16px;
+      align-items: flex-start; page-break-inside: avoid;
+    }
+    .label-qr { flex-shrink: 0; }
+    .label-info { flex: 1; min-width: 0; }
+    .label-org {
+      font-size: 0.6rem; text-transform: uppercase; letter-spacing: .1em;
+      color: #64748b; margin-bottom: 4px;
+    }
+    .label-name {
+      font-size: 0.95rem; font-weight: 700; color: #0f172a;
+      line-height: 1.2; margin-bottom: 6px;
+    }
+    .label-tag {
+      display: inline-block; font-family: 'Courier New', monospace;
+      font-size: 0.82rem; font-weight: 700;
+      background: #00c9a7; color: #fff;
+      padding: 2px 8px; border-radius: 4px; margin-bottom: 8px;
+    }
+    .label-row {
+      display: flex; gap: 6px; font-size: 0.68rem; color: #475569;
+      margin-bottom: 3px; align-items: flex-start;
+    }
+    .label-row .lk { color: #94a3b8; min-width: 60px; flex-shrink: 0; }
+    .label-row .lv { font-weight: 600; color: #1e293b; }
+    .label-divider {
+      border-top: 1px dashed #e2e8f0; margin: 8px 0; padding-top: 6px;
+    }
+    .label-scan-hint {
+      font-size: 0.6rem; color: #94a3b8; text-align: center; margin-top: 6px;
+    }
+
+    /* Size selector */
+    .size-btns { display: flex; gap: 6px; }
+
+    /* Full-page single label for lanyards/stickers */
+    .single-label-wrap { display: none; }
+    body.size-large .label-grid { display: none; }
+    body.size-large .single-label-wrap { display: flex; justify-content: center; }
+    body.size-large .label-card { max-width: 380px; width: 100%; flex-direction: column; align-items: center; text-align: center; padding: 28px; }
+    body.size-large .label-qr { margin: 0 auto 12px; }
+    body.size-large .label-row { justify-content: center; }
+  </style>
+</head>
+<body id="body">
+
+<div class="toolbar no-print">
+  <h2>🏷️ QR Label — {{ eq['name'] }}</h2>
+  <div class="size-btns">
+    <button class="btn btn-ghost" onclick="setSize('normal')">Standard (2-up)</button>
+    <button class="btn btn-ghost" onclick="setSize('large')">Large (single)</button>
+  </div>
+  <a href="{{ url_for('qr_batch') }}" class="btn btn-ghost">Batch Print</a>
+  <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="btn btn-ghost">← Equipment</a>
+  <button class="btn btn-primary" onclick="window.print()">🖨️ Print Label</button>
+</div>
+
+<!-- Standard 2-up grid -->
+<div class="label-grid" id="labelGrid">
+  <div class="label-card" id="label-a">
+    <div class="label-qr">
+      <div id="qr-a"></div>
+      <div class="label-scan-hint">Scan for full record</div>
+    </div>
+    <div class="label-info">
+      <div class="label-org">Ingutsheni Central | HEM</div>
+      <div class="label-name">{{ eq['name'] }}</div>
+      <div class="label-tag">{{ eq['asset_tag'] }}</div>
+      <div class="label-row"><span class="lk">Serial</span><span class="lv">{{ eq['serial_number'] or 'N/A' }}</span></div>
+      <div class="label-row"><span class="lk">Dept</span><span class="lv">{{ eq['department'] or 'N/A' }}</span></div>
+      <div class="label-row"><span class="lk">Location</span><span class="lv">{{ eq['location'] or 'N/A' }}</span></div>
+      <div class="label-row"><span class="lk">Category</span><span class="lv">{{ eq['category'] or 'N/A' }}</span></div>
+      <div class="label-divider"></div>
+      <div class="label-row"><span class="lk">State</span><span class="lv">{{ eq['state'] }}</span></div>
+      <div class="label-row"><span class="lk">Condition</span><span class="lv">{{ eq['condition'] }}</span></div>
+    </div>
+  </div>
+  <!-- Duplicate for cut-out efficiency -->
+  <div class="label-card" id="label-b">
+    <div class="label-qr"><div id="qr-b"></div><div class="label-scan-hint">Scan for full record</div></div>
+    <div class="label-info">
+      <div class="label-org">Ingutsheni Central | HEM</div>
+      <div class="label-name">{{ eq['name'] }}</div>
+      <div class="label-tag">{{ eq['asset_tag'] }}</div>
+      <div class="label-row"><span class="lk">Serial</span><span class="lv">{{ eq['serial_number'] or 'N/A' }}</span></div>
+      <div class="label-row"><span class="lk">Dept</span><span class="lv">{{ eq['department'] or 'N/A' }}</span></div>
+      <div class="label-row"><span class="lk">Location</span><span class="lv">{{ eq['location'] or 'N/A' }}</span></div>
+      <div class="label-row"><span class="lk">Category</span><span class="lv">{{ eq['category'] or 'N/A' }}</span></div>
+      <div class="label-divider"></div>
+      <div class="label-row"><span class="lk">State</span><span class="lv">{{ eq['state'] }}</span></div>
+      <div class="label-row"><span class="lk">Condition</span><span class="lv">{{ eq['condition'] }}</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Large single label -->
+<div class="single-label-wrap">
+  <div class="label-card">
+    <div class="label-qr"><div id="qr-large"></div><div class="label-scan-hint">Scan to view full equipment record</div></div>
+    <div class="label-info">
+      <div class="label-org">Ingutsheni Central | HEM</div>
+      <div class="label-name" style="font-size:1.1rem">{{ eq['name'] }}</div>
+      <div style="margin:6px 0"><div class="label-tag" style="font-size:1rem;padding:4px 12px">{{ eq['asset_tag'] }}</div></div>
+      <div class="label-row"><span class="lk">Serial</span><span class="lv">{{ eq['serial_number'] or 'N/A' }}</span></div>
+      <div class="label-row"><span class="lk">Department</span><span class="lv">{{ eq['department'] or 'N/A' }}</span></div>
+      <div class="label-row"><span class="lk">Location</span><span class="lv">{{ eq['location'] or 'N/A' }}</span></div>
+      <div class="label-row"><span class="lk">Manufacturer</span><span class="lv">{{ eq['manufacturer'] or 'N/A' }}</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const URL = '{{ request.host_url }}equipment/{{ eq["id"] }}';
+const opts = { width: 90, height: 90, colorDark: '#0f172a', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M };
+
+new QRCode(document.getElementById('qr-a'), { ...opts, text: URL });
+new QRCode(document.getElementById('qr-b'), { ...opts, text: URL });
+new QRCode(document.getElementById('qr-large'), { ...opts, width: 160, height: 160, text: URL });
+
+function setSize(s) {
+  document.getElementById('body').className = s === 'large' ? 'size-large' : '';
+}
+</script>
+</body>
+</html>

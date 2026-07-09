@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Maintenance Log{% endblock %}
+{% block page_title %}Maintenance Log{% endblock %}
+{% block content %}
+<div class="card">
+  {% if records %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Equipment</th><th>Type</th><th>Performed By</th>
+          <th>Completed</th><th>Next Due</th><th>Outcome</th><th>Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rec in records %}
+        <tr>
+          <td>
+            <a href="{{ url_for('equipment_detail', eq_id=rec['equipment_id']) }}" style="color:var(--accent);text-decoration:none;font-weight:600">
+              {{ rec['eq_name'] }}
+            </a>
+            <div style="font-size:0.72rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace">{{ rec['asset_tag'] }}</div>
+          </td>
+          <td><span class="badge badge-blue">{{ rec['maintenance_type'] }}</span></td>
+          <td style="color:var(--text-dim)">{{ rec['tech_name'] or '—' }}</td>
+          <td style="font-size:0.82rem">{{ rec['completed_date']|fmtdate }}</td>
+          <td style="font-size:0.82rem">{{ rec['next_due']|fmtdate }}</td>
+          <td>
+            {% set out_map={'Resolved':'badge-green','Pending':'badge-amber','Escalated':'badge-red'} %}
+            <span class="badge {{ out_map.get(rec['outcome'],'badge-gray') }}">{{ rec['outcome'] }}</span>
+          </td>
+          <td style="font-size:0.82rem">{{ rec['cost']|currency }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty"><div class="emoji">🔧</div><p>No maintenance records found.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

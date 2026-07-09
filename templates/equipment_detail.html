@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+{% block title %}{{ eq['name'] }}{% endblock %}
+{% block page_title %}Equipment Detail{% endblock %}
+
+{% block head %}
+<style>
+.timeline { position:relative; padding-left:20px; }
+.timeline::before { content:''; position:absolute; left:7px; top:0; bottom:0; width:2px; background:var(--border); }
+.timeline-item { position:relative; padding-bottom:22px; }
+.timeline-item:last-child { padding-bottom:0; }
+.timeline-item::before { content:''; position:absolute; left:-17px; top:4px; width:10px; height:10px; border-radius:50%; background:var(--accent); border:2px solid var(--bg); }
+.timeline-item .t-header { display:flex; align-items:baseline; gap:8px; margin-bottom:4px; }
+.timeline-item .t-type   { font-size:0.75rem; font-weight:700; color:var(--accent); text-transform:uppercase; }
+.timeline-item .t-date   { font-size:0.72rem; color:var(--text-muted); }
+.timeline-item .t-desc   { font-size:0.82rem; color:var(--text-dim); }
+.timeline-item .t-by     { font-size:0.72rem; color:var(--text-muted); margin-top:3px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+  <div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent);margin-bottom:4px">{{ eq['asset_tag'] }}</div>
+    <h1 style="font-size:1.5rem;font-weight:700;letter-spacing:-0.02em">{{ eq['name'] }}</h1>
+    <div style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">{{ eq['manufacturer'] }} {{ eq['model'] }}</div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    {% if session.role in ['chief_engineer','technician'] %}
+    <a href="{{ url_for('edit_equipment', eq_id=eq['id']) }}" class="btn btn-ghost">✏️ Edit</a>
+    <a href="{{ url_for('add_maintenance', eq_id=eq['id']) }}" class="btn btn-blue">🔧 Log Maintenance</a>
+    {% if eq['state'] not in ['Disposed','Pending Disposal'] %}
+    <a href="{{ url_for('request_disposal', eq_id=eq['id']) }}" class="btn btn-danger">🗑️ Request Disposal</a>
+    {% endif %}
+    {% endif %}
+    <a href="{{ url_for('export_equipment', eq_id=eq['id']) }}" class="btn btn-ghost" target="_blank">📄 Export</a>
+    <a href="{{ url_for('equipment_qr', eq_id=eq['id']) }}" class="btn btn-ghost" target="_blank">🏷️ QR Label</a>
+    <a href="{{ url_for('equipment_list') }}" class="btn btn-ghost">← Back</a>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
+  <div style="display:flex;flex-direction:column;gap:16px">
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <!-- Inline state edit -->
+      <div id="display-state" class="inline-edit-val" onclick="{{ 'showInlineEdit(\"state\")' if session.role in ['chief_engineer','technician'] else '' }}"
+           title="{{ 'Click to change state' if session.role in ['chief_engineer','technician'] else '' }}">
+        <span class="badge {{ state_badge(eq['state']) }}" style="font-size:0.8rem;padding:4px 12px">{{ eq['state'] }}</span>
+      </div>
+      <div id="edit-state" class="inline-edit-form">
+        <select id="state-select" class="form-control" style="font-size:0.8rem;padding:4px 8px">
+          {% for s in ['Active','Under Maintenance','In Storage'] %}
+          <option value="{{ s }}" {{ 'selected' if eq['state']==s }}>{{ s }}</option>
+          {% endfor %}
+        </select>
+        <button onclick="saveInline({{ eq['id'] }},'state','state-select')" class="btn btn-primary btn-sm">✓</button>
+        <button onclick="hideInlineEdit('state')" class="btn btn-ghost btn-sm">✕</button>
+      </div>
+
+      <!-- Inline condition edit -->
+      <div id="display-condition" class="inline-edit-val" onclick="{{ 'showInlineEdit(\"condition\")' if session.role in ['chief_engineer','technician'] else '' }}"
+           title="{{ 'Click to change condition' if session.role in ['chief_engineer','technician'] else '' }}">
+        <span class="badge {{ cond_badge(eq['condition']) }}" style="font-size:0.8rem;padding:4px 12px">{{ eq['condition'] }} Condition</span>
+      </div>
+      <div id="edit-condition" class="inline-edit-form">
+        <select id="condition-select" class="form-control" style="font-size:0.8rem;padding:4px 8px">
+          {% for c in ['Excellent','Good','Fair','Poor','Critical'] %}
+          <option value="{{ c }}" {{ 'selected' if eq['condition']==c }}>{{ c }}</option>
+          {% endfor %}
+        </select>
+        <button onclick="saveInline({{ eq['id'] }},'condition','condition-select')" class="btn btn-primary btn-sm">✓</button>
+        <button onclick="hideInlineEdit('condition')" class="btn btn-ghost btn-sm">✕</button>
+      </div>
+
+      {% if is_overdue(eq['next_maintenance']) and eq['state'] == 'Active' %}
+      <span class="badge badge-red pulse" style="font-size:0.8rem;padding:4px 12px">⚠ Maintenance Overdue</span>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Equipment Information</h2></div>
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-item"><div class="key">Serial Number</div><div class="val mono">{{ eq['serial_number'] or '—' }}</div></div>
+          <div class="detail-item"><div class="key">Category</div><div class="val">{{ eq['category'] or '—' }}</div></div>
+          <div class="detail-item"><div class="key">Department</div><div class="val">{{ eq['department'] or '—' }}</div></div>
+          <div class="detail-item"><div class="key">Location</div><div class="val">{{ eq['location'] or '—' }}</div></div>
+          <div class="detail-item"><div class="key">Country of Origin</div><div class="val">{{ eq['country_of_origin'] or '—' }}</div></div>
+          <div class="detail-item"><div class="key">Donor / Source</div><div class="val">{{ eq['donor_name'] or 'Direct Purchase' }}</div></div>
+          {% if session.role != 'intern' %}
+          <div class="detail-item"><div class="key">Purchase Date</div><div class="val">{{ eq['purchase_date']|fmtdate }}</div></div>
+          <div class="detail-item"><div class="key">Purchase Cost</div><div class="val">{{ eq['purchase_cost']|currency }}</div></div>
+          {% endif %}
+          <div class="detail-item"><div class="key">Warranty Expiry</div><div class="val">{{ eq['warranty_expiry']|fmtdate }}</div></div>
+          <div class="detail-item"><div class="key">Received By</div><div class="val">{{ eq['received_by_name'] or '—' }}</div></div>
+          <div class="detail-item"><div class="key">Last Maintenance</div><div class="val">{{ eq['last_maintenance']|fmtdate }}</div></div>
+          <div class="detail-item">
+            <div class="key">Next Maintenance</div>
+            <div class="val">
+              {% if eq['next_maintenance'] %}
+                {% if is_overdue(eq['next_maintenance']) %}
+                  <span style="color:var(--danger)">{{ eq['next_maintenance']|fmtdate }} (Overdue)</span>
+                {% else %}
+                  {{ eq['next_maintenance']|fmtdate }}
+                {% endif %}
+              {% else %}—{% endif %}
+            </div>
+          </div>
+        </div>
+        {% if eq['notes'] %}
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+          <div class="key" style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Notes</div>
+          <div style="font-size:0.84rem;color:var(--text-dim);line-height:1.6">{{ eq['notes'] }}</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Maintenance History</h2>
+        {% if session.role in ['chief_engineer','technician'] %}
+        <div class="hdr-actions"><a href="{{ url_for('add_maintenance', eq_id=eq['id']) }}" class="btn btn-ghost btn-sm">+ Log</a></div>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        {% if maintenance %}
+        <div class="timeline">
+          {% for rec in maintenance %}
+          <div class="timeline-item">
+            <div class="t-header">
+              <span class="t-type">{{ rec['maintenance_type'] }}</span>
+              <span class="t-date">{{ (rec['completed_date'] or rec['created_at'])|fmtdate }}</span>
+              {% set out_map={'Resolved':'badge-green','Pending':'badge-amber','Escalated':'badge-red'} %}
+              <span class="badge {{ out_map.get(rec['outcome'],'badge-gray') }}" style="font-size:0.65rem">{{ rec['outcome'] }}</span>
+            </div>
+            <div class="t-desc">{{ rec['description'] }}</div>
+            {% if rec['findings'] %}<div class="t-desc" style="margin-top:3px;font-style:italic">Findings: {{ rec['findings'] }}</div>{% endif %}
+            <div class="t-by">By {{ rec['tech_name'] or '—' }}{% if rec['cost'] %} · Cost: {{ rec['cost']|currency }}{% endif %}</div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty" style="padding:24px"><div class="emoji">🔧</div><p>No maintenance records yet.</p></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px">
+    {% if disposal %}
+    <div class="card">
+      <div class="card-header"><h2>🗑️ Disposal Request</h2></div>
+      <div class="card-body">
+        {% set ds_map={'Pending':'badge-amber','Approved':'badge-green','Rejected':'badge-red','Completed':'badge-gray'} %}
+        <span class="badge {{ ds_map.get(disposal['status'],'badge-gray') }}">{{ disposal['status'] }}</span>
+        <div style="margin-top:12px;font-size:0.82rem;color:var(--text-dim)">{{ disposal['reason'] }}</div>
+        <div style="margin-top:8px;font-size:0.75rem;color:var(--text-muted)">
+          Method: {{ disposal['method'] or '—' }}<br>
+          Requested: {{ disposal['request_date']|fmtdate }}<br>
+          By: {{ disposal['req_name'] or '—' }}
+        </div>
+        {% if disposal['status'] == 'Pending' and session.role == 'chief_engineer' %}
+        <div style="margin-top:14px;display:flex;gap:8px">
+          <form method="POST" action="{{ url_for('approve_disposal', rec_id=disposal['id']) }}" style="flex:1">
+            <input type="hidden" name="action" value="approve">
+            <button class="btn btn-primary btn-sm" style="width:100%">Approve</button>
+          </form>
+          <form method="POST" action="{{ url_for('approve_disposal', rec_id=disposal['id']) }}" style="flex:1">
+            <input type="hidden" name="action" value="reject">
+            <button class="btn btn-danger btn-sm" style="width:100%">Reject</button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="card">
+      <div class="card-header"><h2>Quick Info</h2></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+        <div class="detail-item"><div class="key">Asset Tag</div><div class="val mono" style="color:var(--accent)">{{ eq['asset_tag'] }}</div></div>
+        <div class="detail-item"><div class="key">Registered</div><div class="val" style="font-size:0.82rem">{{ eq['created_at']|fmtdate }}</div></div>
+        <div class="detail-item"><div class="key">Last Updated</div><div class="val" style="font-size:0.82rem">{{ eq['updated_at']|fmtdatetime }}</div></div>
+        <div class="detail-item"><div class="key">Total Maint. Records</div><div class="val">{{ maintenance|length }}</div></div>
+      </div>
+    </div>
+
+    <!-- Attachments -->
+    <div class="card">
+      <div class="card-header"><h2>📎 Attachments</h2></div>
+      <div class="card-body" style="padding:12px 16px">
+        {% if attachments %}
+          {% for att in attachments %}
+          <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+            <span style="font-size:1.1rem">
+              {% if att['file_type'] in ['pdf'] %}📄{% elif att['file_type'] in ['png','jpg','jpeg'] %}🖼️{% else %}📁{% endif %}
+            </span>
+            <div style="flex:1;min-width:0">
+              <a href="{{ url_for('download_attachment', att_id=att['id']) }}"
+                 style="color:var(--accent-2);text-decoration:none;font-size:0.8rem;font-weight:600;
+                        display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                {{ att['original_name'] }}
+              </a>
+              {% if att['description'] %}
+              <div style="font-size:0.7rem;color:var(--text-muted)">{{ att['description'] }}</div>
+              {% endif %}
+              <div style="font-size:0.68rem;color:var(--text-muted)">
+                {{ att['uploader'] or '—' }} · {{ att['created_at']|fmtdate }}
+              </div>
+            </div>
+            {% if session.role in ['chief_engineer','technician'] %}
+            <form method="POST" action="{{ url_for('delete_attachment', att_id=att['id']) }}"
+                  onsubmit="return confirm('Delete this attachment?')">
+              <button class="btn btn-ghost btn-sm" style="color:var(--danger)">✕</button>
+            </form>
+            {% endif %}
+          </div>
+          {% endfor %}
+        {% else %}
+          <div style="font-size:0.8rem;color:var(--text-muted);padding:8px 0">No attachments yet.</div>
+        {% endif %}
+        {% if session.role in ['chief_engineer','technician'] %}
+        <form method="POST" action="{{ url_for('upload_attachment', eq_id=eq['id']) }}"
+              enctype="multipart/form-data" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+          <div style="font-size:0.72rem;font-weight:600;color:var(--text-dim);margin-bottom:6px">Upload Document</div>
+          <input type="file" name="file" class="form-control" style="font-size:0.78rem;padding:5px 8px;margin-bottom:6px"
+                 accept=".pdf,.png,.jpg,.jpeg,.docx,.xlsx,.csv,.txt">
+          <input type="text" name="description" class="form-control" placeholder="Description (optional)"
+                 style="font-size:0.78rem;padding:5px 8px;margin-bottom:8px">
+          <button type="submit" class="btn btn-ghost btn-sm" style="width:100%">📎 Upload</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function saveInline(eqId, field, selectId) {
+  const val = document.getElementById(selectId).value;
+  const res  = await fetch(`/equipment/${eqId}/inline-edit`, {
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body: `field=${field}&value=${encodeURIComponent(val)}`
+  });
+  const data = await res.json();
+  if (data.ok) {
+    hideInlineEdit(field);
+    const display = document.getElementById('display-'+field);
+    gsap.from(display, { scale:1.08, duration:0.25, ease:'back.out' });
+    setTimeout(() => location.reload(), 400);
+  }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% block title %}Maintenance Schedule{% endblock %}
+{% block page_title %}Maintenance Schedule{% endblock %}
+
+{% block head %}
+<style>
+.window-tabs { display:flex; gap:8px; margin-bottom:22px; }
+.timeline-row {
+  display:grid; grid-template-columns:140px 1fr;
+  gap:0; border-bottom:1px solid var(--border);
+}
+.timeline-row:last-child { border-bottom:none; }
+.date-col {
+  padding:14px 16px; border-right:1px solid var(--border);
+  font-size:0.78rem; color:var(--text-muted); background:var(--bg-raised);
+  display:flex; flex-direction:column; justify-content:center; flex-shrink:0;
+}
+.date-col .day  { font-size:1.4rem; font-weight:700; color:var(--text); line-height:1; }
+.date-col .mon  { font-size:0.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); }
+.date-col .dow  { font-size:0.68rem; color:var(--text-muted); }
+.items-col { padding:8px 16px; display:flex; flex-direction:column; gap:6px; justify-content:center; }
+.sched-item {
+  display:flex; align-items:center; gap:10px;
+  background:var(--bg-raised); border:1px solid var(--border);
+  border-radius:8px; padding:8px 12px; font-size:0.82rem;
+  transition:border-color .15s;
+}
+.sched-item:hover { border-color:var(--border-hl); }
+.sched-item.overdue { border-left:3px solid var(--danger); background:rgba(239,68,68,.04); }
+.sched-item.due-soon { border-left:3px solid var(--warn); }
+.sched-item.due-ok   { border-left:3px solid var(--accent); }
+.days-pill {
+  font-family:'JetBrains Mono',monospace; font-size:0.68rem; font-weight:700;
+  padding:2px 7px; border-radius:5px; flex-shrink:0; white-space:nowrap;
+}
+.pill-over { background:rgba(239,68,68,.15);  color:#fca5a5; }
+.pill-soon { background:rgba(245,158,11,.12); color:#fcd34d; }
+.pill-ok   { background:rgba(0,201,167,.1);   color:#5eead4; }
+.summary-bar {
+  display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;
+  padding:14px 18px; background:var(--bg-card); border:1px solid var(--border); border-radius:10px;
+}
+.summary-chip { font-size:0.78rem; color:var(--text-muted); }
+.summary-chip strong { color:var(--text); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Window selector -->
+<div class="window-tabs">
+  {% for w, label in [('30','Next 30 days'),('60','Next 60 days'),('90','Next 90 days')] %}
+  <a href="{{ url_for('maintenance_schedule', window=w) }}"
+     class="btn {{ 'btn-primary' if window==w else 'btn-ghost' }} btn-sm">{{ label }}</a>
+  {% endfor %}
+</div>
+
+<!-- Summary bar -->
+<div class="summary-bar">
+  <div class="summary-chip">🔴 <strong>{{ overdue|length }}</strong> overdue</div>
+  <div class="summary-chip">🟡 <strong>{{ upcoming|selectattr('days_until','lt',8)|list|length }}</strong> due within 7 days</div>
+  <div class="summary-chip">🟢 <strong>{{ upcoming|length }}</strong> total in window</div>
+</div>
+
+<!-- Overdue section -->
+{% if overdue %}
+<div class="card" style="margin-bottom:16px;border-color:rgba(239,68,68,.2)">
+  <div class="card-header" style="border-color:rgba(239,68,68,.15)">
+    <h2>⚠️ Overdue — Requires Immediate Action</h2>
+  </div>
+  <div>
+    {% for eq in overdue %}
+    {% set days_over = eq['days_overdue']|int %}
+    <div class="timeline-row">
+      <div class="date-col">
+        <div class="day" style="color:var(--danger)">{{ eq['next_maintenance']|fmtdate('%d') }}</div>
+        <div class="mon">{{ eq['next_maintenance']|fmtdate('%b %Y') }}</div>
+        <div class="dow">{{ eq['next_maintenance']|fmtdate('%A') }}</div>
+      </div>
+      <div class="items-col">
+        <div class="sched-item overdue">
+          <span class="days-pill pill-over">{{ days_over }}d late</span>
+          <div style="flex:1">
+            <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" style="font-weight:600;color:var(--text);text-decoration:none">{{ eq['name'] }}</a>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:1px">
+              {{ eq['asset_tag'] }} · {{ eq['department'] or '—' }} · {{ eq['location'] or '—' }}
+            </div>
+          </div>
+          <span class="badge {{ cond_badge(eq['condition']) }}">{{ eq['condition'] }}</span>
+          {% if session.role in ['chief_engineer','technician'] %}
+          <a href="{{ url_for('add_maintenance', eq_id=eq['id']) }}" class="btn btn-primary btn-sm">Log Now</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Upcoming grouped by date -->
+{% if upcoming %}
+<div class="card">
+  <div class="card-header"><h2>📅 Upcoming in {{ window }} Days</h2></div>
+  <div>
+    {% set current_date = namespace(val='') %}
+    {% for eq in upcoming %}
+      {% set dstr = eq['next_maintenance'][:10] if eq['next_maintenance'] else '' %}
+      {% if dstr != current_date.val %}
+        {% set current_date.val = dstr %}
+        {% set days_until = eq['days_until']|int %}
+        <div class="timeline-row">
+          <div class="date-col">
+            <div class="day" style="color:{{ 'var(--warn)' if days_until < 8 else 'var(--text)' }}">
+              {{ eq['next_maintenance']|fmtdate('%d') }}
+            </div>
+            <div class="mon">{{ eq['next_maintenance']|fmtdate('%b %Y') }}</div>
+            <div class="dow">{{ eq['next_maintenance']|fmtdate('%A') }}</div>
+          </div>
+          <div class="items-col">
+      {% endif %}
+          {% set days_until = eq['days_until']|int %}
+          <div class="sched-item {{ 'due-soon' if days_until < 8 else 'due-ok' }}">
+            <span class="days-pill {{ 'pill-soon' if days_until < 8 else 'pill-ok' }}">
+              in {{ days_until }}d
+            </span>
+            <div style="flex:1">
+              <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" style="font-weight:600;color:var(--text);text-decoration:none">{{ eq['name'] }}</a>
+              <div style="font-size:0.72rem;color:var(--text-muted);margin-top:1px">
+                {{ eq['asset_tag'] }} · {{ eq['department'] or '—' }} · {{ eq['location'] or '—' }}
+              </div>
+            </div>
+            <span class="badge {{ state_badge(eq['state']) }}" style="font-size:0.65rem">{{ eq['state'] }}</span>
+            <span class="badge {{ cond_badge(eq['condition']) }}" style="font-size:0.65rem">{{ eq['condition'] }}</span>
+          </div>
+      {% if loop.last or upcoming[loop.index]['next_maintenance'][:10] != dstr %}
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="empty" style="padding:64px">
+  <div class="emoji">✅</div>
+  <p>No maintenance due in the next {{ window }} days.</p>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+gsap.from('.summary-bar', { y:-10, opacity:0, duration:0.35, ease:'power2.out' });
+gsap.from('.timeline-row', { y:10, opacity:0, duration:0.3, stagger:0.04, ease:'power1.out', delay:0.1 });
+</script>
+{% endblock %}

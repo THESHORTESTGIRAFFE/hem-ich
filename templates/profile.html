@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:800px">
+
+  <!-- Profile info -->
+  <div class="card">
+    <div class="card-header"><h2>👤 Account Details</h2></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+      <div class="detail-item">
+        <div class="key">Full Name</div>
+        <div class="val">{{ user['full_name'] }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Username</div>
+        <div class="val mono" style="color:var(--accent)">{{ user['username'] }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Role</div>
+        <div class="val">
+          {% set role_map={'chief_engineer':'badge-teal','technician':'badge-blue','intern':'badge-gray'} %}
+          <span class="badge {{ role_map.get(user['role'],'badge-gray') }}">{{ user['role'].replace('_',' ').title() }}</span>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Email</div>
+        <div class="val">{{ user['email'] or '—' }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Account Created</div>
+        <div class="val">{{ user['created_at']|fmtdate }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Status</div>
+        <div class="val"><span class="badge badge-green">Active</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password change -->
+  <div class="card">
+    <div class="card-header"><h2>🔒 Change Password</h2></div>
+    <div class="card-body">
+      <form method="POST" id="pw-form">
+        <div class="form-group" style="margin-bottom:14px">
+          <label>Current Password *</label>
+          <input type="password" name="current_password" class="form-control" required
+                 placeholder="Your current password">
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label>New Password *</label>
+          <input type="password" name="new_password" class="form-control" required
+                 id="new-pw" placeholder="At least 8 characters">
+          <div id="pw-strength" style="margin-top:5px;height:4px;border-radius:2px;background:var(--border);overflow:hidden">
+            <div id="pw-bar" style="height:100%;width:0%;transition:width .3s,background .3s"></div>
+          </div>
+          <div id="pw-label" style="font-size:0.7rem;color:var(--text-muted);margin-top:3px"></div>
+        </div>
+        <div class="form-group" style="margin-bottom:18px">
+          <label>Confirm New Password *</label>
+          <input type="password" name="confirm_password" class="form-control" required
+                 id="confirm-pw" placeholder="Repeat new password">
+          <div id="pw-match" style="font-size:0.72rem;margin-top:4px"></div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">Update Password</button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<!-- Session info -->
+<div class="card" style="margin-top:16px;max-width:800px">
+  <div class="card-header"><h2>🔐 Session Security</h2></div>
+  <div class="card-body">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;font-size:0.83rem">
+      <div class="detail-item">
+        <div class="key">Session Policy</div>
+        <div class="val">Auto-expires after 8 hours of inactivity</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Login Environment</div>
+        <div class="val">Hospital shared terminal — always sign out when done</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Sign Out</div>
+        <div class="val"><a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm">⏻ Sign Out Now</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+gsap.from('.card', { y:20, opacity:0, duration:0.4, stagger:0.1, ease:'power2.out' });
+
+// Password strength meter
+const newPw = document.getElementById('new-pw');
+const bar   = document.getElementById('pw-bar');
+const label = document.getElementById('pw-label');
+newPw.addEventListener('input', function() {
+  const v = this.value;
+  let score = 0;
+  if (v.length >= 8)  score++;
+  if (/[A-Z]/.test(v)) score++;
+  if (/[0-9]/.test(v)) score++;
+  if (/[^a-zA-Z0-9]/.test(v)) score++;
+  const levels = [
+    { pct:'25%', color:'var(--danger)',  text:'Weak' },
+    { pct:'50%', color:'var(--warn)',    text:'Fair' },
+    { pct:'75%', color:'var(--accent-2)',text:'Good' },
+    { pct:'100%',color:'var(--accent)',  text:'Strong' },
+  ];
+  const l = levels[Math.max(0, score-1)] || levels[0];
+  bar.style.width = v.length ? l.pct : '0%';
+  bar.style.background = l.color;
+  label.textContent = v.length ? l.text : '';
+  label.style.color = l.color;
+});
+
+// Password match check
+document.getElementById('confirm-pw').addEventListener('input', function() {
+  const match = document.getElementById('pw-match');
+  if (this.value && this.value === newPw.value) {
+    match.textContent = '✅ Passwords match';
+    match.style.color = 'var(--success)';
+  } else if (this.value) {
+    match.textContent = '❌ Passwords do not match';
+    match.style.color = 'var(--danger)';
+  } else {
+    match.textContent = '';
+  }
+});
+</script>
+{% endblock %}
