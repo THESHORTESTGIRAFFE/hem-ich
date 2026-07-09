@@ -1,9 +1,9 @@
 @echo off
 :: Set title of the Command Prompt window
-title ICH-Wards Management System - Production Server
+title HEM - Hospital Equipment Management System - Production Server
 
 echo ============================================================
-echo   🏥 ICH-WARDS MANAGEMENT SYSTEM - WINDOWS LAUNCHER
+echo   🏥 HEM - HOSPITAL EQUIPMENT MANAGEMENT SYSTEM
 echo ============================================================
 echo.
 

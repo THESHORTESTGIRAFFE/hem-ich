@@ -266,3 +266,153 @@ Traceback (most recent call last):
   File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
   File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
 sqlite3.OperationalError: no such table: equipment
+2026-07-09 11:53:23,624 [ERROR] Exception on /api/notifications [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
+sqlite3.OperationalError: no such table: equipment
+2026-07-09 11:54:23,817 [ERROR] Exception on /api/notifications [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
+sqlite3.OperationalError: no such table: equipment
+2026-07-09 11:55:23,915 [ERROR] Exception on /api/notifications [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
+sqlite3.OperationalError: no such table: equipment
+2026-07-09 11:56:24,097 [ERROR] Exception on /api/notifications [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
+sqlite3.OperationalError: no such table: equipment
+2026-07-09 11:57:24,186 [ERROR] Exception on /api/notifications [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
+sqlite3.OperationalError: no such table: equipment
+2026-07-09 11:58:24,461 [ERROR] Exception on /api/notifications [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
+sqlite3.OperationalError: no such table: equipment
+2026-07-09 11:59:24,674 [ERROR] Exception on /api/notifications [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
+sqlite3.OperationalError: no such table: equipment
+2026-07-09 12:00:24,845 [ERROR] Exception on /api/notifications [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
+sqlite3.OperationalError: no such table: equipment
+2026-07-09 12:01:24,940 [ERROR] Exception on /api/notifications [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
+sqlite3.OperationalError: no such table: equipment
+2026-07-09 12:02:25,251 [ERROR] Exception on /api/notifications [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
+sqlite3.OperationalError: no such table: equipment
