@@ -117,7 +117,16 @@ def login():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    stats = {
+        'total': query('SELECT COUNT(*) as count FROM equipment', one=True)['count'],
+        'active': query('SELECT COUNT(*) as count FROM equipment WHERE state = "Active"', one=True)['count'],
+        'maintenance': query('SELECT COUNT(*) as count FROM equipment WHERE state = "Under Maintenance"', one=True)['count'],
+        'overdue': query('SELECT COUNT(*) as count FROM equipment WHERE next_maintenance < date("now") AND state = "Active"', one=True)['count'],
+        'disposed': query('SELECT COUNT(*) as count FROM equipment WHERE state = "Disposed"', one=True)['count'],
+        'pending_disposal': query('SELECT COUNT(*) as count FROM equipment WHERE state = "Pending Disposal"', one=True)['count'],
+        'open_flags': query('SELECT COUNT(*) as count FROM issue_flags WHERE status = "Open"', one=True)['count']
+    }
+    return render_template('dashboard.html', stats=stats)
 
 @app.route('/equipment')
 @login_required
