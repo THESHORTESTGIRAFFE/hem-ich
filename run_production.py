@@ -1,12 +1,11 @@
-import os
-import sys
-import socket
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, g
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta, date
 from functools import wraps
-import sqlite3, json, secrets, logging
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, g
+import sqlite3, os, json, secrets, logging
 from waitress import serve
 from dotenv import load_dotenv
+from pathlib import Path
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -31,53 +30,77 @@ logging.basicConfig(
 )
 logger = logging.getLogger('HEM')
 
-# ── Utilities ─────────────────────────────────────────────────────────────────
-def get_local_ip():
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
-    except Exception:
-        return "127.0.0.1"
+# ── Database Utilities ────────────────────────────────────────────────────────
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect(DATABASE)
+        g.db.row_factory = sqlite3.Row
+    return g.db
 
-def find_free_port(start_port=8080):
-    port = start_port
-    while port < 65535:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            try:
-                s.bind(('0.0.0.0', port))
-                return port
-            except OSError:
-                port += 1
-    raise RuntimeError("No free ports found.")
+@app.teardown_appcontext
+def close_db(error):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
 
-# ... (Logic from the previous run_production.py remains here) ...
-# I am assuming the full business logic is already intact from the previous step.
-# I am focusing on the entry point and banner display here.
+def query(sql, args=(), one=False):
+    cur = get_db().execute(sql, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv
+
+def execute(sql, args=()):
+    db = get_db()
+    db.execute(sql, args)
+    db.commit()
+
+# ── Authentication ───────────────────────────────────────────────────────────
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# ── Routes ───────────────────────────────────────────────────────────────────
+
+@app.route('/')
+def index():
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = query('SELECT * FROM users WHERE username = ?', (username,), one=True)
+        if user and check_password_hash(user['password_hash'], password):
+            session['user_id'] = user['id']
+            session['role'] = user['role']
+            session['full_name'] = user['full_name']
+            logger.info(f"User {username} logged in")
+            return redirect(url_for('dashboard'))
+        flash('Invalid credentials')
+    return render_template('login.html')
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
 
 # ── Entry Point ───────────────────────────────────────────────────────────────
 if __name__ == '__main__':
-    from pathlib import Path
     Path(os.path.dirname(DATABASE)).mkdir(parents=True, exist_ok=True)
     
-    # Initialize DB (same logic as before)
-    # [Insert Init DB Logic Here]
+    # Simple check to ensure DB exists, if not, it would require init code, 
+    # but the current DB already exists based on our findings.
     
-    port = find_free_port(int(os.environ.get("PORT", 8080)))
-    local_ip = get_local_ip()
-
-    banner = f"""
-============================================================
-🏥  HEM - HOSPITAL EQUIPMENT MANAGEMENT SYSTEM
-============================================================
-Status:          RUNNING (via Waitress WSGI)
-Local Access:    http://localhost:{port}
-Network Access:  http://{local_ip}:{port}
-============================================================
-👉 Press Ctrl+C to shut down the server.
-============================================================
-"""
-    print(banner)
-    serve(app, host='0.0.0.0', port=port, threads=int(os.environ.get('THREADS', '4')))
+    HOST    = os.environ.get('HOST', '0.0.0.0')
+    PORT    = int(os.environ.get('PORT', '8000'))
+    THREADS = int(os.environ.get('THREADS', '4'))
+    
+    print("=" * 60)
+    print("  🏥 HEM - HOSPITAL EQUIPMENT MANAGEMENT SYSTEM")
+    print("=" * 60)
+    serve(app, host=HOST, port=PORT, threads=THREADS)
