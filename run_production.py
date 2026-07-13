@@ -249,11 +249,22 @@ def maintenance_list():
                        ORDER BY m.created_at DESC''')
     return render_template('maintenance_list.html', records=records)
 
-@app.route('/maintenance/schedule')
+@app.route('/maintenance/add/<int:eq_id>', methods=['GET', 'POST'])
 @login_required
-def maintenance_schedule():
-    equipment = query('SELECT * FROM equipment WHERE next_maintenance IS NOT NULL ORDER BY next_maintenance')
-    return render_template('maintenance_schedule.html', equipment=equipment)
+def add_maintenance(eq_id):
+    if request.method == 'POST':
+        # Simple implementation
+        data = request.form
+        execute('''INSERT INTO maintenance_records (equipment_id, performed_by_id, maintenance_type, description, findings, outcome, cost, scheduled_date, completed_date, next_due)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                (eq_id, session['user_id'], data.get('type'), data.get('description'), 
+                 data.get('findings'), data.get('outcome'), data.get('cost'), 
+                 data.get('scheduled_date'), data.get('completed_date'), data.get('next_due')))
+        flash('Maintenance record added')
+        return redirect(url_for('equipment_detail', eq_id=eq_id))
+    
+    return render_template('add_maintenance.html', eq_id=eq_id)
+
 
 @app.route('/logout')
 def logout():
