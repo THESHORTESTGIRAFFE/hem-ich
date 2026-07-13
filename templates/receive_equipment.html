@@ -2,39 +2,89 @@
 {% block title %}Register Equipment - Identity{% endblock %}
 {% block page_title %}Register Equipment{% endblock %}
 
+{% block head %}
+<style>
+  /* ── Panel Styling ───────────────────────────────────────────── */
+  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .card-header { margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+  .card-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+  
+  /* ── Field Styling ───────────────────────────────────────────── */
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .field-row.single { grid-template-columns: 1fr; }
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field label {
+    font-size: 0.78rem; font-weight: 700; color: var(--text-dim);
+    letter-spacing: 0.01em; display: flex; align-items: center; gap: 6px;
+  }
+  .field label .req {
+    color: var(--accent); font-size: 0.65rem; background: rgba(0,201,167,.1);
+    padding: 1px 5px; border-radius: 4px; font-weight: 600;
+  }
+  .field label .opt {
+    color: var(--text-muted); font-size: 0.65rem; background: var(--bg-raised);
+    padding: 1px 5px; border-radius: 4px; font-weight: 500;
+  }
+  .fi {
+    background: #111a2a; border: 1.5px solid #3a5070;
+    border-radius: 9px; color: #ffffff; padding: 11px 14px;
+    font-size: 0.95rem; font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+  .fi:focus { outline: none; border-color: var(--accent); background: #1a2840; box-shadow: 0 0 0 3px rgba(0,201,167,.2); }
+  .hint { font-size: 0.71rem; color: var(--text-muted); margin-top: 4px; }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="margin-bottom:24px">
-  <h2 style="font-size:1.1rem;font-weight:700">Step 1: Equipment Identity</h2>
-  <p style="color:var(--text-muted);font-size:0.82rem;margin-top:3px">Enter the core identification details.</p>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+  <div>
+    <h2 style="font-size:1.1rem;font-weight:700">Register New Equipment</h2>
+    <p style="color:var(--text-muted);font-size:0.82rem;margin-top:3px">Enter core identification details.</p>
+  </div>
+  <a href="{{ url_for('equipment_list') }}" class="btn btn-ghost">← Back</a>
 </div>
 
 <form method="POST" id="receive-form" class="card">
   <div class="card-header"><h2>🔬 Equipment Identity</h2></div>
-  <div class="card-body" style="padding-top:28px">
-    <div class="field-row single" style="margin-bottom:28px">
-      <div class="field">
-        <label>Equipment Name <span class="req">Required</span></label>
-        <input type="text" name="name" id="f-name" class="fi" autofocus placeholder="e.g. Draeger Ventilator Pro X2000" required>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Manufacturer</label>
-        <input type="text" name="manufacturer" class="fi" placeholder="e.g. Draeger">
-      </div>
-      <div class="field">
-        <label>Model</label>
-        <input type="text" name="model" class="fi" placeholder="e.g. VX-2000">
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Serial Number</label>
-        <input type="text" name="serial_number" class="fi" placeholder="Unique serial number">
-      </div>
+  
+  <div class="field-row single" style="margin-bottom:28px">
+    <div class="field">
+      <label>Equipment Name <span class="req">Required</span></label>
+      <input type="text" name="name" class="fi" placeholder="e.g. Draeger Ventilator Pro X2000" required>
+      <div class="hint">Full descriptive name as it appears on the device.</div>
     </div>
   </div>
-  <div class="card-footer" style="padding:16px; border-top:1px solid var(--border);">
+
+  <div class="field-row">
+    <div class="field">
+      <label>Manufacturer <span class="opt">Optional</span></label>
+      <input type="text" name="manufacturer" class="fi" placeholder="e.g. Draeger">
+    </div>
+    <div class="field">
+      <label>Model <span class="opt">Optional</span></label>
+      <input type="text" name="model" class="fi" placeholder="e.g. VX-2000">
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>Serial Number <span class="opt">Optional</span></label>
+      <input type="text" name="serial_number" class="fi" placeholder="Unique serial number">
+    </div>
+    <div class="field">
+      <label>Category <span class="opt">Optional</span></label>
+      <select name="category" class="fi">
+        <option value="">— Select a category —</option>
+        {% for cat in ['Respiratory','Monitoring','Imaging','Emergency','Infusion','Cardiology','Sterilization','Surgical','Laboratory','Diagnostic','Other'] %}
+        <option value="{{ cat }}">{{ cat }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div style="margin-top:20px; text-align: right;">
     <button type="submit" class="btn btn-primary">Next: Provenance →</button>
   </div>
 </form>
