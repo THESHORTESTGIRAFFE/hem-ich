@@ -89,6 +89,33 @@ def login():
 def dashboard():
     return render_template('dashboard.html')
 
+# ── Jinja2 Filters ────────────────────────────────────────────────────────────
+@app.template_filter('fmtdate')
+def fmtdate(value, format='%Y-%m-%d'):
+    if not value: return '—'
+    try:
+        # Handle string inputs (like '2026-07-09')
+        if isinstance(value, str):
+            # Simple check if it's already in a recognizable format
+            dt = datetime.strptime(value.split(' ')[0], '%Y-%m-%d')
+        else:
+            dt = value
+        return dt.strftime(format)
+    except:
+        return value
+
+@app.template_filter('fmtdatetime')
+def fmtdatetime(value, format='%Y-%m-%d %H:%M'):
+    if not value: return '—'
+    try:
+        if isinstance(value, str):
+            dt = datetime.strptime(value.split('.')[0], '%Y-%m-%d %H:%M:%S')
+        else:
+            dt = value
+        return dt.strftime(format)
+    except:
+        return value
+
 # ── Entry Point ───────────────────────────────────────────────────────────────
 if __name__ == '__main__':
     Path(os.path.dirname(DATABASE)).mkdir(parents=True, exist_ok=True)
