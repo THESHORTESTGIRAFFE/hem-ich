@@ -128,6 +128,30 @@ def dashboard():
     }
     return render_template('dashboard.html', stats=stats)
 
+@app.route('/equipment')
+@login_required
+def equipment_list():
+    q = request.args.get('q', '')
+    state = request.args.get('state', '')
+    category = request.args.get('category', '')
+    
+    sql = 'SELECT * FROM equipment WHERE 1=1'
+    params = []
+    if q:
+        sql += ' AND (name LIKE ? OR asset_tag LIKE ? OR serial_number LIKE ?)'
+        params.extend([f'%{q}%', f'%{q}%', f'%{q}%'])
+    if state:
+        sql += ' AND state = ?'
+        params.append(state)
+    if category:
+        sql += ' AND category = ?'
+        params.append(category)
+        
+    equipment = query(sql, params)
+    categories = [r['category'] for r in query('SELECT DISTINCT category FROM equipment WHERE category IS NOT NULL')]
+    
+    return render_template('equipment_list.html', equipment=equipment, q=q, state=state, cat=category, categories=categories)
+
 @app.route('/equipment/<int:eq_id>')
 @login_required
 def equipment_detail(eq_id):
