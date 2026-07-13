@@ -197,7 +197,71 @@ def maintenance_schedule():
 
 
 
-# ── Jinja2 Filters ────────────────────────────────────────────────────────────
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+@app.route('/disposal')
+@login_required
+def disposal_list():
+    disposals = query('''SELECT d.*, e.name as eq_name, e.asset_tag 
+                         FROM disposal_records d 
+                         JOIN equipment e ON d.equipment_id = e.id 
+                         ORDER BY d.request_date DESC''')
+    return render_template('disposal_list.html', disposals=disposals)
+
+@app.route('/analytics')
+@login_required
+def analytics():
+    # Placeholder for analytics logic
+    return render_template('analytics.html')
+
+@app.route('/audit')
+@login_required
+def audit_log():
+    logs = query('SELECT * FROM audit_log ORDER BY timestamp DESC LIMIT 100')
+    return render_template('audit_log.html', logs=logs)
+
+@app.route('/department')
+@login_required
+def department_overview():
+    deps = query('SELECT DISTINCT department FROM equipment WHERE department IS NOT NULL')
+    return render_template('department_overview.html', departments=deps)
+
+@app.route('/flag', methods=['GET', 'POST'])
+@login_required
+def flag_issue():
+    # Placeholder for flagging issue logic
+    return render_template('flag_issue.html')
+
+@app.route('/intern')
+@login_required
+def intern_dashboard():
+    # Placeholder for intern dashboard
+    return render_template('intern_dashboard.html')
+
+@app.route('/issue')
+@login_required
+def issue_list():
+    issues = query('SELECT * FROM issue_flags ORDER BY created_at DESC')
+    return render_template('issue_list.html', issues=issues)
+
+@app.route('/profile')
+@login_required
+def profile():
+    user = query('SELECT * FROM users WHERE id = ?', (session['user_id'],), one=True)
+    return render_template('profile.html', user=user)
+
+@app.route('/users')
+@login_required
+def user_list():
+    if session.get('role') != 'admin':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    users = query('SELECT * FROM users')
+    return render_template('user_list.html', users=users)
+
 @app.template_filter('fmtdate')
 def fmtdate(value, format='%Y-%m-%d'):
     if not value: return '—'
