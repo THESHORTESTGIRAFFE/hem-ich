@@ -143,6 +143,27 @@ def equipment_list():
     
     return render_template('equipment_list.html', equipment=equipment, q=q, state=state, cat=category, categories=categories)
 
+@app.route('/receive', methods=['GET', 'POST'])
+@login_required
+def receive_equipment():
+    if session.get('role') not in ['chief_engineer', 'technician']:
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    
+    if request.method == 'POST':
+        # Simple implementation for now, assuming form fields match DB columns
+        data = request.form
+        execute('''INSERT INTO equipment (asset_tag, name, model, manufacturer, serial_number, category, department, location, state, condition, purchase_date, purchase_cost, received_by_id)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                (data['asset_tag'], data['name'], data.get('model'), data.get('manufacturer'), data.get('serial_number'),
+                 data.get('category'), data.get('department'), data.get('location'), 'Active', data.get('condition', 'Good'),
+                 data.get('purchase_date'), data.get('purchase_cost'), session['user_id']))
+        flash('Equipment received successfully')
+        return redirect(url_for('equipment_list'))
+    
+    return render_template('receive_equipment.html')
+
+
 
 # ── Jinja2 Filters ────────────────────────────────────────────────────────────
 @app.template_filter('fmtdate')
