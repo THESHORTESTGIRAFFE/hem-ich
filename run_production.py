@@ -197,11 +197,19 @@ def equipment_detail(eq_id):
     
     return render_template('equipment_detail.html', eq=eq, maintenance=maintenance, disposal=disposal, attachments=attachments)
 
-@app.route('/equipment/<int:eq_id>/edit', methods=['GET', 'POST'])
+@app.route('/equipment/<int:eq_id>/request-disposal', methods=['GET', 'POST'])
 @login_required
-def edit_equipment(eq_id):
-    flash('Edit functionality needs implementation')
-    return redirect(url_for('equipment_detail', eq_id=eq_id))
+def request_disposal(eq_id):
+    if request.method == 'POST':
+        data = request.form
+        execute('''INSERT INTO disposal_records (equipment_id, requested_by_id, reason, method, status)
+                   VALUES (?, ?, ?, ?, 'Pending')''',
+                (eq_id, session['user_id'], data.get('reason'), data.get('method')))
+        flash('Disposal request submitted')
+        return redirect(url_for('equipment_detail', eq_id=eq_id))
+    
+    return render_template('request_disposal.html', eq_id=eq_id)
+
 
 @app.route('/receive', methods=['GET', 'POST'])
 @login_required
