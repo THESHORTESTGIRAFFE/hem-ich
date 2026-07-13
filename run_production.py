@@ -163,6 +163,21 @@ def receive_equipment():
     
     return render_template('receive_equipment.html')
 
+@app.route('/import', methods=['GET', 'POST'])
+@login_required
+def import_equipment():
+    if session.get('role') != 'chief_engineer':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    
+    # Placeholder implementation
+    if request.method == 'POST':
+        flash('Bulk import functionality needs implementation')
+        return redirect(url_for('equipment_list'))
+        
+    return render_template('import_equipment.html')
+
+
 
 
 # ── Jinja2 Filters ────────────────────────────────────────────────────────────
