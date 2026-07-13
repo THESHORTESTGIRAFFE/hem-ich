@@ -128,29 +128,20 @@ def dashboard():
     }
     return render_template('dashboard.html', stats=stats)
 
-@app.route('/equipment')
+@app.route('/equipment/<int:eq_id>')
 @login_required
-def equipment_list():
-    q = request.args.get('q', '')
-    state = request.args.get('state', '')
-    category = request.args.get('category', '')
+def equipment_detail(eq_id):
+    eq = query('SELECT * FROM equipment WHERE id = ?', (eq_id,), one=True)
+    if not eq:
+        flash('Equipment not found')
+        return redirect(url_for('equipment_list'))
     
-    sql = 'SELECT * FROM equipment WHERE 1=1'
-    params = []
-    if q:
-        sql += ' AND (name LIKE ? OR asset_tag LIKE ? OR serial_number LIKE ?)'
-        params.extend([f'%{q}%', f'%{q}%', f'%{q}%'])
-    if state:
-        sql += ' AND state = ?'
-        params.append(state)
-    if category:
-        sql += ' AND category = ?'
-        params.append(category)
-        
-    equipment = query(sql, params)
-    categories = [r['category'] for r in query('SELECT DISTINCT category FROM equipment WHERE category IS NOT NULL')]
+    maintenance = query('SELECT * FROM maintenance_records WHERE equipment_id = ? ORDER BY created_at DESC', (eq_id,))
+    disposal = query('SELECT * FROM disposal_records WHERE equipment_id = ?', (eq_id,), one=True)
+    attachments = query('SELECT * FROM attachments WHERE equipment_id = ? ORDER BY created_at DESC', (eq_id,))
     
-    return render_template('equipment_list.html', equipment=equipment, q=q, state=state, cat=category, categories=categories)
+    return render_template('equipment_detail.html', eq=eq, maintenance=maintenance, disposal=disposal, attachments=attachments)
+
 
 @app.route('/receive', methods=['GET', 'POST'])
 @login_required
