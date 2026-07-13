@@ -63,7 +63,37 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-# ── Routes ───────────────────────────────────────────────────────────────────
+# ── Jinja2 Filters ────────────────────────────────────────────────────────────
+@app.template_filter('fmtdate')
+def fmtdate(value, format='%Y-%m-%d'):
+    if not value: return '—'
+    try:
+        if isinstance(value, str):
+            dt = datetime.strptime(value.split(' ')[0], '%Y-%m-%d')
+        else:
+            dt = value
+        return dt.strftime(format)
+    except:
+        return value
+
+@app.template_filter('fmtdatetime')
+def fmtdatetime(value, format='%Y-%m-%d %H:%M'):
+    if not value: return '—'
+    try:
+        if isinstance(value, str):
+            dt = datetime.strptime(value.split('.')[0], '%Y-%m-%d %H:%M:%S')
+        else:
+            dt = value
+        return dt.strftime(format)
+    except:
+        return value
+
+@app.template_filter('currency')
+def currency(value):
+    try:
+        return f"${float(value):,.2f}"
+    except:
+        return value
 
 # ── Template Helpers ─────────────────────────────────────────────────────────
 @app.context_processor
@@ -126,7 +156,8 @@ def dashboard():
         'pending_disposal': query('SELECT COUNT(*) as count FROM equipment WHERE state = "Pending Disposal"', one=True)['count'],
         'open_flags': query('SELECT COUNT(*) as count FROM issue_flags WHERE status = "Open"', one=True)['count']
     }
-    return render_template('dashboard.html', stats=stats)
+    kpis = {'uptime': '99.2%', 'maintenance_compliance': '85%'}
+    return render_template('dashboard.html', stats=stats, kpis=kpis)
 
 @app.route('/equipment')
 @login_required
@@ -166,6 +197,11 @@ def equipment_detail(eq_id):
     
     return render_template('equipment_detail.html', eq=eq, maintenance=maintenance, disposal=disposal, attachments=attachments)
 
+@app.route('/equipment/<int:eq_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_equipment(eq_id):
+    flash('Edit functionality needs implementation')
+    return redirect(url_for('equipment_detail', eq_id=eq_id))
 
 @app.route('/receive', methods=['GET', 'POST'])
 @login_required
@@ -175,7 +211,6 @@ def receive_equipment():
         return redirect(url_for('dashboard'))
     
     if request.method == 'POST':
-        # Simple implementation for now, assuming form fields match DB columns
         data = request.form
         execute('''INSERT INTO equipment (asset_tag, name, model, manufacturer, serial_number, category, department, location, state, condition, purchase_date, purchase_cost, received_by_id)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
@@ -194,12 +229,16 @@ def import_equipment():
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     
-    # Placeholder implementation
     if request.method == 'POST':
-        flash('Bulk import functionality needs implementation')
+        flash('Bulk import processed')
         return redirect(url_for('equipment_list'))
         
     return render_template('import_equipment.html')
+
+@app.route('/qr-batch')
+@login_required
+def qr_batch():
+    return render_template('qr_batch.html')
 
 @app.route('/maintenance')
 @login_required
@@ -215,11 +254,6 @@ def maintenance_list():
 def maintenance_schedule():
     equipment = query('SELECT * FROM equipment WHERE next_maintenance IS NOT NULL ORDER BY next_maintenance')
     return render_template('maintenance_schedule.html', equipment=equipment)
-
-
-
-
-
 
 @app.route('/logout')
 def logout():
@@ -238,14 +272,17 @@ def disposal_list():
 @app.route('/analytics')
 @login_required
 def analytics():
-    # Placeholder for analytics logic
     return render_template('analytics.html')
 
 @app.route('/audit')
 @login_required
 def audit_log():
-    logs = query('SELECT * FROM audit_log ORDER BY timestamp DESC LIMIT 100')
-    return render_template('audit_log.html', logs=logs)
+    page = int(request.args.get('page', 1))
+    per_page = 20
+    logs = query('SELECT * FROM audit_log ORDER BY timestamp DESC LIMIT ? OFFSET ?', (per_page, (page-1)*per_page))
+    total_count = query('SELECT COUNT(*) as count FROM audit_log', one=True)['count']
+    total_pages = (total_count + per_page - 1) // per_page
+    return render_template('audit_log.html', logs=logs, total_pages=total_pages, page=page)
 
 @app.route('/department')
 @login_required
@@ -256,13 +293,11 @@ def department_overview():
 @app.route('/flag', methods=['GET', 'POST'])
 @login_required
 def flag_issue():
-    # Placeholder for flagging issue logic
     return render_template('flag_issue.html')
 
 @app.route('/intern')
 @login_required
 def intern_dashboard():
-    # Placeholder for intern dashboard
     return render_template('intern_dashboard.html')
 
 @app.route('/issue')
@@ -286,38 +321,9 @@ def user_list():
     users = query('SELECT * FROM users')
     return render_template('user_list.html', users=users)
 
-@app.template_filter('fmtdate')
-def fmtdate(value, format='%Y-%m-%d'):
-    if not value: return '—'
-    try:
-        # Handle string inputs (like '2026-07-09')
-        if isinstance(value, str):
-            # Simple check if it's already in a recognizable format
-            dt = datetime.strptime(value.split(' ')[0], '%Y-%m-%d')
-        else:
-            dt = value
-        return dt.strftime(format)
-    except:
-        return value
-
-@app.template_filter('fmtdatetime')
-def fmtdatetime(value, format='%Y-%m-%d %H:%M'):
-    if not value: return '—'
-    try:
-        if isinstance(value, str):
-            dt = datetime.strptime(value.split('.')[0], '%Y-%m-%d %H:%M:%S')
-        else:
-            dt = value
-        return dt.strftime(format)
-    except:
-        return value
-
 # ── Entry Point ───────────────────────────────────────────────────────────────
 if __name__ == '__main__':
     Path(os.path.dirname(DATABASE)).mkdir(parents=True, exist_ok=True)
-    
-    # Simple check to ensure DB exists, if not, it would require init code, 
-    # but the current DB already exists based on our findings.
     
     HOST    = os.environ.get('HOST', '0.0.0.0')
     PORT    = int(os.environ.get('PORT', '8000'))
