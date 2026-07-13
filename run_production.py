@@ -177,6 +177,16 @@ def import_equipment():
         
     return render_template('import_equipment.html')
 
+@app.route('/maintenance')
+@login_required
+def maintenance_list():
+    records = query('''SELECT m.*, e.name as eq_name, e.asset_tag 
+                       FROM maintenance_records m 
+                       JOIN equipment e ON m.equipment_id = e.id 
+                       ORDER BY m.created_at DESC''')
+    return render_template('maintenance_list.html', records=records)
+
+
 
 
 
