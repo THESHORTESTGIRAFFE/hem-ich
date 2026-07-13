@@ -186,6 +186,13 @@ def maintenance_list():
                        ORDER BY m.created_at DESC''')
     return render_template('maintenance_list.html', records=records)
 
+@app.route('/maintenance/schedule')
+@login_required
+def maintenance_schedule():
+    equipment = query('SELECT * FROM equipment WHERE next_maintenance IS NOT NULL ORDER BY next_maintenance')
+    return render_template('maintenance_schedule.html', equipment=equipment)
+
+
 
 
 
