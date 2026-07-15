@@ -84,8 +84,54 @@
     </div>
   </div>
 
+  <div class="card-header" style="margin-top:28px"><h2>📍 Provenance &amp; Logistics</h2></div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>Department <span class="opt">Optional</span></label>
+      <input type="text" name="department" class="fi" placeholder="e.g. ICU">
+    </div>
+    <div class="field">
+      <label>Location <span class="opt">Optional</span></label>
+      <input type="text" name="location" class="fi" placeholder="e.g. Ward 4, Room 2">
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>Country of Origin <span class="opt">Optional</span></label>
+      <input type="text" name="country_of_origin" class="fi" placeholder="e.g. Germany">
+    </div>
+    <div class="field">
+      <label>Donor / Source <span class="opt">Optional</span></label>
+      <input type="text" name="donor_name" class="fi" placeholder="Leave blank if direct purchase">
+    </div>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label>Purchase Date <span class="opt">Optional</span></label>
+      <input type="date" name="purchase_date" class="fi">
+    </div>
+    <div class="field">
+      <label>Purchase Cost <span class="opt">Optional</span></label>
+      <input type="number" step="0.01" name="purchase_cost" class="fi" placeholder="0.00">
+    </div>
+  </div>
+
+  <div class="field-row single">
+    <div class="field">
+      <label>Condition <span class="opt">Optional</span></label>
+      <select name="condition" class="fi">
+        {% for c in ['Excellent','Good','Fair','Poor'] %}
+        <option value="{{ c }}" {{ 'selected' if c == 'Good' }}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
   <div style="margin-top:20px; text-align: right;">
-    <button type="submit" class="btn btn-primary">Next: Provenance →</button>
+    <button type="submit" class="btn btn-primary">✓ Register Equipment</button>
   </div>
 </form>
 {% endblock %}

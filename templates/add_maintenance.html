@@ -10,7 +10,7 @@
 </div>
 
 <form method="POST" id="maint-form">
-  <div class="card">
+  <div class="card animate-in" style="animation-delay: 0.1s">
     <div class="card-header"><h2>🔧 Maintenance Details</h2></div>
     <div class="card-body">
       <div class="form-grid">
@@ -61,7 +61,7 @@
   </div>
 
   <div class="section-label">Equipment State Update</div>
-  <div class="card">
+  <div class="card animate-in" style="animation-delay: 0.2s">
     <div class="card-body">
       <div class="form-group" style="max-width:320px">
         <label>Update Equipment State After Maintenance</label>
@@ -84,7 +84,6 @@
 
 {% block scripts %}
 <script>
-gsap.from('.card', { y:20, opacity:0, duration:0.4, stagger:0.1, ease:'power2.out' });
 document.getElementById('maint-form').addEventListener('submit', function() {
   const btn = document.getElementById('submit-btn');
   btn.textContent = 'Saving…'; btn.disabled = true;
