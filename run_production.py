@@ -585,6 +585,48 @@ def user_list():
     users = query('SELECT * FROM users')
     return render_template('user_list.html', users=users)
 
+@app.route('/users/add', methods=['GET', 'POST'])
+@login_required
+def add_user():
+    if session.get('role') != 'admin':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    if request.method == 'POST':
+        full_name = request.form['full_name']
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form['role']
+        email = request.form.get('email')
+        
+        execute('INSERT INTO users (username, password_hash, full_name, role, email) VALUES (?, ?, ?, ?, ?)',
+                (username, generate_password_hash(password), full_name, role, email))
+        flash('User created')
+        return redirect(url_for('user_list'))
+    return render_template('add_user.html')
+
+@app.route('/users/<int:uid>/toggle', methods=['POST'])
+@login_required
+def toggle_user(uid):
+    if session.get('role') != 'admin':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    user = query('SELECT is_active FROM users WHERE id = ?', (uid,), one=True)
+    new_status = not user['is_active']
+    execute('UPDATE users SET is_active = ? WHERE id = ?', (int(new_status), uid))
+    flash('User status updated')
+    return redirect(url_for('user_list'))
+
+@app.route('/users/<int:uid>/reset-password', methods=['POST'])
+@login_required
+def reset_password(uid):
+    if session.get('role') != 'admin':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    new_password = request.form['password']
+    execute('UPDATE users SET password_hash = ? WHERE id = ?', (generate_password_hash(new_password), uid))
+    flash('Password reset')
+    return redirect(url_for('user_list'))
+
 # ── Entry Point ───────────────────────────────────────────────────────────────
 if __name__ == '__main__':
     Path(os.path.dirname(DATABASE)).mkdir(parents=True, exist_ok=True)
