@@ -579,7 +579,7 @@ def profile():
 @app.route('/users')
 @login_required
 def user_list():
-    if session.get('role') != 'admin':
+    if session.get('role') != 'chief_engineer':
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     users = query('SELECT * FROM users')
@@ -588,7 +588,7 @@ def user_list():
 @app.route('/users/add', methods=['GET', 'POST'])
 @login_required
 def add_user():
-    if session.get('role') != 'admin':
+    if session.get('role') != 'chief_engineer':
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     if request.method == 'POST':
@@ -607,7 +607,7 @@ def add_user():
 @app.route('/users/<int:uid>/toggle', methods=['POST'])
 @login_required
 def toggle_user(uid):
-    if session.get('role') != 'admin':
+    if session.get('role') != 'chief_engineer':
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     user = query('SELECT is_active FROM users WHERE id = ?', (uid,), one=True)
@@ -619,7 +619,7 @@ def toggle_user(uid):
 @app.route('/users/<int:uid>/reset-password', methods=['POST'])
 @login_required
 def reset_password(uid):
-    if session.get('role') != 'admin':
+    if session.get('role') != 'chief_engineer':
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     new_password = request.form['password']
@@ -630,7 +630,7 @@ def reset_password(uid):
 @app.route('/users/<int:uid>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_user(uid):
-    if session.get('role') != 'admin':
+    if session.get('role') != 'chief_engineer':
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     user = query('SELECT * FROM users WHERE id = ?', (uid,), one=True)
@@ -650,7 +650,7 @@ def edit_user(uid):
 @app.route('/users/<int:uid>/delete', methods=['POST'])
 @login_required
 def delete_user(uid):
-    if session.get('role') != 'admin':
+    if session.get('role') != 'chief_engineer':
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     if uid == session.get('user_id'):
