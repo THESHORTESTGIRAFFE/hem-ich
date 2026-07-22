@@ -627,7 +627,39 @@ def reset_password(uid):
     flash('Password reset')
     return redirect(url_for('user_list'))
 
-# ── Entry Point ───────────────────────────────────────────────────────────────
+@app.route('/users/<int:uid>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_user(uid):
+    if session.get('role') != 'admin':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    user = query('SELECT * FROM users WHERE id = ?', (uid,), one=True)
+    if not user:
+        flash('User not found')
+        return redirect(url_for('user_list'))
+    if request.method == 'POST':
+        full_name = request.form['full_name']
+        role = request.form['role']
+        email = request.form.get('email')
+        execute('UPDATE users SET full_name = ?, role = ?, email = ? WHERE id = ?',
+                (full_name, role, email, uid))
+        flash('User updated')
+        return redirect(url_for('user_list'))
+    return render_template('edit_user.html', user=user)
+
+@app.route('/users/<int:uid>/delete', methods=['POST'])
+@login_required
+def delete_user(uid):
+    if session.get('role') != 'admin':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    if uid == session.get('user_id'):
+        flash('Cannot delete yourself')
+        return redirect(url_for('user_list'))
+    execute('DELETE FROM users WHERE id = ?', (uid,))
+    flash('User deleted')
+    return redirect(url_for('user_list'))
+
 if __name__ == '__main__':
     Path(os.path.dirname(DATABASE)).mkdir(parents=True, exist_ok=True)
     
