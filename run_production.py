@@ -223,12 +223,12 @@ def edit_equipment(eq_id):
     if request.method == 'POST':
         data = request.form
         execute('''UPDATE equipment SET
-                       name=?, manufacturer=?, model=?, category=?, department=?, location=?,
+                       name=?, manufacturer=?, model=?, category=?, department_id=?, location=?,
                        country_of_origin=?, donor_name=?, state=?, condition=?,
                        warranty_expiry=?, next_maintenance=?, notes=?, updated_at=datetime('now')
                    WHERE id=?''',
                 (data.get('name'), data.get('manufacturer'), data.get('model'), data.get('category'),
-                 data.get('department'), data.get('location'), data.get('country_of_origin'),
+                 data.get('department_id'), data.get('location'), data.get('country_of_origin'),
                  data.get('donor_name'), data.get('state'), data.get('condition'),
                  data.get('warranty_expiry') or None, data.get('next_maintenance') or None,
                  data.get('notes'), eq_id))
@@ -394,13 +394,13 @@ def receive_equipment():
             asset_tag = f"HEM-{year}-{count + 1:04d}"
 
         execute('''INSERT INTO equipment (asset_tag, name, model, manufacturer, serial_number, category,
-                       department, location, country_of_origin, donor_name, state, condition,
-                       purchase_date, purchase_cost, received_by_id)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                (asset_tag, data['name'], data.get('model'), data.get('manufacturer'), data.get('serial_number'),
-                 data.get('category'), data.get('department'), data.get('location'),
-                 data.get('country_of_origin'), data.get('donor_name'), 'Active', data.get('condition', 'Good'),
-                 data.get('purchase_date') or None, data.get('purchase_cost') or None, session['user_id']))
+                        department_id, location, country_of_origin, donor_name, state, condition,
+                        purchase_date, purchase_cost, received_by_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                 (asset_tag, data['name'], data.get('model'), data.get('manufacturer'), data.get('serial_number'),
+                  data.get('category'), data.get('department_id'), data.get('location'),
+                  data.get('country_of_origin'), data.get('donor_name'), data.get('state'), data.get('condition'),
+                  data.get('purchase_date'), data.get('purchase_cost'), session['user_id']))
         eq_id = query('SELECT id FROM equipment WHERE asset_tag = ?', (asset_tag,), one=True)['id']
         flash(f'Equipment received successfully — tagged {asset_tag}')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
@@ -486,11 +486,11 @@ def disposal_list():
 def analytics():
     kpis = query('SELECT SUM(purchase_cost) as total_asset_value, COUNT(*) as total_assets, AVG(purchase_cost) as avg_asset_value FROM equipment WHERE state = \"Active\"', one=True)
     total_maint_cost = query('SELECT SUM(cost) as total FROM maintenance_records', one=True)
-    by_dept = query('SELECT department, SUM(purchase_cost) as total_value FROM equipment GROUP BY department')
+    by_dept = query('SELECT d.name as department, SUM(e.purchase_cost) as total_value FROM equipment e JOIN departments d ON e.department_id = d.id GROUP BY d.name')
     by_cat = query('SELECT category, SUM(purchase_cost) as total_value FROM equipment GROUP BY category')
-    maint_by_month = query('SELECT strftime(\"%Y-%m\", completed_date) as month, SUM(cost) as total_cost FROM maintenance_records GROUP BY month ORDER BY month')
+    maint_by_month = query('SELECT strftime("%Y-%m", completed_date) as month, SUM(cost) as total_cost FROM maintenance_records GROUP BY month ORDER BY month')
     maint_by_type = query('SELECT maintenance_type, SUM(cost) as total_cost FROM maintenance_records GROUP BY maintenance_type')
-    top_equipment = query('SELECT id, name, department, asset_tag, purchase_cost FROM equipment ORDER BY purchase_cost DESC LIMIT 10')
+    top_equipment = query('SELECT e.id, e.name, d.name as department, e.asset_tag, e.purchase_cost FROM equipment e JOIN departments d ON e.department_id = d.id ORDER BY e.purchase_cost DESC LIMIT 10')
     by_condition = query('SELECT condition, COUNT(*) as count, SUM(purchase_cost) as total_value FROM equipment GROUP BY condition')
     
     return render_template('analytics.html', kpis=kpis, total_maint_cost=total_maint_cost, by_dept=by_dept, by_cat=by_cat, maint_by_month=maint_by_month, maint_by_type=maint_by_type, top_equipment=top_equipment, by_condition=by_condition, cond_badge=lambda x: 'badge-green')
@@ -509,31 +509,32 @@ def audit_log():
 @app.route('/department')
 @login_required
 def department_overview():
-    unassigned = query('SELECT COUNT(*) as count FROM equipment WHERE (department IS NULL OR department = \"\") AND state = \"Active\"', one=True)['count']
-    departments = query('''SELECT department, 
-                            COUNT(*) as total, 
-                            SUM(CASE WHEN state=\"Active\" THEN 1 ELSE 0 END) as active, 
-                            SUM(CASE WHEN state=\"Under Maintenance\" THEN 1 ELSE 0 END) as under_maint, 
-                            SUM(CASE WHEN next_maintenance < date(\"now\") THEN 1 ELSE 0 END) as overdue,
+    unassigned = query('SELECT COUNT(*) as count FROM equipment WHERE department_id IS NULL AND state = "Active"', one=True)['count']
+    departments = query('''SELECT d.name, 
+                            COUNT(e.id) as total, 
+                            SUM(CASE WHEN e.state="Active" THEN 1 ELSE 0 END) as active, 
+                            SUM(CASE WHEN e.state="Under Maintenance" THEN 1 ELSE 0 END) as under_maint, 
+                            SUM(CASE WHEN e.next_maintenance < date("now") THEN 1 ELSE 0 END) as overdue,
                             0 as critical_count,
-                            SUM(purchase_cost) as total_value
-                          FROM equipment WHERE department IS NOT NULL GROUP BY department''')
+                            SUM(e.purchase_cost) as total_value
+                          FROM departments d LEFT JOIN equipment e ON d.id = e.department_id GROUP BY d.name''')
     return render_template('department_overview.html', departments=departments, unassigned=unassigned)
 
 @app.route('/department/<dept>')
 @login_required
 def department_detail(dept):
-    equipment = query('SELECT * FROM equipment WHERE department = ?', (dept,))
+    equipment = query('SELECT e.*, d.name as department_name FROM equipment e JOIN departments d ON e.department_id = d.id WHERE d.name = ?', (dept,))
     
     # Calculate stats
-    stats_data = query('''SELECT COUNT(*) as total, 
-                                 SUM(CASE WHEN state=\"Active\" THEN 1 ELSE 0 END) as active, 
-                                 SUM(CASE WHEN next_maintenance < date(\"now\") THEN 1 ELSE 0 END) as overdue, 
-                                 SUM(purchase_cost) as value 
-                          FROM equipment WHERE department = ?''', (dept,), one=True)
+    stats_data = query('''SELECT COUNT(e.id) as total, 
+                                 SUM(CASE WHEN e.state="Active" THEN 1 ELSE 0 END) as active, 
+                                 SUM(CASE WHEN e.next_maintenance < date("now") THEN 1 ELSE 0 END) as overdue, 
+                                 SUM(e.purchase_cost) as value 
+                          FROM equipment e JOIN departments d ON e.department_id = d.id WHERE d.name = ?''', (dept,), one=True)
     open_flags_count = query('''SELECT COUNT(*) as count FROM issue_flags i 
                                 JOIN equipment e ON i.equipment_id=e.id 
-                                WHERE e.department = ? AND i.status=\"Open\"''', (dept,), one=True)['count']
+                                JOIN departments d ON e.department_id = d.id
+                                WHERE d.name = ? AND i.status="Open"''', (dept,), one=True)['count']
     
     stats = {
         'total': stats_data['total'],
@@ -543,10 +544,11 @@ def department_detail(dept):
         'open_flags': open_flags_count
     }
     
-    maint_due = query('SELECT * FROM equipment WHERE department = ? AND next_maintenance IS NOT NULL AND next_maintenance <= date(\"now\", \"+30 days\")', (dept,))
+    maint_due = query('SELECT e.* FROM equipment e JOIN departments d ON e.department_id = d.id WHERE d.name = ? AND e.next_maintenance IS NOT NULL AND e.next_maintenance <= date("now", "+30 days")', (dept,))
     flags = query('''SELECT i.*, e.name as eq_name FROM issue_flags i 
                      JOIN equipment e ON i.equipment_id=e.id 
-                     WHERE e.department = ? AND i.status=\"Open\"''', (dept,))
+                     JOIN departments d ON e.department_id = d.id
+                     WHERE d.name = ? AND i.status="Open"''', (dept,))
     
     return render_template('department_detail.html', dept=dept, equipment=equipment, stats=stats, maint_due=maint_due, flags=flags, state_badge=lambda x: 'badge-green', cond_badge=lambda x: 'badge-blue')
 
@@ -659,6 +661,43 @@ def delete_user(uid):
     execute('DELETE FROM users WHERE id = ?', (uid,))
     flash('User deleted')
     return redirect(url_for('user_list'))
+
+# ── Department & Ward Management ───────────────────────────────────────────────
+@app.route('/departments')
+@login_required
+def department_list():
+    if session.get('role') != 'chief_engineer':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    departments = query('SELECT * FROM departments')
+    return render_template('department_list.html', departments=departments)
+
+@app.route('/departments/add', methods=['GET', 'POST'])
+@login_required
+def add_department():
+    if session.get('role') != 'chief_engineer':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    if request.method == 'POST':
+        name = request.form['name']
+        execute('INSERT INTO departments (name) VALUES (?)', (name,))
+        flash('Department created')
+        return redirect(url_for('department_list'))
+    return render_template('add_department.html')
+
+@app.route('/departments/<int:did>/wards', methods=['GET', 'POST'])
+@login_required
+def manage_wards(did):
+    if session.get('role') != 'chief_engineer':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    dept = query('SELECT * FROM departments WHERE id = ?', (did,), one=True)
+    if request.method == 'POST':
+        name = request.form['name']
+        execute('INSERT INTO wards (name, department_id) VALUES (?, ?)', (name, did))
+        flash('Ward added')
+    wards = query('SELECT * FROM wards WHERE department_id = ?', (did,))
+    return render_template('manage_wards.html', dept=dept, wards=wards)
 
 if __name__ == '__main__':
     Path(os.path.dirname(DATABASE)).mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Departments{% endblock %}
+{% block page_title %}Department Management{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:flex-end;margin-bottom:18px">
+  <a href="{{ url_for('add_department') }}" class="btn btn-primary">+ Add Department</a>
+</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Department</th><th></th></tr></thead>
+      <tbody>
+        {% for d in departments %}
+        <tr>
+          <td style="font-weight:600">{{ d['name'] }}</td>
+          <td>
+            <a href="{{ url_for('manage_wards', did=d['id']) }}" class="btn btn-ghost btn-sm">Manage Wards</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -433,7 +433,7 @@
         <span class="icon">🚩</span> Issue Flags
         {% if open_issues_count and open_issues_count > 0 %}<span class="badge" style="background:var(--warn)">{{ open_issues_count }}</span>{% endif %}
       </a>
-      <a href="{{ url_for('department_overview') }}" class="{{ 'active' if 'department' in request.endpoint }}">
+      <a href="{{ url_for('department_list') }}" class="{{ 'active' if 'department' in request.endpoint }}">
         <span class="icon">🏥</span> Departments
       </a>
       {% if session.role == 'chief_engineer' %}
