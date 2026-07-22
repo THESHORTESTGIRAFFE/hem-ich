@@ -265,11 +265,13 @@ def export_equipment(eq_id):
 @app.route('/equipment/<int:eq_id>/qr')
 @login_required
 def equipment_qr(eq_id):
-    eq = query('SELECT * FROM equipment WHERE id = ?', (eq_id,), one=True)
+    eq = query('''SELECT e.*, d.name as department_name FROM equipment e 
+                  JOIN departments d ON e.department_id = d.id 
+                  WHERE e.id = ?''', (eq_id,), one=True)
     if not eq:
         flash('Equipment not found')
         return redirect(url_for('equipment_list'))
-    return render_template('equipment_qr.html', eq=eq)
+    return render_template('equipment_qr.html', eq=eq, now=datetime.now())
 
 @app.route('/disposal/<int:rec_id>/approve', methods=['POST'])
 @login_required
