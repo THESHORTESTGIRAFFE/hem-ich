@@ -235,7 +235,7 @@ def edit_equipment(eq_id):
         flash('Equipment updated')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
 
-    return render_template('edit_equipment.html', eq=eq)
+    return render_template('edit_equipment.html', eq=eq, departments=query('SELECT * FROM departments ORDER BY name'))
 
 @app.route('/equipment/<int:eq_id>/inline-edit', methods=['POST'])
 @login_required
@@ -381,7 +381,7 @@ def receive_equipment():
         data = request.form
         if not data.get('name'):
             flash('Equipment name is required')
-            return render_template('receive_equipment.html')
+            return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'))
 
         # Asset tags aren't collected on the form — generate the next one for this year.
         year = datetime.now().year
@@ -407,7 +407,7 @@ def receive_equipment():
         flash(f'Equipment received successfully — tagged {asset_tag}')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
 
-    return render_template('receive_equipment.html')
+    return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'))
 
 @app.route('/import', methods=['GET', 'POST'])
 @login_required
@@ -687,19 +687,33 @@ def add_department():
         return redirect(url_for('department_list'))
     return render_template('add_department.html')
 
-@app.route('/departments/<int:did>/wards', methods=['GET', 'POST'])
+@app.route('/departments/<int:did>/edit', methods=['GET', 'POST'])
 @login_required
-def manage_wards(did):
+def edit_department(did):
     if session.get('role') != 'chief_engineer':
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     dept = query('SELECT * FROM departments WHERE id = ?', (did,), one=True)
+    if not dept:
+        flash('Department not found')
+        return redirect(url_for('department_list'))
     if request.method == 'POST':
         name = request.form['name']
-        execute('INSERT INTO wards (name, department_id) VALUES (?, ?)', (name, did))
-        flash('Ward added')
-    wards = query('SELECT * FROM wards WHERE department_id = ?', (did,))
-    return render_template('manage_wards.html', dept=dept, wards=wards)
+        execute('UPDATE departments SET name = ? WHERE id = ?', (name, did))
+        flash('Department updated')
+        return redirect(url_for('department_list'))
+    return render_template('edit_department.html', dept=dept)
+
+@app.route('/departments/<int:did>/delete', methods=['POST'])
+@login_required
+def delete_department(did):
+    if session.get('role') != 'chief_engineer':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    execute('DELETE FROM departments WHERE id = ?', (did,))
+    flash('Department deleted')
+    return redirect(url_for('department_list'))
+
 
 if __name__ == '__main__':
     Path(os.path.dirname(DATABASE)).mkdir(parents=True, exist_ok=True)

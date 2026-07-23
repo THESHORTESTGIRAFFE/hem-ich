@@ -13,7 +13,6 @@ def run_migration():
         print("Starting migration...")
         # 1. Create Tables
         conn.execute('CREATE TABLE IF NOT EXISTS departments (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE)')
-        conn.execute('CREATE TABLE IF NOT EXISTS wards (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE, department_id INTEGER, FOREIGN KEY(department_id) REFERENCES departments(id))')
         
         # 2. Migrate existing departments
         # Get unique departments from equipment

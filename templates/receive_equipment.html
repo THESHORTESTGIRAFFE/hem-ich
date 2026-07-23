@@ -89,7 +89,12 @@
   <div class="field-row">
     <div class="field">
       <label>Department <span class="opt">Optional</span></label>
-      <input type="text" name="department" class="fi" placeholder="e.g. ICU">
+      <select name="department_id" class="fi">
+        <option value="">— Select a department —</option>
+        {% for d in departments %}
+        <option value="{{ d['id'] }}">{{ d['name'] }}</option>
+        {% endfor %}
+      </select>
     </div>
     <div class="field">
       <label>Location <span class="opt">Optional</span></label>
