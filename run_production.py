@@ -540,7 +540,11 @@ def department_overview():
 @app.route('/department/<dept>')
 @login_required
 def department_detail(dept):
-    equipment = query('SELECT e.*, d.name as department_name FROM equipment e JOIN departments d ON e.department_id = d.id WHERE d.name = ?', (dept,))
+    equipment = query('''SELECT e.*, d.name as department_name, l.name as location_name 
+                         FROM equipment e 
+                         JOIN departments d ON e.department_id = d.id 
+                         LEFT JOIN locations l ON e.location_id = l.id
+                         WHERE d.name = ?''', (dept,))
     
     # Calculate stats
     stats_data = query('''SELECT COUNT(e.id) as total, 

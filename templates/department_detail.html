@@ -57,7 +57,7 @@
                 <div style="font-size:0.7rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace">{{ eq['asset_number'] }}</div>
               </td>
               <td style="color:var(--text-dim);font-size:0.8rem">{{ eq['category'] or '—' }}</td>
-              <td style="color:var(--text-dim);font-size:0.8rem">{{ eq['location'] or '—' }}</td>
+              <td style="color:var(--text-dim);font-size:0.8rem">{{ eq['location_name'] or '—' }}</td>
               <td><span class="badge {{ state_badge(eq['state']) }}">{{ eq['state'] }}</span></td>
               <td><span class="badge {{ cond_badge(eq['condition']) }}">{{ eq['condition'] }}</span></td>
               <td style="font-size:0.78rem">
