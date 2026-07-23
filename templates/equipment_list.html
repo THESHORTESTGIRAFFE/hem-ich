@@ -47,7 +47,7 @@
     <table>
       <thead>
         <tr>
-          <th><a href="?sort=asset_tag&order={{ 'desc' if sort=='asset_tag' and order=='asc' else 'asc' }}">Asset Tag</a></th>
+          <th><a href="?sort=asset_number&order={{ 'desc' if sort=='asset_number' and order=='asc' else 'asc' }}">Asset Number</a></th>
           <th><a href="?sort=name&order={{ 'desc' if sort=='name' and order=='asc' else 'asc' }}">Name</a></th>
           <th>Manufacturer</th><th>Category</th>
           <th><a href="?sort=location&order={{ 'desc' if sort=='location' and order=='asc' else 'asc' }}">Location</a></th>
@@ -57,7 +57,7 @@
       <tbody>
         {% for eq in equipment %}
         <tr>
-          <td><span class="asset-tag">{{ eq['asset_tag'] }}</span></td>
+          <td><span class="asset-tag">{{ eq['asset_number'] }}</span></td>
           <td>
             <div style="font-weight:600">{{ eq['name'] }}</div>
             {% if eq['model'] %}<div style="font-size:0.73rem;color:var(--text-muted)">{{ eq['model'] }}</div>{% endif %}

@@ -22,7 +22,7 @@
               <option value="">Select equipment…</option>
               {% for eq in all_equipment %}
               <option value="{{ eq['id'] }}" {{ 'selected' if preselect == eq['id'] }}>
-                {{ eq['name'] }} — {{ eq['asset_tag'] }}
+                {{ eq['name'] }} — {{ eq['asset_number'] }}
               </option>
               {% endfor %}
             </select>

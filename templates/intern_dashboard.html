@@ -177,7 +177,7 @@
         <span class="badge {{ st_map.get(flag['status'],'badge-gray') }}">{{ flag['status'] }}</span>
       </div>
       <div class="flag-meta">
-        {{ flag['eq_name'] }} · {{ flag['asset_tag'] }} · Raised {{ flag['created_at']|fmtdatetime }}
+        {{ flag['eq_name'] }} · {{ flag['asset_number'] }} · Raised {{ flag['created_at']|fmtdatetime }}
       </div>
     </div>
     {% endfor %}
@@ -198,7 +198,7 @@
       {% for eq in equipment %}
       <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="eq-card">
         <div class="eq-name">{{ eq['name'] }}</div>
-        <div class="eq-tag">{{ eq['asset_tag'] }}</div>
+        <div class="eq-tag">{{ eq['asset_number'] }}</div>
         <div class="eq-meta">
           <span class="badge {{ state_badge(eq['state']) }}" style="font-size:0.65rem">{{ eq['state'] }}</span>
           <span class="badge {{ cond_badge(eq['condition']) }}" style="font-size:0.65rem">{{ eq['condition'] }}</span>

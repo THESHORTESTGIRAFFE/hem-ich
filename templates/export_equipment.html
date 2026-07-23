@@ -82,7 +82,7 @@
 
 <!-- Title -->
 <div style="margin-bottom:20px">
-  <span class="asset-tag">{{ eq['asset_tag'] }}</span>
+  <span class="asset-tag">{{ eq['asset_number'] }}</span>
   <h1 style="margin-top:6px">{{ eq['name'] }}</h1>
   <div style="font-size:0.85rem;color:#64748b;margin-top:2px">{{ eq['manufacturer'] }} {{ eq['model'] }}</div>
   <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
@@ -204,7 +204,7 @@
 </div>
 
 <div style="margin-top:16px;font-size:0.68rem;color:#94a3b8;text-align:center">
-  Ingutsheni Central | HEM Health Equipment Maintenance · Confidential · {{ eq['asset_tag'] }} · {{ now.strftime('%Y') }}
+  Ingutsheni Central | HEM Health Equipment Maintenance · Confidential · {{ eq['asset_number'] }} · {{ now.strftime('%Y') }}
 </div>
 
 </body>

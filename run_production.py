@@ -180,7 +180,7 @@ def equipment_list():
     order = request.args.get('order', 'asc')
     
     # Whitelist sort columns
-    if sort not in ['name', 'asset_tag', 'manufacturer', 'category', 'location', 'state', 'condition', 'next_maintenance']:
+    if sort not in ['name', 'asset_number', 'manufacturer', 'category', 'location', 'state', 'condition', 'next_maintenance']:
         sort = 'name'
     if order not in ['asc', 'desc']:
         order = 'asc'
@@ -188,7 +188,7 @@ def equipment_list():
     sql = 'SELECT e.*, l.name as location_name FROM equipment e LEFT JOIN locations l ON e.location_id = l.id WHERE 1=1'
     params = []
     if q:
-        sql += ' AND (e.name LIKE ? OR e.asset_tag LIKE ? OR e.serial_number LIKE ?)'
+        sql += ' AND (e.name LIKE ? OR e.asset_number LIKE ? OR e.serial_number LIKE ?)'
         params.extend([f'%{q}%', f'%{q}%', f'%{q}%'])
     if state:
         sql += ' AND e.state = ?'
@@ -401,25 +401,25 @@ def receive_equipment():
         # Asset tags aren't collected on the form — generate the next one for this year.
         year = datetime.now().year
         count = query(
-            "SELECT COUNT(*) as count FROM equipment WHERE asset_tag LIKE ?",
+            "SELECT COUNT(*) as count FROM equipment WHERE asset_number LIKE ?",
             (f'HEM-{year}-%',), one=True
         )['count']
-        asset_tag = f"HEM-{year}-{count + 1:04d}"
+        asset_number = f"HEM-{year}-{count + 1:04d}"
         # Guard against a rare collision (e.g. a manually-entered tag using the same pattern).
-        while query('SELECT id FROM equipment WHERE asset_tag = ?', (asset_tag,), one=True):
+        while query('SELECT id FROM equipment WHERE asset_number = ?', (asset_number,), one=True):
             count += 1
-            asset_tag = f"HEM-{year}-{count + 1:04d}"
+            asset_number = f"HEM-{year}-{count + 1:04d}"
 
-        execute('''INSERT INTO equipment (asset_tag, name, model, manufacturer, serial_number, category,
+        execute('''INSERT INTO equipment (asset_number, name, model, manufacturer, serial_number, category,
                         department_id, location_id, country_of_origin, donor_name, state, condition,
                         purchase_date, purchase_cost, received_by_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                 (asset_tag, data['name'], data.get('model'), data.get('manufacturer'), data.get('serial_number'),
+                 (asset_number, data['name'], data.get('model'), data.get('manufacturer'), data.get('serial_number'),
                   data.get('category'), data.get('department_id'), data.get('location_id'),
                   data.get('country_of_origin'), data.get('donor_name'), data.get('state'), data.get('condition'),
                   data.get('purchase_date'), data.get('purchase_cost'), session['user_id']))
-        eq_id = query('SELECT id FROM equipment WHERE asset_tag = ?', (asset_tag,), one=True)['id']
-        flash(f'Equipment received successfully — tagged {asset_tag}')
+        eq_id = query('SELECT id FROM equipment WHERE asset_number = ?', (asset_number,), one=True)['id']
+        flash(f'Equipment received successfully — tagged {asset_number}')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
 
     return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
@@ -445,7 +445,7 @@ def qr_batch():
 @app.route('/maintenance')
 @login_required
 def maintenance_list():
-    records = query('''SELECT m.*, e.name as eq_name, e.asset_tag 
+    records = query('''SELECT m.*, e.name as eq_name, e.asset_number 
                        FROM maintenance_records m 
                        JOIN equipment e ON m.equipment_id = e.id 
                        ORDER BY m.created_at DESC''')
@@ -492,7 +492,7 @@ def logout():
 @app.route('/disposal')
 @login_required
 def disposal_list():
-    disposals = query('''SELECT d.*, e.name as eq_name, e.asset_tag 
+    disposals = query('''SELECT d.*, e.name as eq_name, e.asset_number 
                          FROM disposal_records d 
                          JOIN equipment e ON d.equipment_id = e.id 
                          ORDER BY d.request_date DESC''')
@@ -507,7 +507,7 @@ def analytics():
     by_cat = query('SELECT category, SUM(purchase_cost) as total_value FROM equipment GROUP BY category')
     maint_by_month = query('SELECT strftime("%Y-%m", completed_date) as month, SUM(cost) as total_cost FROM maintenance_records GROUP BY month ORDER BY month')
     maint_by_type = query('SELECT maintenance_type, SUM(cost) as total_cost FROM maintenance_records GROUP BY maintenance_type')
-    top_equipment = query('SELECT e.id, e.name, d.name as department, e.asset_tag, e.purchase_cost FROM equipment e JOIN departments d ON e.department_id = d.id ORDER BY e.purchase_cost DESC LIMIT 10')
+    top_equipment = query('SELECT e.id, e.name, d.name as department, e.asset_number, e.purchase_cost FROM equipment e JOIN departments d ON e.department_id = d.id ORDER BY e.purchase_cost DESC LIMIT 10')
     by_condition = query('SELECT condition, COUNT(*) as count, SUM(purchase_cost) as total_value FROM equipment GROUP BY condition')
     
     return render_template('analytics.html', kpis=kpis, total_maint_cost=total_maint_cost, by_dept=by_dept, by_cat=by_cat, maint_by_month=maint_by_month, maint_by_type=maint_by_type, top_equipment=top_equipment, by_condition=by_condition, cond_badge=lambda x: 'badge-green')

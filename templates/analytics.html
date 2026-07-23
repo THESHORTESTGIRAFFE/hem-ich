@@ -103,7 +103,7 @@ canvas { max-height:240px; }
           <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}"
              style="color:var(--text);text-decoration:none;font-weight:600;font-size:0.82rem;
                     display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ eq['name'] }}</a>
-          <div style="font-size:0.7rem;color:var(--text-muted)">{{ eq['department'] or '—' }} · {{ eq['asset_tag'] }}</div>
+          <div style="font-size:0.7rem;color:var(--text-muted)">{{ eq['department'] or '—' }} · {{ eq['asset_number'] }}</div>
         </div>
         <div class="cost-bar-outer">
           <div class="cost-bar-inner" style="width:{{ ((eq['purchase_cost'] / max_cost) * 100)|int }}%"></div>

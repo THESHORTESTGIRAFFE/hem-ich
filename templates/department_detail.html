@@ -54,7 +54,7 @@
             <tr>
               <td>
                 <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" style="font-weight:600;color:var(--accent);text-decoration:none">{{ eq['name'] }}</a>
-                <div style="font-size:0.7rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace">{{ eq['asset_tag'] }}</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace">{{ eq['asset_number'] }}</div>
               </td>
               <td style="color:var(--text-dim);font-size:0.8rem">{{ eq['category'] or '—' }}</td>
               <td style="color:var(--text-dim);font-size:0.8rem">{{ eq['location'] or '—' }}</td>

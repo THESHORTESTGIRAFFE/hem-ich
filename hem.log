@@ -1,12 +1,6 @@
-2026-06-26 08:44:40,820 [INFO] First-run admin account created. Temporary password printed to console.
-2026-06-26 10:19:04,867 [INFO] Serving on http://0.0.0.0:8000
-2026-07-09 11:12:02,345 [INFO] Serving on http://0.0.0.0:8000
-2026-07-09 11:27:10,589 [INFO] First-run admin account created. Temporary password printed to console.
-2026-07-09 11:27:10,712 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on http://127.0.0.1:5000
-2026-07-09 11:27:10,713 [INFO] [33mPress CTRL+C to quit[0m
-2026-07-09 11:28:05,394 [INFO] Serving on http://0.0.0.0:8000
-2026-07-09 11:38:20,556 [ERROR] Exception on /api/notifications [GET]
+2026-07-15 09:33:43,569 [INFO] Serving on http://0.0.0.0:8000
+2026-07-15 09:34:11,840 [INFO] User admin logged in
+2026-07-15 09:34:43,589 [ERROR] Exception on /maintenance/add/1 [GET]
 Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
     response = self.full_dispatch_request()
@@ -17,493 +11,10 @@ Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
+  File "/home/ellie/Downloads/hem-ich-master/run_production.py", line 64, in decorated_function
     return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-    overdue = query("""SELECT id, name, asset_tag, next_maintenance FROM equipment
-                        WHERE next_maintenance < date('now') AND state='Active'
-                        ORDER BY next_maintenance LIMIT 10""")
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-    cur = get_db().execute(sql, args)
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:39:20,848 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-    overdue = query("""SELECT id, name, asset_tag, next_maintenance FROM equipment
-                        WHERE next_maintenance < date('now') AND state='Active'
-                        ORDER BY next_maintenance LIMIT 10""")
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-    cur = get_db().execute(sql, args)
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:40:21,214 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-    overdue = query("""SELECT id, name, asset_tag, next_maintenance FROM equipment
-                        WHERE next_maintenance < date('now') AND state='Active'
-                        ORDER BY next_maintenance LIMIT 10""")
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-    cur = get_db().execute(sql, args)
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:41:21,501 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-    overdue = query("""SELECT id, name, asset_tag, next_maintenance FROM equipment
-                        WHERE next_maintenance < date('now') AND state='Active'
-                        ORDER BY next_maintenance LIMIT 10""")
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-    cur = get_db().execute(sql, args)
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:42:21,761 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-    overdue = query("""SELECT id, name, asset_tag, next_maintenance FROM equipment
-                        WHERE next_maintenance < date('now') AND state='Active'
-                        ORDER BY next_maintenance LIMIT 10""")
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-    cur = get_db().execute(sql, args)
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:43:22,076 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-    overdue = query("""SELECT id, name, asset_tag, next_maintenance FROM equipment
-                        WHERE next_maintenance < date('now') AND state='Active'
-                        ORDER BY next_maintenance LIMIT 10""")
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-    cur = get_db().execute(sql, args)
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:44:22,209 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-    overdue = query("""SELECT id, name, asset_tag, next_maintenance FROM equipment
-                        WHERE next_maintenance < date('now') AND state='Active'
-                        ORDER BY next_maintenance LIMIT 10""")
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-    cur = get_db().execute(sql, args)
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:45:22,425 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:46:22,510 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:47:22,666 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:48:22,770 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:49:22,835 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:50:23,196 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:51:23,933 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:52:23,418 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:53:23,624 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:54:23,817 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:55:23,915 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:56:24,097 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:57:24,186 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:58:24,461 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 11:59:24,674 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 12:00:24,845 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 12:01:24,940 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 12:02:25,251 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 12:03:25,349 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-09 12:04:25,355 [ERROR] Exception on /api/notifications [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 246, in decorated
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 856, in api_notifications
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/app.py", line 80, in query
-sqlite3.OperationalError: no such table: equipment
-2026-07-10 08:25:21,556 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 11:08:39,770 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 11:42:56,710 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 12:38:36,999 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 12:45:24,489 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 12:45:31,748 [INFO] User admin logged in
-2026-07-13 12:45:31,791 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 90, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 149, in render_template
-    template = app.jinja_env.get_or_select_template(template_name_or_list)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1084, in get_or_select_template
-    return self.get_template(template_name_or_list, parent, globals)
-           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1013, in get_template
-    return self._load_template(name, globals)
-           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 972, in _load_template
-    template = self.loader.load(self, name, self.make_globals(globals))
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/loaders.py", line 138, in load
-    code = environment.compile(source, name, filename)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 768, in compile
-    self.handle_exception(source=source_hint)
-    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 74, in template
-    <td><span class="badge badge-red">{{ eq['next_maintenance']|fmtdate }}</span></td>
-    ^^^^^^^^^^^^^
-jinja2.exceptions.TemplateAssertionError: No filter named 'fmtdate'.
-2026-07-13 12:47:21,482 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 12:47:24,309 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 90, in dashboard
-    return render_template('dashboard.html')
+  File "/home/ellie/Downloads/hem-ich-master/run_production.py", line 451, in add_maintenance
+    return render_template('add_maintenance.html', eq_id=eq_id)
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
     return _render(app, template, context)
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
@@ -513,521 +24,19 @@ Traceback (most recent call last):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
     raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
+  File "/home/ellie/Downloads/hem-ich-master/templates/add_maintenance.html", line 1, in top-level template code
     {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 398, in top-level template code
-    <a href="{{ url_for('equipment_list') }}" class="{{ 'active' if request.endpoint == 'equipment_list' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'equipment_list'. Did you mean 'index' instead?
-2026-07-13 12:47:28,063 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 90, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 398, in top-level template code
-    <a href="{{ url_for('equipment_list') }}" class="{{ 'active' if request.endpoint == 'equipment_list' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'equipment_list'. Did you mean 'index' instead?
-2026-07-13 12:48:28,353 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 12:48:33,710 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 402, in top-level template code
-    <a href="{{ url_for('receive_equipment') }}" class="{{ 'active' if request.endpoint == 'receive_equipment' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'receive_equipment'. Did you mean 'equipment_list' instead?
-2026-07-13 12:48:36,400 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 402, in top-level template code
-    <a href="{{ url_for('receive_equipment') }}" class="{{ 'active' if request.endpoint == 'receive_equipment' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'receive_equipment'. Did you mean 'equipment_list' instead?
-2026-07-13 12:48:43,157 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 12:48:45,803 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 402, in top-level template code
-    <a href="{{ url_for('receive_equipment') }}" class="{{ 'active' if request.endpoint == 'receive_equipment' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'receive_equipment'. Did you mean 'equipment_list' instead?
-2026-07-13 12:50:06,663 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 12:50:54,503 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 407, in top-level template code
-    <a href="{{ url_for('import_equipment') }}" class="{{ 'active' if request.endpoint == 'import_equipment' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'import_equipment'. Did you mean 'receive_equipment' instead?
-2026-07-13 12:50:58,916 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 407, in top-level template code
-    <a href="{{ url_for('import_equipment') }}" class="{{ 'active' if request.endpoint == 'import_equipment' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'import_equipment'. Did you mean 'receive_equipment' instead?
-2026-07-13 13:32:11,431 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 13:32:41,514 [INFO] User admin logged in
-2026-07-13 13:32:41,706 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 407, in top-level template code
-    <a href="{{ url_for('import_equipment') }}" class="{{ 'active' if request.endpoint == 'import_equipment' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'import_equipment'. Did you mean 'receive_equipment' instead?
-2026-07-13 13:33:20,674 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 13:33:23,261 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 413, in top-level template code
-    <a href="{{ url_for('maintenance_list') }}" class="{{ 'active' if request.endpoint == 'maintenance_list' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'maintenance_list'. Did you mean 'equipment_list' instead?
-2026-07-13 13:33:26,160 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 413, in top-level template code
-    <a href="{{ url_for('maintenance_list') }}" class="{{ 'active' if request.endpoint == 'maintenance_list' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'maintenance_list'. Did you mean 'equipment_list' instead?
-2026-07-13 13:33:56,617 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 13:34:05,174 [INFO] User admin logged in
-2026-07-13 13:34:05,336 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 416, in top-level template code
-    <a href="{{ url_for('maintenance_schedule') }}" class="{{ 'active' if request.endpoint == 'maintenance_schedule' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'maintenance_schedule'. Did you mean 'maintenance_list' instead?
-2026-07-13 13:37:45,643 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 13:37:55,445 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 419, in top-level template code
-    <a href="{{ url_for('disposal_list') }}" class="{{ 'active' if request.endpoint == 'disposal_list' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'disposal_list'. Did you mean 'equipment_list' instead?
-2026-07-13 13:40:43,620 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 13:40:46,553 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 120, in dashboard
-    return render_template('dashboard.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 484, in top-level template code
-    {% block content %}{% endblock %}
-    ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 22, in block 'content'
-    <div class="label">Total Equipment</div><div class="value">{{ stats.total }}</div><div class="sub">Assets registered</div>
-    ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ellie/Downloads/hem-ich-master/templates/base.html", line 6, in top-level template code
+    <title>{% block title %}Ingutsheni Central | HEM{% endblock %} — HEM Inventory</title>
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ellie/Downloads/hem-ich-master/templates/add_maintenance.html", line 2, in block 'title'
+    {% block title %}Log Maintenance — {{ eq.name }}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 487, in getattr
     return getattr(obj, attribute)
-jinja2.exceptions.UndefinedError: 'stats' is undefined
-2026-07-13 13:42:59,138 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 13:43:05,991 [ERROR] Exception on /equipment [GET]
+jinja2.exceptions.UndefinedError: 'eq' is undefined
+2026-07-15 10:05:48,429 [INFO] Serving on http://0.0.0.0:8000
+2026-07-15 10:05:54,636 [ERROR] Exception on /maintenance/add/1 [GET]
 Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
     response = self.full_dispatch_request()
@@ -1038,10 +47,10 @@ Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 64, in decorated_function
     return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 153, in equipment_list
-    return render_template('equipment_list.html', equipment=equipment, q=q, state=state, cat=category, categories=categories)
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 451, in add_maintenance
+    return render_template('add_maintenance.html', eq_id=eq_id)
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
     return _render(app, template, context)
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
@@ -1051,27 +60,18 @@ Traceback (most recent call last):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
     raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_list.html", line 1, in top-level template code
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/add_maintenance.html", line 1, in top-level template code
     {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 484, in top-level template code
-    {% block content %}{% endblock %}
-    ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_list.html", line 76, in block 'content'
-    <td><a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="btn btn-ghost btn-sm">View →</a></td>
-    ^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'equipment_detail' with values ['eq_id']. Did you mean 'equipment_list' instead?
-2026-07-13 13:43:25,855 [ERROR] Exception on /equipment [GET]
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 6, in top-level template code
+    <title>{% block title %}Ingutsheni Central | HEM{% endblock %} — HEM Inventory</title>
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/add_maintenance.html", line 2, in block 'title'
+    {% block title %}Log Maintenance — {{ eq.name }}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 487, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'eq' is undefined
+2026-07-15 10:06:03,694 [ERROR] Exception on /department [GET]
 Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
     response = self.full_dispatch_request()
@@ -1082,220 +82,9 @@ Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 64, in decorated_function
     return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 153, in equipment_list
-    if request.method == 'POST':
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_list.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 484, in top-level template code
-    {% block content %}{% endblock %}
-    ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_list.html", line 76, in block 'content'
-    <td><a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="btn btn-ghost btn-sm">View →</a></td>
-    ^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'equipment_detail' with values ['eq_id']. Did you mean 'equipment_list' instead?
-2026-07-13 13:44:10,386 [ERROR] Exception on /equipment [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 153, in equipment_list
-    if request.method == 'POST':
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_list.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 484, in top-level template code
-    {% block content %}{% endblock %}
-    ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_list.html", line 76, in block 'content'
-    <td><a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="btn btn-ghost btn-sm">View →</a></td>
-    ^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'equipment_detail' with values ['eq_id']. Did you mean 'equipment_list' instead?
-2026-07-13 13:48:26,880 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 13:48:38,430 [ERROR] Exception on /receive [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 164, in receive_equipment
-    return render_template('receive_equipment.html')
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/receive_equipment.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 398, in top-level template code
-    <a href="{{ url_for('equipment_list') }}" class="{{ 'active' if request.endpoint == 'equipment_list' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'equipment_list'. Did you mean 'equipment_detail' instead?
-2026-07-13 13:49:02,617 [INFO] User admin logged in
-2026-07-13 13:49:02,697 [ERROR] Exception on /dashboard [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 129, in dashboard
-    return render_template('dashboard.html', stats=stats)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/dashboard.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 398, in top-level template code
-    <a href="{{ url_for('equipment_list') }}" class="{{ 'active' if request.endpoint == 'equipment_list' }}">
-    ^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'equipment_list'. Did you mean 'equipment_detail' instead?
-2026-07-13 13:51:16,928 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 13:52:34,706 [ERROR] Exception on /maintenance [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 211, in maintenance_list
-    return render_template('maintenance_list.html', records=records)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 149, in render_template
-    template = app.jinja_env.get_or_select_template(template_name_or_list)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1084, in get_or_select_template
-    return self.get_template(template_name_or_list, parent, globals)
-           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1013, in get_template
-    return self._load_template(name, globals)
-           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 972, in _load_template
-    template = self.loader.load(self, name, self.make_globals(globals))
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/loaders.py", line 138, in load
-    code = environment.compile(source, name, filename)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 768, in compile
-    self.handle_exception(source=source_hint)
-    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/maintenance_list.html", line 32, in template
-    <td style="font-size:0.82rem">{{ rec['cost']|currency }}</td>
-    ^^^^^^^^^^^^^^^
-jinja2.exceptions.TemplateAssertionError: No filter named 'currency'.
-2026-07-13 13:53:13,653 [ERROR] Exception on /department [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 254, in department_overview
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 487, in department_overview
     return render_template('department_overview.html', departments=deps)
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
     return _render(app, template, context)
@@ -1311,22 +100,10 @@ Traceback (most recent call last):
   File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 484, in top-level template code
     {% block content %}{% endblock %}
     ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/department_overview.html", line 50, in block 'content'
-    <a href="{{ url_for('qr_batch') }}" class="btn btn-ghost">🏷️ Print All QR Labels</a>
-    ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'qr_batch'. Did you mean 'static' instead?
-2026-07-13 13:53:47,013 [ERROR] Exception on /analytics [GET]
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/department_overview.html", line 57, in block 'content'
+    {% if unassigned > 0 %}
+jinja2.exceptions.UndefinedError: 'unassigned' is undefined
+2026-07-15 10:06:22,781 [ERROR] Exception on /department [GET]
 Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
     response = self.full_dispatch_request()
@@ -1337,9 +114,41 @@ Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 64, in decorated_function
     return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 242, in analytics
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 487, in department_overview
+    return render_template('department_overview.html', departments=deps)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/department_overview.html", line 1, in top-level template code
+    {% extends 'base.html' %}
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 484, in top-level template code
+    {% block content %}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/department_overview.html", line 57, in block 'content'
+    {% if unassigned > 0 %}
+jinja2.exceptions.UndefinedError: 'unassigned' is undefined
+2026-07-15 10:06:44,482 [ERROR] Exception on /analytics [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 64, in decorated_function
+    return f(*args, **kwargs)
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 471, in analytics
     return render_template('analytics.html')
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
     return _render(app, template, context)
@@ -1362,7 +171,8 @@ Traceback (most recent call last):
     return obj[argument]
            ~~~^^^^^^^^^^
 jinja2.exceptions.UndefinedError: 'kpis' is undefined
-2026-07-13 13:54:08,287 [ERROR] Exception on /audit [GET]
+2026-07-15 11:47:39,629 [INFO] Serving on http://0.0.0.0:8000
+2026-07-15 11:47:50,585 [ERROR] Exception on /department [GET]
 Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
     response = self.full_dispatch_request()
@@ -1373,10 +183,10 @@ Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 64, in decorated_function
     return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 248, in audit_log
-    return render_template('audit_log.html', logs=logs)
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 505, in department_overview
+    return render_template('department_overview.html', departments=departments, unassigned=unassigned)
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
     return _render(app, template, context)
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
@@ -1386,47 +196,14 @@ Traceback (most recent call last):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
     raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/audit_log.html", line 1, in top-level template code
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/department_overview.html", line 1, in top-level template code
     {% extends 'base.html' %}
   File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 484, in top-level template code
     {% block content %}{% endblock %}
     ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/audit_log.html", line 75, in block 'content'
-    {% if total_pages > 1 %}
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/department_overview.html", line 69, in block 'content'
+    <a href="{{ url_for('department_detail', dept=dept['department']) }}" class="dept-card"
     ^^^^^^^^^^^^^^^^^^^^^^^
-jinja2.exceptions.UndefinedError: 'total_pages' is undefined
-2026-07-13 13:55:08,438 [ERROR] Exception on /equipment/1 [GET]
-Traceback (most recent call last):
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
-    return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 167, in equipment_detail
-    return render_template('equipment_detail.html', eq=eq, maintenance=maintenance, disposal=disposal, attachments=attachments)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
-    return _render(app, template, context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
-    rv = template.render(context)
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
-    self.environment.handle_exception()
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
-    raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_detail.html", line 1, in top-level template code
-    {% extends 'base.html' %}
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 484, in top-level template code
-    {% block content %}{% endblock %}
-    ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_detail.html", line 29, in block 'content'
-    <a href="{{ url_for('edit_equipment', eq_id=eq['id']) }}" class="btn btn-ghost">✏️ Edit</a>
-    ^^^^^^^^^^^^^^^^^^^^^
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
     return self.handle_url_build_error(error, endpoint, values)
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1438,9 +215,9 @@ Traceback (most recent call last):
     )
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
     raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'edit_equipment' with values ['eq_id']. Did you mean 'import_equipment' instead?
-2026-07-13 13:55:49,003 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 13:55:56,976 [ERROR] Exception on /equipment/2 [GET]
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'department_detail' with values ['dept']. Did you mean 'equipment_detail' instead?
+2026-07-15 12:11:24,806 [INFO] Serving on http://0.0.0.0:8000
+2026-07-15 12:17:43,754 [ERROR] Exception on /department/ICU [GET]
 Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
     response = self.full_dispatch_request()
@@ -1451,10 +228,10 @@ Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 64, in decorated_function
     return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 167, in equipment_detail
-    return render_template('equipment_detail.html', eq=eq, maintenance=maintenance, disposal=disposal, attachments=attachments)
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 511, in department_detail
+    return render_template('department_detail.html', dept=dept, equipment=equipment)
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
     return _render(app, template, context)
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
@@ -1464,28 +241,18 @@ Traceback (most recent call last):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
     raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_detail.html", line 1, in top-level template code
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/department_detail.html", line 1, in top-level template code
     {% extends 'base.html' %}
   File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 484, in top-level template code
     {% block content %}{% endblock %}
     ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_detail.html", line 29, in block 'content'
-    <a href="{{ url_for('edit_equipment', eq_id=eq['id']) }}" class="btn btn-ghost">✏️ Edit</a>
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/department_detail.html", line 30, in block 'content'
+    <div class="label">Total Assets</div><div class="value">{{ stats.total }}</div></div>
     ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'edit_equipment' with values ['eq_id']. Did you mean 'import_equipment' instead?
-2026-07-13 14:05:36,420 [INFO] Serving on http://0.0.0.0:8000
-2026-07-13 14:05:42,863 [ERROR] Exception on /equipment/2 [GET]
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 487, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'stats' is undefined
+2026-07-15 12:55:42,677 [ERROR] Exception on /department/ICU [GET]
 Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
     response = self.full_dispatch_request()
@@ -1496,10 +263,9 @@ Traceback (most recent call last):
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 63, in decorated_function
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 64, in decorated_function
     return f(*args, **kwargs)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 198, in equipment_detail
-    return render_template('equipment_detail.html', eq=eq, maintenance=maintenance, disposal=disposal, attachments=attachments)
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 511, in department_detail
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
     return _render(app, template, context)
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
@@ -1509,23 +275,94 @@ Traceback (most recent call last):
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
   File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
     raise rewrite_traceback_stack(source=source)
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_detail.html", line 1, in top-level template code
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/department_detail.html", line 1, in top-level template code
     {% extends 'base.html' %}
   File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 484, in top-level template code
     {% block content %}{% endblock %}
     ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/equipment_detail.html", line 30, in block 'content'
-    <a href="{{ url_for('add_maintenance', eq_id=eq['id']) }}" class="btn btn-blue">🔧 Log Maintenance</a>
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/department_detail.html", line 30, in block 'content'
+    <div class="label">Total Assets</div><div class="value">{{ stats.total }}</div></div>
     ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1084, in url_for
-    return self.handle_url_build_error(error, endpoint, values)
-           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1073, in url_for
-    rv = url_adapter.build(  # type: ignore[union-attr]
-        endpoint,
-    ...<3 lines>...
-        force_external=_external,
-    )
-  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/werkzeug/routing/map.py", line 924, in build
-    raise BuildError(endpoint, values, method, self)
-werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'add_maintenance' with values ['eq_id']. Did you mean 'maintenance_list' instead?
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 487, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'stats' is undefined
+2026-07-15 14:57:44,848 [INFO] Serving on http://0.0.0.0:8000
+2026-07-15 14:59:16,351 [ERROR] Exception on /maintenance/add/2 [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 64, in decorated_function
+    return f(*args, **kwargs)
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 451, in add_maintenance
+    return render_template('add_maintenance.html', eq_id=eq_id)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/add_maintenance.html", line 1, in top-level template code
+    {% extends 'base.html' %}
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 6, in top-level template code
+    <title>{% block title %}Ingutsheni Central | HEM{% endblock %} — HEM Inventory</title>
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/add_maintenance.html", line 2, in block 'title'
+    {% block title %}Log Maintenance — {{ eq.name }}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 487, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'eq' is undefined
+2026-07-15 15:11:18,598 [INFO] Serving on http://0.0.0.0:8000
+2026-07-15 15:30:02,889 [INFO] Serving on http://0.0.0.0:8000
+2026-07-15 16:16:20,962 [INFO] Serving on http://0.0.0.0:8000
+2026-07-15 16:16:23,324 [ERROR] Exception on /equipment/2/request-disposal [GET]
+Traceback (most recent call last):
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 1473, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 882, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 880, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/app.py", line 865, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 64, in decorated_function
+    return f(*args, **kwargs)
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/run_production.py", line 362, in request_disposal
+    return render_template('request_disposal.html', eq_id=eq_id)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 1304, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 939, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/request_disposal.html", line 1, in top-level template code
+    {% extends 'base.html' %}
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/base.html", line 6, in top-level template code
+    <title>{% block title %}Ingutsheni Central | HEM{% endblock %} — HEM Inventory</title>
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ellie/Documents/Workspace/Projects/Python/hem_ingutsheni/templates/request_disposal.html", line 2, in block 'title'
+    {% block title %}Request Disposal — {{ eq.name }}{% endblock %}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ellie/python_envs/hyperbeast/lib/python3.13/site-packages/jinja2/environment.py", line 487, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'eq' is undefined
+2026-07-16 09:26:06,187 [INFO] Serving on http://0.0.0.0:8000
+2026-07-16 09:26:39,379 [INFO] User admin logged in
+2026-07-20 14:07:51,714 [INFO] Serving on http://0.0.0.0:8000
+2026-07-20 14:08:28,934 [INFO] User admin logged in
+2026-07-20 15:49:56,607 [INFO] Serving on http://0.0.0.0:8000
+2026-07-20 15:50:06,040 [INFO] User admin logged in

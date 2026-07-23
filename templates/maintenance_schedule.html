@@ -83,7 +83,7 @@
           <div style="flex:1">
             <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" style="font-weight:600;color:var(--text);text-decoration:none">{{ eq['name'] }}</a>
             <div style="font-size:0.72rem;color:var(--text-muted);margin-top:1px">
-              {{ eq['asset_tag'] }} · {{ eq['department'] or '—' }} · {{ eq['location'] or '—' }}
+              {{ eq['asset_number'] }} · {{ eq['department'] or '—' }} · {{ eq['location'] or '—' }}
             </div>
           </div>
           <span class="badge {{ cond_badge(eq['condition']) }}">{{ eq['condition'] }}</span>
@@ -127,7 +127,7 @@
             <div style="flex:1">
               <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" style="font-weight:600;color:var(--text);text-decoration:none">{{ eq['name'] }}</a>
               <div style="font-size:0.72rem;color:var(--text-muted);margin-top:1px">
-                {{ eq['asset_tag'] }} · {{ eq['department'] or '—' }} · {{ eq['location'] or '—' }}
+                {{ eq['asset_number'] }} · {{ eq['department'] or '—' }} · {{ eq['location'] or '—' }}
               </div>
             </div>
             <span class="badge {{ state_badge(eq['state']) }}" style="font-size:0.65rem">{{ eq['state'] }}</span>

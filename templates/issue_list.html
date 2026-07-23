@@ -61,7 +61,7 @@
     {% endif %}
 
     <div class="issue-meta">
-      <span>🔬 <a href="{{ url_for('equipment_detail', eq_id=flag['equipment_id']) }}" style="color:var(--accent);text-decoration:none">{{ flag['eq_name'] }}</a> · {{ flag['asset_tag'] }}</span>
+      <span>🔬 <a href="{{ url_for('equipment_detail', eq_id=flag['equipment_id']) }}" style="color:var(--accent);text-decoration:none">{{ flag['eq_name'] }}</a> · {{ flag['asset_number'] }}</span>
       <span>👤 Raised by {{ flag['raiser_name'] }}</span>
       {% if flag['assignee_name'] %}<span>🔧 Assigned to {{ flag['assignee_name'] }}</span>{% endif %}
       <span>🕒 {{ flag['created_at']|fmtdatetime }}</span>

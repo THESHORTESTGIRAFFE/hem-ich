@@ -5,7 +5,7 @@
 {% block content %}
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
   <div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent)">{{ eq['asset_tag'] }}</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent)">{{ eq['asset_number'] }}</div>
     <h2 style="font-size:1.15rem;font-weight:700">{{ eq['name'] }}</h2>
   </div>
   <a href="{{ url_for('equipment_detail', eq_id=eq['id']) }}" class="btn btn-ghost">← Cancel</a>

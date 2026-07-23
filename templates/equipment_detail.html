@@ -20,7 +20,7 @@
 {% block content %}
 <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
   <div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent);margin-bottom:4px">{{ eq['asset_tag'] }}</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent);margin-bottom:4px">{{ eq['asset_number'] }}</div>
     <h1 style="font-size:1.5rem;font-weight:700;letter-spacing:-0.02em">{{ eq['name'] }}</h1>
     <div style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">{{ eq['manufacturer'] }} {{ eq['model'] }}</div>
   </div>
@@ -179,7 +179,7 @@
     <div class="card">
       <div class="card-header"><h2>Quick Info</h2></div>
       <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
-        <div class="detail-item"><div class="key">Asset Tag</div><div class="val mono" style="color:var(--accent)">{{ eq['asset_tag'] }}</div></div>
+        <div class="detail-item"><div class="key">Asset Number</div><div class="val mono" style="color:var(--accent)">{{ eq['asset_number'] }}</div></div>
         <div class="detail-item"><div class="key">Registered</div><div class="val" style="font-size:0.82rem">{{ eq['created_at']|fmtdate }}</div></div>
         <div class="detail-item"><div class="key">Last Updated</div><div class="val" style="font-size:0.82rem">{{ eq['updated_at']|fmtdatetime }}</div></div>
         <div class="detail-item"><div class="key">Total Maint. Records</div><div class="val">{{ maintenance|length }}</div></div>

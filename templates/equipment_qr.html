@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <title>QR Label — {{ eq['asset_tag'] }}</title>
+  <title>QR Label — {{ eq['asset_number'] }}</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     @page { margin: 10mm; size: A4; }
@@ -103,7 +103,7 @@
     <div class="label-info">
       <div class="label-org">Ingutsheni Central | HEM</div>
       <div class="label-name">{{ eq['name'] }}</div>
-      <div class="label-tag">{{ eq['asset_tag'] }}</div>
+      <div class="label-tag">{{ eq['asset_number'] }}</div>
       <div class="label-row"><span class="lk">Serial</span><span class="lv">{{ eq['serial_number'] or 'N/A' }}</span></div>
       <div class="label-row"><span class="lk">Dept</span><span class="lv">{{ eq['department_name'] or 'N/A' }}</span></div>
       <div class="label-row"><span class="lk">Location</span><span class="lv">{{ eq['location'] or 'N/A' }}</span></div>
@@ -122,7 +122,7 @@
     <div class="label-info">
       <div class="label-org">Ingutsheni Central | HEM</div>
       <div class="label-name">{{ eq['name'] }}</div>
-      <div class="label-tag">{{ eq['asset_tag'] }}</div>
+      <div class="label-tag">{{ eq['asset_number'] }}</div>
       <div class="label-row"><span class="lk">Serial</span><span class="lv">{{ eq['serial_number'] or 'N/A' }}</span></div>
       <div class="label-row"><span class="lk">Dept</span><span class="lv">{{ eq['department_name'] or 'N/A' }}</span></div>
       <div class="label-row"><span class="lk">Location</span><span class="lv">{{ eq['location'] or 'N/A' }}</span></div>
@@ -144,7 +144,7 @@
     <div class="label-info">
       <div class="label-org">Ingutsheni Central | HEM</div>
       <div class="label-name" style="font-size:1.1rem">{{ eq['name'] }}</div>
-      <div style="margin:6px 0"><div class="label-tag" style="font-size:1rem;padding:4px 12px">{{ eq['asset_tag'] }}</div></div>
+      <div style="margin:6px 0"><div class="label-tag" style="font-size:1rem;padding:4px 12px">{{ eq['asset_number'] }}</div></div>
       <div class="label-row"><span class="lk">Serial</span><span class="lv">{{ eq['serial_number'] or 'N/A' }}</span></div>
       <div class="label-row"><span class="lk">Department</span><span class="lv">{{ eq['department'] or 'N/A' }}</span></div>
       <div class="label-row"><span class="lk">Location</span><span class="lv">{{ eq['location'] or 'N/A' }}</span></div>
