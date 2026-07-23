@@ -12,7 +12,7 @@
       <tbody>
         {% for d in departments %}
         <tr>
-          <td style="font-weight:600">{{ d['name'] }}</td>
+          <td style="font-weight:600"><a href="{{ url_for('department_detail', dept=d['name']) }}">{{ d['name'] }}</a></td>
           <td style="text-align:right">
             <a href="{{ url_for('edit_department', did=d['id']) }}" class="btn btn-ghost btn-sm">Edit</a>
             <form method="POST" action="{{ url_for('delete_department', did=d['id']) }}" style="display:inline" onsubmit="return confirm('Delete this department?')">

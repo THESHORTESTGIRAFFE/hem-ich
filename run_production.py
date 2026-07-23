@@ -176,23 +176,38 @@ def equipment_list():
     q = request.args.get('q', '')
     state = request.args.get('state', '')
     category = request.args.get('category', '')
+    sort = request.args.get('sort', 'name')
+    order = request.args.get('order', 'asc')
     
-    sql = 'SELECT * FROM equipment WHERE 1=1'
+    # Whitelist sort columns
+    if sort not in ['name', 'asset_tag', 'manufacturer', 'category', 'location', 'state', 'condition', 'next_maintenance']:
+        sort = 'name'
+    if order not in ['asc', 'desc']:
+        order = 'asc'
+    
+    sql = 'SELECT e.*, l.name as location_name FROM equipment e LEFT JOIN locations l ON e.location_id = l.id WHERE 1=1'
     params = []
     if q:
-        sql += ' AND (name LIKE ? OR asset_tag LIKE ? OR serial_number LIKE ?)'
+        sql += ' AND (e.name LIKE ? OR e.asset_tag LIKE ? OR e.serial_number LIKE ?)'
         params.extend([f'%{q}%', f'%{q}%', f'%{q}%'])
     if state:
-        sql += ' AND state = ?'
+        sql += ' AND e.state = ?'
         params.append(state)
     if category:
-        sql += ' AND category = ?'
+        sql += ' AND e.category = ?'
         params.append(category)
+        
+    # Map sort column to actual column name
+    order_by = sort
+    if sort == 'location':
+        order_by = 'location_name'
+    
+    sql += f' ORDER BY {order_by} {order}'
         
     equipment = query(sql, params)
     categories = [r['category'] for r in query('SELECT DISTINCT category FROM equipment WHERE category IS NOT NULL')]
     
-    return render_template('equipment_list.html', equipment=equipment, q=q, state=state, cat=category, categories=categories)
+    return render_template('equipment_list.html', equipment=equipment, q=q, state=state, cat=category, categories=categories, sort=sort, order=order)
 
 @app.route('/equipment/<int:eq_id>')
 @login_required
@@ -223,19 +238,19 @@ def edit_equipment(eq_id):
     if request.method == 'POST':
         data = request.form
         execute('''UPDATE equipment SET
-                       name=?, manufacturer=?, model=?, category=?, department_id=?, location=?,
+                       name=?, manufacturer=?, model=?, category=?, department_id=?, location_id=?,
                        country_of_origin=?, donor_name=?, state=?, condition=?,
                        warranty_expiry=?, next_maintenance=?, notes=?, updated_at=datetime('now')
                    WHERE id=?''',
                 (data.get('name'), data.get('manufacturer'), data.get('model'), data.get('category'),
-                 data.get('department_id'), data.get('location'), data.get('country_of_origin'),
+                 data.get('department_id'), data.get('location_id'), data.get('country_of_origin'),
                  data.get('donor_name'), data.get('state'), data.get('condition'),
                  data.get('warranty_expiry') or None, data.get('next_maintenance') or None,
                  data.get('notes'), eq_id))
         flash('Equipment updated')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
 
-    return render_template('edit_equipment.html', eq=eq, departments=query('SELECT * FROM departments ORDER BY name'))
+    return render_template('edit_equipment.html', eq=eq, departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
 
 @app.route('/equipment/<int:eq_id>/inline-edit', methods=['POST'])
 @login_required
@@ -381,7 +396,7 @@ def receive_equipment():
         data = request.form
         if not data.get('name'):
             flash('Equipment name is required')
-            return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'))
+            return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
 
         # Asset tags aren't collected on the form — generate the next one for this year.
         year = datetime.now().year
@@ -396,18 +411,18 @@ def receive_equipment():
             asset_tag = f"HEM-{year}-{count + 1:04d}"
 
         execute('''INSERT INTO equipment (asset_tag, name, model, manufacturer, serial_number, category,
-                        department_id, location, country_of_origin, donor_name, state, condition,
+                        department_id, location_id, country_of_origin, donor_name, state, condition,
                         purchase_date, purchase_cost, received_by_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                  (asset_tag, data['name'], data.get('model'), data.get('manufacturer'), data.get('serial_number'),
-                  data.get('category'), data.get('department_id'), data.get('location'),
+                  data.get('category'), data.get('department_id'), data.get('location_id'),
                   data.get('country_of_origin'), data.get('donor_name'), data.get('state'), data.get('condition'),
                   data.get('purchase_date'), data.get('purchase_cost'), session['user_id']))
         eq_id = query('SELECT id FROM equipment WHERE asset_tag = ?', (asset_tag,), one=True)['id']
         flash(f'Equipment received successfully — tagged {asset_tag}')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
 
-    return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'))
+    return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
 
 @app.route('/import', methods=['GET', 'POST'])
 @login_required
@@ -704,15 +719,54 @@ def edit_department(did):
         return redirect(url_for('department_list'))
     return render_template('edit_department.html', dept=dept)
 
-@app.route('/departments/<int:did>/delete', methods=['POST'])
+@app.route('/locations')
 @login_required
-def delete_department(did):
+def location_list():
     if session.get('role') != 'chief_engineer':
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
-    execute('DELETE FROM departments WHERE id = ?', (did,))
-    flash('Department deleted')
-    return redirect(url_for('department_list'))
+    locations = query('SELECT * FROM locations')
+    return render_template('location_list.html', locations=locations)
+
+@app.route('/locations/add', methods=['GET', 'POST'])
+@login_required
+def add_location():
+    if session.get('role') != 'chief_engineer':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    if request.method == 'POST':
+        name = request.form['name']
+        execute('INSERT INTO locations (name) VALUES (?)', (name,))
+        flash('Location created')
+        return redirect(url_for('location_list'))
+    return render_template('add_location.html')
+
+@app.route('/locations/<int:lid>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_location(lid):
+    if session.get('role') != 'chief_engineer':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    loc = query('SELECT * FROM locations WHERE id = ?', (lid,), one=True)
+    if not loc:
+        flash('Location not found')
+        return redirect(url_for('location_list'))
+    if request.method == 'POST':
+        name = request.form['name']
+        execute('UPDATE locations SET name = ? WHERE id = ?', (name, lid))
+        flash('Location updated')
+        return redirect(url_for('location_list'))
+    return render_template('edit_location.html', loc=loc)
+
+@app.route('/locations/<int:lid>/delete', methods=['POST'])
+@login_required
+def delete_location(lid):
+    if session.get('role') != 'chief_engineer':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    execute('DELETE FROM locations WHERE id = ?', (lid,))
+    flash('Location deleted')
+    return redirect(url_for('location_list'))
 
 
 if __name__ == '__main__':

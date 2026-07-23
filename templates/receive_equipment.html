@@ -98,7 +98,12 @@
     </div>
     <div class="field">
       <label>Location <span class="opt">Optional</span></label>
-      <input type="text" name="location" class="fi" placeholder="e.g. Ward 4, Room 2">
+      <select name="location_id" class="fi">
+        <option value="">— Select a location —</option>
+        {% for l in locations %}
+        <option value="{{ l['id'] }}">{{ l['name'] }}</option>
+        {% endfor %}
+      </select>
     </div>
   </div>
 

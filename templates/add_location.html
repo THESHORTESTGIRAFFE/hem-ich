@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Add Location{% endblock %}
+{% block page_title %}Add Location{% endblock %}
+{% block content %}
+<div style="max-width:400px">
+  <div class="card">
+    <div class="card-body">
+      <form method="POST">
+        <div class="form-group">
+          <label>Location Name *</label>
+          <input type="text" name="name" class="form-control" required>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
+          <a href="{{ url_for('location_list') }}" class="btn btn-ghost">Cancel</a>
+          <button type="submit" class="btn btn-primary">Create Location</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
