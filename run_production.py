@@ -542,12 +542,12 @@ def audit_log():
 def department_overview():
     unassigned = query('SELECT COUNT(*) as count FROM equipment WHERE department_id IS NULL AND state = "Active"', one=True)['count']
     departments = query('''SELECT d.name, 
-                            COUNT(e.id) as total, 
-                            SUM(CASE WHEN e.state="Active" THEN 1 ELSE 0 END) as active, 
-                            SUM(CASE WHEN e.state="Under Maintenance" THEN 1 ELSE 0 END) as under_maint, 
-                            SUM(CASE WHEN e.next_maintenance < date("now") THEN 1 ELSE 0 END) as overdue,
+                            SUM(COALESCE(e.quantity, 0)) as total, 
+                            SUM(CASE WHEN e.state="Active" THEN e.quantity ELSE 0 END) as active, 
+                            SUM(CASE WHEN e.state="Under Maintenance" THEN e.quantity ELSE 0 END) as under_maint, 
+                            SUM(CASE WHEN e.next_maintenance < date("now") THEN e.quantity ELSE 0 END) as overdue,
                             0 as critical_count,
-                            SUM(e.purchase_cost) as total_value
+                            SUM(e.purchase_cost * COALESCE(e.quantity, 1)) as total_value
                           FROM departments d LEFT JOIN equipment e ON d.id = e.department_id GROUP BY d.name''')
     return render_template('department_overview.html', departments=departments, unassigned=unassigned)
 
@@ -561,10 +561,10 @@ def department_detail(dept):
                          WHERE d.name = ?''', (dept,))
     
     # Calculate stats
-    stats_data = query('''SELECT COUNT(e.id) as total, 
-                                 SUM(CASE WHEN e.state="Active" THEN 1 ELSE 0 END) as active, 
-                                 SUM(CASE WHEN e.next_maintenance < date("now") THEN 1 ELSE 0 END) as overdue, 
-                                 SUM(e.purchase_cost) as value 
+    stats_data = query('''SELECT SUM(COALESCE(e.quantity, 0)) as total, 
+                                 SUM(CASE WHEN e.state="Active" THEN e.quantity ELSE 0 END) as active, 
+                                 SUM(CASE WHEN e.next_maintenance < date("now") THEN e.quantity ELSE 0 END) as overdue, 
+                                 SUM(e.purchase_cost * COALESCE(e.quantity, 1)) as value 
                           FROM equipment e JOIN departments d ON e.department_id = d.id WHERE d.name = ?''', (dept,), one=True)
     open_flags_count = query('''SELECT COUNT(*) as count FROM issue_flags i 
                                 JOIN equipment e ON i.equipment_id=e.id 
