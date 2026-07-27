@@ -737,6 +737,16 @@ def edit_department(did):
         return redirect(url_for('department_list'))
     return render_template('edit_department.html', dept=dept)
 
+@app.route('/departments/<int:did>/delete', methods=['POST'])
+@login_required
+def delete_department(did):
+    if session.get('role') != 'chief_engineer':
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    execute('DELETE FROM departments WHERE id = ?', (did,))
+    flash('Department deleted')
+    return redirect(url_for('department_list'))
+
 @app.route('/locations')
 @login_required
 def location_list():
