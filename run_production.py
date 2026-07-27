@@ -240,13 +240,12 @@ def edit_equipment(eq_id):
         execute('''UPDATE equipment SET
                        name=?, manufacturer=?, model=?, category=?, department_id=?, location_id=?,
                        country_of_origin=?, donor_name=?, state=?, condition=?,
-                       warranty_expiry=?, next_maintenance=?, notes=?, updated_at=datetime('now')
+                       warranty_expiry=?, next_maintenance=?, notes=?, updated_at=datetime('now'), quantity=?
                    WHERE id=?''',
-                (data.get('name'), data.get('manufacturer'), data.get('model'), data.get('category'),
-                 data.get('department_id'), data.get('location_id'), data.get('country_of_origin'),
-                 data.get('donor_name'), data.get('state'), data.get('condition'),
+                (data.get('name'), data.get('manufacturer'), data.get('model'), data.get('category'), data.get('department_id'), data.get('location_id'),
+                 data.get('country_of_origin'), data.get('donor_name'), data.get('state'), data.get('condition'),
                  data.get('warranty_expiry') or None, data.get('next_maintenance') or None,
-                 data.get('notes'), eq_id))
+                 data.get('notes'), data.get('quantity', 1), eq_id))
         flash('Equipment updated')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
 
@@ -412,12 +411,12 @@ def receive_equipment():
 
         execute('''INSERT INTO equipment (asset_number, name, model, manufacturer, serial_number, category,
                         department_id, location_id, country_of_origin, donor_name, state, condition,
-                        purchase_date, purchase_cost, received_by_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                        purchase_date, purchase_cost, received_by_id, quantity)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                  (asset_number, data['name'], data.get('model'), data.get('manufacturer'), data.get('serial_number'),
                   data.get('category'), data.get('department_id'), data.get('location_id'),
                   data.get('country_of_origin'), data.get('donor_name'), data.get('state'), data.get('condition'),
-                  data.get('purchase_date'), data.get('purchase_cost'), session['user_id']))
+                  data.get('purchase_date'), data.get('purchase_cost'), session['user_id'], data.get('quantity', 1)))
         eq_id = query('SELECT id FROM equipment WHERE asset_number = ?', (asset_number,), one=True)['id']
         flash(f'Equipment received successfully — tagged {asset_number}')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
@@ -513,15 +512,19 @@ def analytics():
     return render_template('analytics.html', kpis=kpis, total_maint_cost=total_maint_cost, by_dept=by_dept, by_cat=by_cat, maint_by_month=maint_by_month, maint_by_type=maint_by_type, top_equipment=top_equipment, by_condition=by_condition, cond_badge=lambda x: 'badge-green')
 
 
-@app.route('/audit')
+@app.route('/inventory')
 @login_required
-def audit_log():
-    page = int(request.args.get('page', 1))
-    per_page = 20
-    logs = query('SELECT * FROM audit_log ORDER BY timestamp DESC LIMIT ? OFFSET ?', (per_page, (page-1)*per_page))
-    total_count = query('SELECT COUNT(*) as count FROM audit_log', one=True)['count']
-    total_pages = (total_count + per_page - 1) // per_page
-    return render_template('audit_log.html', logs=logs, total_pages=total_pages, page=page)
+def inventory_stats():
+    # Total count per category
+    total_by_cat = query('''SELECT category, SUM(quantity) as total_quantity 
+                            FROM equipment 
+                            GROUP BY category''')
+    # Count per category per department
+    by_dept_cat = query('''SELECT d.name as department, e.category, SUM(e.quantity) as total_quantity
+                           FROM equipment e
+                           JOIN departments d ON e.department_id = d.id
+                           GROUP BY d.name, e.category''')
+    return render_template('inventory.html', total_by_cat=total_by_cat, by_dept_cat=by_dept_cat)
 
 @app.route('/department')
 @login_required

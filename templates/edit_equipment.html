@@ -71,6 +71,10 @@
           </select>
         </div>
         <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" name="quantity" class="form-control" value="{{ eq['quantity'] or 1 }}" min="1">
+        </div>
+        <div class="form-group">
           <label>Condition</label>
           <select name="condition" class="form-control">
             {% for c in ['Excellent','Good','Fair','Poor','Critical'] %}

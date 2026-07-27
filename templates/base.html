@@ -412,6 +412,9 @@
         <span class="icon">📦</span> Receive Equipment
       </a>
       {% endif %}
+      <a href="{{ url_for('inventory_stats') }}" class="{{ 'active' if request.endpoint == 'inventory_stats' }}">
+        <span class="icon">📋</span> Inventory Stats
+      </a>
       {% if session.role == 'chief_engineer' %}
       <a href="{{ url_for('import_equipment') }}" class="{{ 'active' if request.endpoint == 'import_equipment' }}">
         <span class="icon">📤</span> Bulk Import

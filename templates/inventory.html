@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Inventory Statistics{% endblock %}
+{% block page_title %}Inventory Overview{% endblock %}
+
+{% block content %}
+<div class="card" style="margin-bottom: 24px;">
+    <div class="card-header"><h2>🏥 Total Inventory by Category</h2></div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Total Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in total_by_cat %}
+            <tr>
+                <td>{{ row['category'] or 'Uncategorized' }}</td>
+                <td>{{ row['total_quantity'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-header"><h2>🏢 Inventory by Department & Category</h2></div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Department</th>
+                <th>Category</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in by_dept_cat %}
+            <tr>
+                <td><a href="{{ url_for('department_detail', dept=row['department']) }}" style="color: var(--accent); text-decoration: none;">{{ row['department'] }}</a></td>
+                <td>{{ row['category'] or 'Uncategorized' }}</td>
+                <td>{{ row['total_quantity'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .data-table th, .data-table td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
+    .data-table th { color: var(--text-dim); font-size: 0.85rem; }
+</style>
+{% endblock %}
