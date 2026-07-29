@@ -537,7 +537,7 @@ def audit_log():
     total_pages = (total_count + per_page - 1) // per_page
     return render_template('audit_log.html', logs=logs, total_pages=total_pages, page=page)
 
-@app.route('/department')
+@app.route('/department', strict_slashes=False)
 @login_required
 def department_overview():
     unassigned = query('SELECT COUNT(*) as count FROM equipment WHERE department_id IS NULL AND state = "Active"', one=True)['count']
