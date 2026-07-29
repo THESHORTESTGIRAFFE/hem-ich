@@ -467,16 +467,21 @@ def add_maintenance(eq_id):
     if request.method == 'POST':
         # Simple implementation
         data = request.form
+        next_due = data.get('next_due')
         execute('''INSERT INTO maintenance_records (equipment_id, performed_by_id, maintenance_type, description, findings, outcome, cost, scheduled_date, completed_date, next_due)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                 (eq_id, session['user_id'], data.get('maintenance_type'), data.get('description'), 
                  data.get('findings'), data.get('outcome'), data.get('cost'), 
-                 data.get('scheduled_date'), data.get('completed_date'), data.get('next_due')))
+                 data.get('scheduled_date'), data.get('completed_date'), next_due))
+        
+        # Automatically update next_maintenance date on equipment if a next_due date is provided
+        if next_due:
+            execute('UPDATE equipment SET next_maintenance = ? WHERE id = ?', (next_due, eq_id))
         
         if data.get('update_state'):
             execute('UPDATE equipment SET state = ? WHERE id = ?', (data.get('update_state'), eq_id))
             
-        flash('Maintenance record added')
+        flash('Maintenance record added and next maintenance date updated')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
     
     return render_template('add_maintenance.html', eq=eq, today=date.today().isoformat())
