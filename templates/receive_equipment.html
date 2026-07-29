@@ -86,22 +86,13 @@
 
   <div class="card-header" style="margin-top:28px"><h2>📍 Provenance &amp; Logistics</h2></div>
 
-  <div class="field-row">
+  <div class="field-row single">
     <div class="field">
-      <label>Department <span class="opt">Optional</span></label>
-      <select name="department_id" class="fi">
+      <label>Department <span class="req">Required</span></label>
+      <select name="department_id" class="fi" required>
         <option value="">— Select a department —</option>
         {% for d in departments %}
         <option value="{{ d['id'] }}">{{ d['name'] }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div class="field">
-      <label>Location <span class="opt">Optional</span></label>
-      <select name="location_id" class="fi">
-        <option value="">— Select a location —</option>
-        {% for l in locations %}
-        <option value="{{ l['id'] }}">{{ l['name'] }}</option>
         {% endfor %}
       </select>
     </div>

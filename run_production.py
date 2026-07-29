@@ -393,8 +393,8 @@ def receive_equipment():
     
     if request.method == 'POST':
         data = request.form
-        if not data.get('name'):
-            flash('Equipment name is required')
+        if not data.get('name') or not data.get('department_id'):
+            flash('Equipment name and Department are required')
             return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
 
         # Asset tags aren't collected on the form — generate the next one for this year.
@@ -474,9 +474,17 @@ def add_maintenance(eq_id):
                  data.get('findings'), data.get('outcome'), data.get('cost'), 
                  data.get('scheduled_date'), data.get('completed_date'), next_due))
         
-        # Automatically update next_maintenance date on equipment if a next_due date is provided
+        # Automatically update next_maintenance date on equipment if a next_due date is provided or calculate it as 4 months from completed date
         if next_due:
             execute('UPDATE equipment SET next_maintenance = ? WHERE id = ?', (next_due, eq_id))
+        elif data.get('completed_date'):
+            completed_date = datetime.strptime(data.get('completed_date'), '%Y-%m-%d')
+            # Add 4 months using simple month addition
+            month = completed_date.month - 1 + 4
+            year = completed_date.year + month // 12
+            month = month % 12 + 1
+            next_due_calc = date(year, month, completed_date.day)
+            execute('UPDATE equipment SET next_maintenance = ? WHERE id = ?', (next_due_calc.isoformat(), eq_id))
         
         if data.get('update_state'):
             execute('UPDATE equipment SET state = ? WHERE id = ?', (data.get('update_state'), eq_id))
