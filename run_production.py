@@ -541,7 +541,7 @@ def audit_log():
 @login_required
 def department_overview():
     unassigned = query('SELECT COUNT(*) as count FROM equipment WHERE department_id IS NULL AND state = "Active"', one=True)['count']
-    departments = query('''SELECT d.name, 
+    departments = query('''SELECT d.name as department, 
                             COUNT(e.id) as total, 
                             SUM(CASE WHEN e.state="Active" THEN 1 ELSE 0 END) as active, 
                             SUM(CASE WHEN e.state="Under Maintenance" THEN 1 ELSE 0 END) as under_maint, 
