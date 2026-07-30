@@ -185,11 +185,15 @@ def equipment_list():
     if order not in ['asc', 'desc']:
         order = 'asc'
     
-    sql = 'SELECT e.*, l.name as location_name FROM equipment e LEFT JOIN locations l ON e.location_id = l.id WHERE 1=1'
+    sql = '''SELECT e.*, l.name as location_name, d.name as department_name 
+             FROM equipment e 
+             LEFT JOIN locations l ON e.location_id = l.id 
+             LEFT JOIN departments d ON e.department_id = d.id 
+             WHERE 1=1'''
     params = []
     if q:
-        sql += ' AND (e.name LIKE ? OR e.asset_number LIKE ? OR e.serial_number LIKE ?)'
-        params.extend([f'%{q}%', f'%{q}%', f'%{q}%'])
+        sql += ' AND (e.name LIKE ? OR e.asset_number LIKE ? OR e.serial_number LIKE ? OR d.name LIKE ?)'
+        params.extend([f'%{q}%', f'%{q}%', f'%{q}%', f'%{q}%'])
     if state:
         sql += ' AND e.state = ?'
         params.append(state)
