@@ -17,16 +17,18 @@ def run_migration():
         
         # 2. Migrate existing departments
         # Get unique departments from equipment
-        cursor = conn.execute('SELECT DISTINCT department FROM equipment WHERE department IS NOT NULL')
-        depts = [row[0] for row in cursor.fetchall() if row[0]]
-        
-        for dept_name in depts:
-            conn.execute('INSERT OR IGNORE INTO departments (name) VALUES (?)', (dept_name,))
+        cursor = conn.execute('PRAGMA table_info(equipment)')
+        columns = [row[1] for row in cursor.fetchall()]
+        depts = []
+        if 'department' in columns:
+            cursor = conn.execute('SELECT DISTINCT department FROM equipment WHERE department IS NOT NULL')
+            depts = [row[0] for row in cursor.fetchall() if row[0]]
+            
+            for dept_name in depts:
+                conn.execute('INSERT OR IGNORE INTO departments (name) VALUES (?)', (dept_name,))
         
         # 3. Alter Equipment table
         # Check if department_id exists to avoid error if already migrated
-        cursor = conn.execute('PRAGMA table_info(equipment)')
-        columns = [row[1] for row in cursor.fetchall()]
         
         if 'department_id' not in columns:
             conn.execute('ALTER TABLE equipment ADD COLUMN department_id INTEGER')
@@ -37,17 +39,13 @@ def run_migration():
             print("Added quantity column.")
         
         # Populate department_id
-        for dept_name in depts:
-            result = conn.execute('SELECT id FROM departments WHERE name = ?', (dept_name,)).fetchone()
-            if result:
-                dept_id = result[0]
-                # Check if 'department' column still exists before trying to access it
-                cursor = conn.execute('PRAGMA table_info(equipment)')
-                columns = [row[1] for row in cursor.fetchall()]
-                if 'department' in columns:
+        if 'department' in columns and depts:
+            for dept_name in depts:
+                result = conn.execute('SELECT id FROM departments WHERE name = ?', (dept_name,)).fetchone()
+                if result:
+                    dept_id = result[0]
                     conn.execute('UPDATE equipment SET department_id = ? WHERE department = ?', (dept_id, dept_name))
-        
-        print("Migration successful! Departments table created and data linked.")
+            print("Migrated department data.")
         conn.commit()
         
     except sqlite3.OperationalError as e:
