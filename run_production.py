@@ -634,7 +634,16 @@ def flag_issue():
 @app.route('/intern')
 @login_required
 def intern_dashboard():
-    return render_template('intern_dashboard.html')
+    # Calculate stats for intern
+    # Assuming stats for intern might be personal or a general overview based on needs
+    # For now, let's just pass an empty stats dict to avoid the error
+    stats = {
+        'total_active': 0,
+        'overdue_count': 0,
+        'upcoming_count': 0,
+        'my_open_flags': 0
+    }
+    return render_template('intern_dashboard.html', stats=stats)
 
 @app.route('/issue')
 @login_required
