@@ -640,11 +640,11 @@ def intern_dashboard():
     total_active = query('SELECT COUNT(*) as count FROM equipment WHERE state="Active"', one=True)['count']
     overdue_count = query('SELECT COUNT(*) as count FROM equipment WHERE next_maintenance < date("now")', one=True)['count']
     upcoming_count = query('SELECT COUNT(*) as count FROM equipment WHERE next_maintenance BETWEEN date("now") AND date("now", "+30 days")', one=True)['count']
-    my_open_flags = query('SELECT COUNT(*) as count FROM issue_flags WHERE status="Open" AND user_id = ?', (user_id,), one=True)['count']
+    my_open_flags = query('SELECT COUNT(*) as count FROM issue_flags WHERE status="Open" AND raised_by_id = ?', (user_id,), one=True)['count']
     
     overdue = query('SELECT * FROM equipment WHERE next_maintenance < date("now") LIMIT 5')
     upcoming = query('SELECT * FROM equipment WHERE next_maintenance BETWEEN date("now") AND date("now", "+30 days") LIMIT 5')
-    my_flags = query('SELECT i.*, e.name as eq_name, e.asset_number FROM issue_flags i JOIN equipment e ON i.equipment_id=e.id WHERE i.user_id = ? ORDER BY i.created_at DESC', (user_id,))
+    my_flags = query('SELECT i.*, e.name as eq_name, e.asset_number FROM issue_flags i JOIN equipment e ON i.equipment_id=e.id WHERE i.raised_by_id = ? ORDER BY i.created_at DESC', (user_id,))
     equipment = query('SELECT * FROM equipment LIMIT 8')
     
     stats = {
