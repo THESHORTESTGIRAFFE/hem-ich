@@ -634,16 +634,27 @@ def flag_issue():
 @app.route('/intern')
 @login_required
 def intern_dashboard():
-    # Calculate stats for intern
-    # Assuming stats for intern might be personal or a general overview based on needs
-    # For now, let's just pass an empty stats dict to avoid the error
+    # Fetch stats
+    user_id = session.get('user_id')
+    
+    total_active = query('SELECT COUNT(*) as count FROM equipment WHERE state="Active"', one=True)['count']
+    overdue_count = query('SELECT COUNT(*) as count FROM equipment WHERE next_maintenance < date("now")', one=True)['count']
+    upcoming_count = query('SELECT COUNT(*) as count FROM equipment WHERE next_maintenance BETWEEN date("now") AND date("now", "+30 days")', one=True)['count']
+    my_open_flags = query('SELECT COUNT(*) as count FROM issue_flags WHERE status="Open" AND user_id = ?', (user_id,), one=True)['count']
+    
+    overdue = query('SELECT * FROM equipment WHERE next_maintenance < date("now") LIMIT 5')
+    upcoming = query('SELECT * FROM equipment WHERE next_maintenance BETWEEN date("now") AND date("now", "+30 days") LIMIT 5')
+    my_flags = query('SELECT i.*, e.name as eq_name, e.asset_number FROM issue_flags i JOIN equipment e ON i.equipment_id=e.id WHERE i.user_id = ? ORDER BY i.created_at DESC', (user_id,))
+    equipment = query('SELECT * FROM equipment LIMIT 8')
+    
     stats = {
-        'total_active': 0,
-        'overdue_count': 0,
-        'upcoming_count': 0,
-        'my_open_flags': 0
+        'total_active': total_active,
+        'overdue_count': overdue_count,
+        'upcoming_count': upcoming_count,
+        'my_open_flags': my_open_flags
     }
-    return render_template('intern_dashboard.html', stats=stats)
+    
+    return render_template('intern_dashboard.html', stats=stats, overdue=overdue, upcoming=upcoming, my_flags=my_flags, equipment=equipment)
 
 @app.route('/issue')
 @login_required
