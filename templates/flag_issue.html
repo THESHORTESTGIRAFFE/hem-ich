@@ -68,7 +68,7 @@
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px">
-          <a href="{{ url_for('intern_dashboard') if session.role == 'intern' else url_for('issue_list') }}" class="btn btn-ghost">Cancel</a>
+          <a href="{{ url_for('intern_dashboard') if not has_permission('technician') else url_for('issue_list') }}" class="btn btn-ghost">Cancel</a>
           <button type="submit" class="btn btn-primary">🚩 Submit Flag</button>
         </div>
       </form>

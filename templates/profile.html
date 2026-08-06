@@ -20,7 +20,7 @@
       <div class="detail-item">
         <div class="key">Role</div>
         <div class="val">
-          {% set role_map={'chief_engineer':'badge-teal','technician':'badge-blue','intern':'badge-gray'} %}
+          {% set role_map={'administrator':'badge-teal','biomedical_engineer':'badge-teal','biomedical_technician':'badge-blue','hospital_equipment_repairer':'badge-blue','technical_assistant':'badge-gray','handy_man':'badge-gray','intern':'badge-gray'} %}
           <span class="badge {{ role_map.get(user['role'],'badge-gray') }}">{{ user['role'].replace('_',' ').title() }}</span>
         </div>
       </div>

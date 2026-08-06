@@ -51,11 +51,29 @@ def query(sql, args=(), one=False):
     return (rv[0] if rv else None) if one else rv
 
 def execute(sql, args=()):
-    db = get_db()
-    db.execute(sql, args)
-    db.commit()
+    cur = get_db().execute(sql, args)
+    get_db().commit()
+    cur.close()
 
-# ── Authentication ───────────────────────────────────────────────────────────
+ROLE_PERMISSIONS = {
+    'chief_engineer': ['administrator', 'biomedical_engineer'],
+    'technician': ['biomedical_technician', 'hospital_equipment_repairer'],
+    'intern': ['technical_assistant', 'handy_man', 'intern']
+}
+
+def has_permission(level):
+    user_role = session.get('role')
+    if level == 'chief_engineer':
+        return user_role in ROLE_PERMISSIONS['chief_engineer']
+    elif level == 'technician':
+        return user_role in (ROLE_PERMISSIONS['chief_engineer'] + ROLE_PERMISSIONS['technician'])
+    elif level == 'intern':
+        return user_role in (ROLE_PERMISSIONS['chief_engineer'] + ROLE_PERMISSIONS['technician'] + ROLE_PERMISSIONS['intern'])
+    return False
+
+
+app.jinja_env.globals.update(has_permission=has_permission)
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -230,7 +248,7 @@ def equipment_detail(eq_id):
 @app.route('/equipment/<int:eq_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_equipment(eq_id):
-    if session.get('role') not in ['chief_engineer', 'technician']:
+    if not has_permission('technician'):
         flash('Unauthorized')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
 
@@ -258,7 +276,7 @@ def edit_equipment(eq_id):
 @app.route('/equipment/<int:eq_id>/inline-edit', methods=['POST'])
 @login_required
 def inline_edit_equipment(eq_id):
-    if session.get('role') not in ['chief_engineer', 'technician']:
+    if not has_permission('technician'):
         return jsonify({'ok': False, 'error': 'Unauthorized'}), 403
     field = request.form.get('field')
     value = request.form.get('value')
@@ -294,7 +312,7 @@ def equipment_qr(eq_id):
 @app.route('/disposal/<int:rec_id>/approve', methods=['POST'])
 @login_required
 def approve_disposal(rec_id):
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     rec = query('SELECT * FROM disposal_records WHERE id = ?', (rec_id,), one=True)
@@ -318,7 +336,7 @@ def approve_disposal(rec_id):
 @app.route('/equipment/<int:eq_id>/attachments/upload', methods=['POST'])
 @login_required
 def upload_attachment(eq_id):
-    if session.get('role') not in ['chief_engineer', 'technician']:
+    if not has_permission('technician'):
         flash('Unauthorized')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
 
@@ -352,7 +370,7 @@ def download_attachment(att_id):
 @app.route('/attachments/<int:att_id>/delete', methods=['POST'])
 @login_required
 def delete_attachment(att_id):
-    if session.get('role') not in ['chief_engineer', 'technician']:
+    if not has_permission('technician'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     att = query('SELECT * FROM attachments WHERE id = ?', (att_id,), one=True)
@@ -391,7 +409,7 @@ def request_disposal(eq_id):
 @app.route('/receive', methods=['GET', 'POST'])
 @login_required
 def receive_equipment():
-    if session.get('role') not in ['chief_engineer', 'technician']:
+    if not has_permission('technician'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     
@@ -430,7 +448,7 @@ def receive_equipment():
 @app.route('/import', methods=['GET', 'POST'])
 @login_required
 def import_equipment():
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     
@@ -633,7 +651,7 @@ def profile():
 @app.route('/users')
 @login_required
 def user_list():
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     users = query('SELECT * FROM users')
@@ -642,7 +660,7 @@ def user_list():
 @app.route('/users/add', methods=['GET', 'POST'])
 @login_required
 def add_user():
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     if request.method == 'POST':
@@ -661,7 +679,7 @@ def add_user():
 @app.route('/users/<int:uid>/toggle', methods=['POST'])
 @login_required
 def toggle_user(uid):
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     user = query('SELECT is_active FROM users WHERE id = ?', (uid,), one=True)
@@ -673,7 +691,7 @@ def toggle_user(uid):
 @app.route('/users/<int:uid>/reset-password', methods=['POST'])
 @login_required
 def reset_password(uid):
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     new_password = request.form['password']
@@ -684,7 +702,7 @@ def reset_password(uid):
 @app.route('/users/<int:uid>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_user(uid):
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     user = query('SELECT * FROM users WHERE id = ?', (uid,), one=True)
@@ -704,7 +722,7 @@ def edit_user(uid):
 @app.route('/users/<int:uid>/delete', methods=['POST'])
 @login_required
 def delete_user(uid):
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     if uid == session.get('user_id'):
@@ -718,7 +736,7 @@ def delete_user(uid):
 @app.route('/departments')
 @login_required
 def department_list():
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     departments = query('SELECT * FROM departments')
@@ -727,7 +745,7 @@ def department_list():
 @app.route('/departments/add', methods=['GET', 'POST'])
 @login_required
 def add_department():
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     if request.method == 'POST':
@@ -740,7 +758,7 @@ def add_department():
 @app.route('/departments/<int:did>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_department(did):
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     dept = query('SELECT * FROM departments WHERE id = ?', (did,), one=True)
@@ -757,7 +775,7 @@ def edit_department(did):
 @app.route('/departments/<int:did>/delete', methods=['POST'])
 @login_required
 def delete_department(did):
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     execute('DELETE FROM departments WHERE id = ?', (did,))
@@ -767,7 +785,7 @@ def delete_department(did):
 @app.route('/locations')
 @login_required
 def location_list():
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     locations = query('SELECT * FROM locations')
@@ -776,7 +794,7 @@ def location_list():
 @app.route('/locations/add', methods=['GET', 'POST'])
 @login_required
 def add_location():
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     if request.method == 'POST':
@@ -789,7 +807,7 @@ def add_location():
 @app.route('/locations/<int:lid>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_location(lid):
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     loc = query('SELECT * FROM locations WHERE id = ?', (lid,), one=True)
@@ -806,7 +824,7 @@ def edit_location(lid):
 @app.route('/locations/<int:lid>/delete', methods=['POST'])
 @login_required
 def delete_location(lid):
-    if session.get('role') != 'chief_engineer':
+    if not has_permission('chief_engineer'):
         flash('Unauthorized')
         return redirect(url_for('dashboard'))
     execute('DELETE FROM locations WHERE id = ?', (lid,))

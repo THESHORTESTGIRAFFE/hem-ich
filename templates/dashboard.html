@@ -33,7 +33,7 @@ canvas { max-height:200px; }
   <div class="stat-card blue"><div class="glow"></div>
     <div class="label">Disposed</div><div class="value">{{ stats.disposed }}</div><div class="sub">Decommissioned</div>
   </div>
-  {% if session.role == 'chief_engineer' %}
+  {% if has_permission('chief_engineer') %}
   <div class="stat-card amber"><div class="glow"></div>
     <div class="label">Pending Disposal</div><div class="value">{{ stats.pending_disposal }}</div><div class="sub">Awaiting approval</div>
   </div>
@@ -86,7 +86,7 @@ canvas { max-height:200px; }
   <div class="card">
     <div class="card-header">
       <h2>Recent Activity</h2>
-      {% if session.role == 'chief_engineer' %}
+      {% if has_permission('chief_engineer') %}
       <div class="hdr-actions"><a href="{{ url_for('audit_log') }}" class="btn btn-ghost btn-sm">Full audit trail</a></div>
       {% endif %}
     </div>

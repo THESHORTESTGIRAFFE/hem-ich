@@ -15,7 +15,7 @@
           <td style="font-weight:600">{{ u['full_name'] }}</td>
           <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--accent)">{{ u['username'] }}</td>
           <td>
-            {% set role_map={'chief_engineer':'badge-teal','technician':'badge-blue','intern':'badge-gray'} %}
+            {% set role_map={'administrator':'badge-teal','biomedical_engineer':'badge-teal','biomedical_technician':'badge-blue','hospital_equipment_repairer':'badge-blue','technical_assistant':'badge-gray','handy_man':'badge-gray','intern':'badge-gray'} %}
             <span class="badge {{ role_map.get(u['role'],'badge-gray') }}">{{ u['role'].replace('_',' ') }}</span>
           </td>
           <td style="color:var(--text-muted);font-size:0.82rem">{{ u['email'] or '—' }}</td>

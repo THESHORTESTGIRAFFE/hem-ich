@@ -57,7 +57,7 @@
             {% endif %}
           </td>
           <td>
-            {% if session.role == 'chief_engineer' %}
+            {% if has_permission('chief_engineer') %}
               {% if rec['status'] == 'Pending' %}
               <div style="display:flex;gap:5px">
                 <form method="POST" action="{{ url_for('approve_disposal', rec_id=rec['id']) }}">

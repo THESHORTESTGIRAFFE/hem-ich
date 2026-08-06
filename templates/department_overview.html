@@ -48,7 +48,7 @@
   <p style="color:var(--text-muted);font-size:0.84rem">Equipment inventory broken down by hospital department.</p>
   <div style="display:flex;gap:8px">
     <a href="{{ url_for('qr_batch') }}" class="btn btn-ghost">🏷️ Print All QR Labels</a>
-    {% if session.role == 'chief_engineer' %}
+    {% if has_permission('chief_engineer') %}
     <a href="{{ url_for('analytics') }}" class="btn btn-ghost">📈 Cost Analytics</a>
     {% endif %}
   </div>
@@ -75,7 +75,7 @@
         <div style="font-size:0.7rem;color:var(--danger);font-weight:600;margin-bottom:4px">⚠ {{ dept['overdue'] }} overdue</div>
         {% endif %}
         <div class="dept-name">{{ dept['department'] }}</div>
-        {% if session.role != 'intern' %}
+        {% if has_permission('technician') %}
         <div style="font-size:0.73rem;color:var(--text-muted);margin-top:4px">
           Asset value: <strong style="color:var(--text)">${{ '{:,.0f}'.format(dept['total_value']) }}</strong>
         </div>

@@ -34,7 +34,7 @@
     <div class="label">Overdue Checks</div><div class="value">{{ stats.overdue }}</div></div>
   <div class="stat-card amber"><div class="glow"></div>
     <div class="label">Open Flags</div><div class="value">{{ stats.open_flags }}</div></div>
-  {% if session.role != 'intern' %}
+  {% if has_permission('technician') %}
   <div class="stat-card blue"><div class="glow"></div>
     <div class="label">Total Asset Value</div>
     <div class="value" style="font-size:1.3rem">${{ '{:,.0f}'.format(stats.value) }}</div></div>

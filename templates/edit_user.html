@@ -15,9 +15,13 @@
           <div class="form-group">
             <label>Role *</label>
             <select name="role" class="form-control" required>
+              <option value="administrator" {% if user['role'] == 'administrator' %}selected{% endif %}>Administrator</option>
+              <option value="biomedical_engineer" {% if user['role'] == 'biomedical_engineer' %}selected{% endif %}>Biomedical Engineer</option>
+              <option value="biomedical_technician" {% if user['role'] == 'biomedical_technician' %}selected{% endif %}>Biomedical Technician</option>
+              <option value="hospital_equipment_repairer" {% if user['role'] == 'hospital_equipment_repairer' %}selected{% endif %}>Hospital Equipment Repairer</option>
+              <option value="technical_assistant" {% if user['role'] == 'technical_assistant' %}selected{% endif %}>Technical Assistant</option>
+              <option value="handy_man" {% if user['role'] == 'handy_man' %}selected{% endif %}>Handy Man</option>
               <option value="intern" {% if user['role'] == 'intern' %}selected{% endif %}>Intern</option>
-              <option value="technician" {% if user['role'] == 'technician' %}selected{% endif %}>Technician</option>
-              <option value="chief_engineer" {% if user['role'] == 'chief_engineer' %}selected{% endif %}>Chief Engineer</option>
             </select>
           </div>
           <div class="form-group form-span-2">

@@ -18,7 +18,7 @@
 {% block content %}
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
   <div style="color:var(--text-muted);font-size:0.83rem">{{ equipment|length }} records found</div>
-  {% if session.role in ['chief_engineer','technician'] %}
+  {% if has_permission('technician') %}
   <a href="{{ url_for('receive_equipment') }}" class="btn btn-primary">+ Receive Equipment</a>
   {% endif %}
 </div>

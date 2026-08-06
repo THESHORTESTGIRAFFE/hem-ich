@@ -384,7 +384,7 @@
   </div>
 
   <nav>
-    {% if session.role == 'intern' %}
+    {% if not has_permission('technician') %}
       <div class="nav-section">Overview</div>
       <a href="{{ url_for('intern_dashboard') }}" class="{{ 'active' if request.endpoint == 'intern_dashboard' }}">
         <span class="icon">📊</span> My Dashboard
@@ -410,7 +410,7 @@
       <a href="{{ url_for('equipment_list') }}" class="{{ 'active' if request.endpoint == 'equipment_list' }}">
         <span class="icon">🔬</span> All Equipment
       </a>
-      {% if session.role in ['chief_engineer', 'technician'] %}
+      {% if has_permission('technician') %}
       <a href="{{ url_for('receive_equipment') }}" class="{{ 'active' if request.endpoint == 'receive_equipment' }}">
         <span class="icon">📦</span> Receive Equipment
       </a>
@@ -418,7 +418,7 @@
       <a href="{{ url_for('inventory_stats') }}" class="{{ 'active' if request.endpoint == 'inventory_stats' }}">
         <span class="icon">📋</span> Inventory Stats
       </a>
-      {% if session.role == 'chief_engineer' %}
+      {% if has_permission('chief_engineer') %}
       <a href="{{ url_for('import_equipment') }}" class="{{ 'active' if request.endpoint == 'import_equipment' }}">
         <span class="icon">📤</span> Bulk Import
       </a>
@@ -442,13 +442,13 @@
       <a href="{{ url_for('department_list') }}" class="{{ 'active' if 'department' in request.endpoint }}">
         <span class="icon">🏥</span> Departments
       </a>
-      {% if session.role == 'chief_engineer' %}
+      {% if has_permission('chief_engineer') %}
       <a href="{{ url_for('analytics') }}" class="{{ 'active' if request.endpoint == 'analytics' }}">
         <span class="icon">📈</span> Cost Analytics
       </a>
       {% endif %}
 
-      {% if session.role == 'chief_engineer' %}
+      {% if has_permission('chief_engineer') %}
       <div class="nav-section">Administration</div>
       <a href="{{ url_for('audit_log') }}" class="{{ 'active' if request.endpoint == 'audit_log' }}">
         <span class="icon">📋</span> Audit Trail

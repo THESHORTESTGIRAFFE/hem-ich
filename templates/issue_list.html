@@ -68,7 +68,7 @@
       {% if flag['updated_at'] != flag['created_at'] %}<span>✏️ Updated {{ flag['updated_at']|fmtdatetime }}</span>{% endif %}
     </div>
 
-    {% if session.role in ['chief_engineer','technician'] and flag['status'] != 'Closed' %}
+    {% if has_permission('technician') and flag['status'] != 'Closed' %}
     <div class="issue-actions">
       <form method="POST" action="{{ url_for('update_issue', issue_id=flag['id']) }}" class="resolve-form">
         <select name="status">
