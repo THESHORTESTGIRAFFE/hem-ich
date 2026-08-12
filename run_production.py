@@ -415,21 +415,15 @@ def receive_equipment():
     
     if request.method == 'POST':
         data = request.form
-        if not data.get('name') or not data.get('department_id'):
-            flash('Equipment name and Department are required')
+        asset_number = data.get('asset_number', '').strip()
+        
+        if not data.get('name') or not data.get('department_id') or not asset_number:
+            flash('Equipment name, Department, and Asset Number are required')
             return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
 
-        # Asset tags aren't collected on the form — generate the next one for this year.
-        year = datetime.now().year
-        count = query(
-            "SELECT COUNT(*) as count FROM equipment WHERE asset_number LIKE ?",
-            (f'HEM-{year}-%',), one=True
-        )['count']
-        asset_number = f"HEM-{year}-{count + 1:04d}"
-        # Guard against a rare collision (e.g. a manually-entered tag using the same pattern).
-        while query('SELECT id FROM equipment WHERE asset_number = ?', (asset_number,), one=True):
-            count += 1
-            asset_number = f"HEM-{year}-{count + 1:04d}"
+        if query('SELECT id FROM equipment WHERE asset_number = ?', (asset_number,), one=True):
+            flash(f'Asset number {asset_number} already exists')
+            return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
 
         execute('''INSERT INTO equipment (asset_number, name, model, manufacturer, serial_number, category,
                         department_id, location_id, country_of_origin, donor_name, state, condition,

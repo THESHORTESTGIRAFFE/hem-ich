@@ -49,11 +49,16 @@
 <form method="POST" id="receive-form" class="card">
   <div class="card-header"><h2>🔬 Equipment Identity</h2></div>
   
-  <div class="field-row single" style="margin-bottom:28px">
+  <div class="field-row" style="margin-bottom:28px">
     <div class="field">
       <label>Equipment Name <span class="req">Required</span></label>
       <input type="text" name="name" class="fi" placeholder="e.g. Draeger Ventilator Pro X2000" required>
       <div class="hint">Full descriptive name as it appears on the device.</div>
+    </div>
+    <div class="field">
+      <label>Asset Number <span class="req">Required</span></label>
+      <input type="text" name="asset_number" class="fi" placeholder="e.g. HEM-2026-0001" required>
+      <div class="hint">Unique identifier tag for the device.</div>
     </div>
   </div>
 
