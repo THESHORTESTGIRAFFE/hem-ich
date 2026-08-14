@@ -110,7 +110,7 @@ canvas { max-height:240px; }
           <div class="cost-bar-inner" style="width:{{ ((eq['purchase_cost']|float / divisor) * 100)|int }}%"></div>
         </div>
         <div style="font-size:0.8rem;font-weight:700;color:var(--accent);white-space:nowrap;min-width:70px;text-align:right">
-          ${{ '{:,.0f}'.format(eq['purchase_cost']) }}
+          ${{ '{:,.0f}'.format(eq['purchase_cost']|float) }}
         </div>
       </div>
       {% endfor %}
