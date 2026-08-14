@@ -198,14 +198,13 @@ def equipment_list():
     order = request.args.get('order', 'asc')
     
     # Whitelist sort columns
-    if sort not in ['name', 'asset_number', 'manufacturer', 'category', 'area', 'state', 'condition', 'next_maintenance']:
+    if sort not in ['name', 'asset_number', 'manufacturer', 'category', 'state', 'condition', 'next_maintenance']:
         sort = 'name'
     if order not in ['asc', 'desc']:
         order = 'asc'
     
-    sql = '''SELECT e.*, l.name as area_name, d.name as department_name 
+    sql = '''SELECT e.*, d.name as department_name 
              FROM equipment e 
-             LEFT JOIN areas l ON e.area_id = l.id 
              LEFT JOIN departments d ON e.department_id = d.id 
              WHERE 1=1'''
     params = []
@@ -221,8 +220,6 @@ def equipment_list():
         
     # Map sort column to actual column name
     order_by = sort
-    if sort == 'area':
-        order_by = 'area_name'
     
     sql += f' ORDER BY {order_by} {order}'
         
@@ -263,11 +260,11 @@ def edit_equipment(eq_id):
     if request.method == 'POST':
         data = request.form
         execute('''UPDATE equipment SET
-                       name=?, manufacturer=?, model=?, category=?, department_id=?, area_id=?,
+                       name=?, manufacturer=?, model=?, category=?, department_id=?,
                        country_of_origin=?, donor_name=?, state=?, condition=?,
                        warranty_expiry=?, next_maintenance=?, notes=?, updated_at=datetime('now'), quantity=?
                    WHERE id=?''',
-                (data.get('name'), data.get('manufacturer'), data.get('model'), data.get('category'), data.get('department_id'), data.get('area_id'),
+                (data.get('name'), data.get('manufacturer'), data.get('model'), data.get('category'), data.get('department_id'),
                  data.get('country_of_origin'), data.get('donor_name'), data.get('state'), data.get('condition'),
                  data.get('warranty_expiry') or None, data.get('next_maintenance') or None,
                  data.get('notes'), data.get('quantity', 1), eq_id))
@@ -429,11 +426,11 @@ def receive_equipment():
             return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), categories=query('SELECT * FROM categories ORDER BY name'))
 
         execute('''INSERT INTO equipment (asset_number, name, model, manufacturer, serial_number, category,
-                        department_id, area_id, country_of_origin, donor_name, state, condition,
+                        department_id, country_of_origin, donor_name, state, condition,
                         purchase_date, purchase_cost, received_by_id, quantity)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                  (asset_number, data['name'], data.get('model'), data.get('manufacturer'), data.get('serial_number'),
-                  data.get('category'), data.get('department_id'), data.get('area_id'),
+                  data.get('category'), data.get('department_id'),
                   data.get('country_of_origin'), data.get('donor_name'), data.get('state'), data.get('condition'),
                   data.get('purchase_date'), data.get('purchase_cost'), session['user_id'], data.get('quantity', 1)))
         eq_id = query('SELECT id FROM equipment WHERE asset_number = ?', (asset_number,), one=True)['id']
