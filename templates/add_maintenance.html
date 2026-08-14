@@ -6,7 +6,7 @@
 <div style="margin-bottom:20px">
   <div style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent)">{{ eq.asset_number }}</div>
   <h2 style="font-size:1.2rem;font-weight:700;margin-top:2px">{{ eq.name }}</h2>
-  <div style="color:var(--text-muted);font-size:0.83rem">{{ eq.manufacturer }} · {{ eq.location or 'No location set' }}</div>
+  <div style="color:var(--text-muted);font-size:0.83rem">{{ eq.manufacturer }} · {{ eq.department or 'No department set' }}</div>
 </div>
 
 <form method="POST" id="maint-form">

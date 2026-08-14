@@ -50,7 +50,7 @@
           <th><a href="?sort=asset_number&order={{ 'desc' if sort=='asset_number' and order=='asc' else 'asc' }}">Asset Number</a></th>
           <th><a href="?sort=name&order={{ 'desc' if sort=='name' and order=='asc' else 'asc' }}">Name</a></th>
           <th>Manufacturer</th><th>Category</th>
-          <th><a href="?sort=location&order={{ 'desc' if sort=='location' and order=='asc' else 'asc' }}">Location</a></th>
+          <th><a href="?sort=department&order={{ 'desc' if sort=='department' and order=='asc' else 'asc' }}">Department</a></th>
           <th>State</th><th>Condition</th><th>Next Maint.</th><th></th>
         </tr>
       </thead>
@@ -64,7 +64,7 @@
           </td>
           <td style="color:var(--text-dim)">{{ eq['manufacturer'] or '—' }}</td>
           <td style="color:var(--text-dim)">{{ eq['category'] or '—' }}</td>
-          <td style="color:var(--text-dim)">{{ eq['location_name'] or '—' }}</td>
+          <td style="color:var(--text-dim)">{{ eq['department_name'] or '—' }}</td>
           <td><span class="badge {{ state_badge(eq['state']) }}">{{ eq['state'] }}</span></td>
           <td><span class="badge {{ cond_badge(eq['condition']) }}">{{ eq['condition'] }}</span></td>
           <td>

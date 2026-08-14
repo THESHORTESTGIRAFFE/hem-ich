@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Departments{% endblock %}
+{% block page_title %}Department Management{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:flex-end;margin-bottom:18px">
+  <a href="{{ url_for('add_department') }}" class="btn btn-primary">+ Add Department</a>
+</div>
+<div class="card">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Department</th><th></th></tr></thead>
+      <tbody>
+        {% for l in departments %}
+        <tr>
+          <td style="font-weight:600">{{ l['name'] }}</td>
+          <td style="text-align:right">
+            <a href="{{ url_for('edit_department', lid=l['id']) }}" class="btn btn-ghost btn-sm">Edit</a>
+            <form method="POST" action="{{ url_for('delete_department', lid=l['id']) }}" style="display:inline" onsubmit="return confirm('Delete this department?')">
+                <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--danger)">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

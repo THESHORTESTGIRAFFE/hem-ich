@@ -46,11 +46,11 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Location</label>
-          <select name="location_id" class="form-control">
-            <option value="">— Select a location —</option>
-            {% for l in locations %}
-            <option value="{{ l['id'] }}" {{ 'selected' if eq['location_id']==l['id'] }}>{{ l['name'] }}</option>
+          <label>Department</label>
+          <select name="department_id" class="form-control">
+            <option value="">— Select a department —</option>
+            {% for l in departments %}
+            <option value="{{ l['id'] }}" {{ 'selected' if eq['department_id']==l['id'] }}>{{ l['name'] }}</option>
             {% endfor %}
           </select>
         </div>

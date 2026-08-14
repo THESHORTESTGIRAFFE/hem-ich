@@ -443,6 +443,9 @@
         <span class="icon">🏥</span> Departments
       </a>
       {% if has_permission('chief_engineer') %}
+      <a href="{{ url_for('category_list') }}" class="{{ 'active' if 'category' in request.endpoint }}">
+        <span class="icon">🏷️</span> Categories
+      </a>
       <a href="{{ url_for('analytics') }}" class="{{ 'active' if request.endpoint == 'analytics' }}">
         <span class="icon">📈</span> Cost Analytics
       </a>

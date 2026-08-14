@@ -82,8 +82,8 @@
       <label>Category <span class="opt">Optional</span></label>
       <select name="category" class="fi">
         <option value="">— Select a category —</option>
-        {% for cat in ['Respiratory','Monitoring','Imaging','Emergency','Infusion','Cardiology','Sterilization','Surgical','Laboratory','Diagnostic','Other'] %}
-        <option value="{{ cat }}">{{ cat }}</option>
+        {% for cat in categories %}
+        <option value="{{ cat['name'] }}">{{ cat['name'] }}</option>
         {% endfor %}
       </select>
     </div>
@@ -130,6 +130,17 @@
       <label>Quantity <span class="opt">Optional</span></label>
       <input type="number" name="quantity" class="fi" value="1" min="1">
     </div>
+    <div class="field">
+      <label>State <span class="opt">Optional</span></label>
+      <select name="state" class="fi">
+        {% for s in ['Active','Under Maintenance','In Storage','Disposed'] %}
+        <option value="{{ s }}" {{ 'selected' if s == 'Active' }}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="field-row single">
     <div class="field">
       <label>Condition <span class="opt">Optional</span></label>
       <select name="condition" class="fi">

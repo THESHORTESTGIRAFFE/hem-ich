@@ -198,14 +198,14 @@ def equipment_list():
     order = request.args.get('order', 'asc')
     
     # Whitelist sort columns
-    if sort not in ['name', 'asset_number', 'manufacturer', 'category', 'location', 'state', 'condition', 'next_maintenance']:
+    if sort not in ['name', 'asset_number', 'manufacturer', 'category', 'area', 'state', 'condition', 'next_maintenance']:
         sort = 'name'
     if order not in ['asc', 'desc']:
         order = 'asc'
     
-    sql = '''SELECT e.*, l.name as location_name, d.name as department_name 
+    sql = '''SELECT e.*, l.name as area_name, d.name as department_name 
              FROM equipment e 
-             LEFT JOIN locations l ON e.location_id = l.id 
+             LEFT JOIN areas l ON e.area_id = l.id 
              LEFT JOIN departments d ON e.department_id = d.id 
              WHERE 1=1'''
     params = []
@@ -221,8 +221,8 @@ def equipment_list():
         
     # Map sort column to actual column name
     order_by = sort
-    if sort == 'location':
-        order_by = 'location_name'
+    if sort == 'area':
+        order_by = 'area_name'
     
     sql += f' ORDER BY {order_by} {order}'
         
@@ -234,7 +234,10 @@ def equipment_list():
 @app.route('/equipment/<int:eq_id>')
 @login_required
 def equipment_detail(eq_id):
-    eq = query('SELECT * FROM equipment WHERE id = ?', (eq_id,), one=True)
+    eq = query('''SELECT e.*, d.name as department_name
+                  FROM equipment e
+                  LEFT JOIN departments d ON e.department_id = d.id
+                  WHERE e.id = ?''', (eq_id,), one=True)
     if not eq:
         flash('Equipment not found')
         return redirect(url_for('equipment_list'))
@@ -260,18 +263,18 @@ def edit_equipment(eq_id):
     if request.method == 'POST':
         data = request.form
         execute('''UPDATE equipment SET
-                       name=?, manufacturer=?, model=?, category=?, department_id=?, location_id=?,
+                       name=?, manufacturer=?, model=?, category=?, department_id=?, area_id=?,
                        country_of_origin=?, donor_name=?, state=?, condition=?,
                        warranty_expiry=?, next_maintenance=?, notes=?, updated_at=datetime('now'), quantity=?
                    WHERE id=?''',
-                (data.get('name'), data.get('manufacturer'), data.get('model'), data.get('category'), data.get('department_id'), data.get('location_id'),
+                (data.get('name'), data.get('manufacturer'), data.get('model'), data.get('category'), data.get('department_id'), data.get('area_id'),
                  data.get('country_of_origin'), data.get('donor_name'), data.get('state'), data.get('condition'),
                  data.get('warranty_expiry') or None, data.get('next_maintenance') or None,
                  data.get('notes'), data.get('quantity', 1), eq_id))
         flash('Equipment updated')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
 
-    return render_template('edit_equipment.html', eq=eq, departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
+    return render_template('edit_equipment.html', eq=eq, departments=query('SELECT * FROM departments ORDER BY name'), categories=query('SELECT * FROM categories ORDER BY name'))
 
 @app.route('/equipment/<int:eq_id>/inline-edit', methods=['POST'])
 @login_required
@@ -419,25 +422,25 @@ def receive_equipment():
         
         if not data.get('name') or not data.get('department_id') or not asset_number:
             flash('Equipment name, Department, and Asset Number are required')
-            return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
+            return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), categories=query('SELECT * FROM categories ORDER BY name'))
 
         if query('SELECT id FROM equipment WHERE asset_number = ?', (asset_number,), one=True):
             flash(f'Asset number {asset_number} already exists')
-            return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
+            return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), categories=query('SELECT * FROM categories ORDER BY name'))
 
         execute('''INSERT INTO equipment (asset_number, name, model, manufacturer, serial_number, category,
-                        department_id, location_id, country_of_origin, donor_name, state, condition,
+                        department_id, area_id, country_of_origin, donor_name, state, condition,
                         purchase_date, purchase_cost, received_by_id, quantity)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                  (asset_number, data['name'], data.get('model'), data.get('manufacturer'), data.get('serial_number'),
-                  data.get('category'), data.get('department_id'), data.get('location_id'),
+                  data.get('category'), data.get('department_id'), data.get('area_id'),
                   data.get('country_of_origin'), data.get('donor_name'), data.get('state'), data.get('condition'),
                   data.get('purchase_date'), data.get('purchase_cost'), session['user_id'], data.get('quantity', 1)))
         eq_id = query('SELECT id FROM equipment WHERE asset_number = ?', (asset_number,), one=True)['id']
         flash(f'Equipment received successfully — tagged {asset_number}')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
 
-    return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), locations=query('SELECT * FROM locations ORDER BY name'))
+    return render_template('receive_equipment.html', departments=query('SELECT * FROM departments ORDER BY name'), categories=query('SELECT * FROM categories ORDER BY name'))
 
 @app.route('/import', methods=['GET', 'POST'])
 @login_required
@@ -583,10 +586,10 @@ def department_overview():
 @app.route('/department/<dept>')
 @login_required
 def department_detail(dept):
-    equipment = query('''SELECT e.*, d.name as department_name, l.name as location_name 
+    equipment = query('''SELECT e.*, d.name as department_name, l.name as area_name 
                          FROM equipment e 
                          JOIN departments d ON e.department_id = d.id 
-                         LEFT JOIN locations l ON e.location_id = l.id
+                         LEFT JOIN areas l ON e.area_id = l.id
                          WHERE d.name = ?''', (dept,))
     
     # Calculate stats
@@ -746,6 +749,56 @@ def delete_user(uid):
     flash('User deleted')
     return redirect(url_for('user_list'))
 
+# ── Category Management ────────────────────────────────────────────────────────
+@app.route('/categories')
+@login_required
+def category_list():
+    if not has_permission('chief_engineer'):
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    categories = query('SELECT * FROM categories')
+    return render_template('category_list.html', categories=categories)
+
+@app.route('/categories/add', methods=['GET', 'POST'])
+@login_required
+def add_category():
+    if not has_permission('chief_engineer'):
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    if request.method == 'POST':
+        name = request.form['name']
+        execute('INSERT INTO categories (name) VALUES (?)', (name,))
+        flash('Category created')
+        return redirect(url_for('category_list'))
+    return render_template('add_category.html')
+
+@app.route('/categories/<int:cid>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_category(cid):
+    if not has_permission('chief_engineer'):
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    cat = query('SELECT * FROM categories WHERE id = ?', (cid,), one=True)
+    if not cat:
+        flash('Category not found')
+        return redirect(url_for('category_list'))
+    if request.method == 'POST':
+        name = request.form['name']
+        execute('UPDATE categories SET name = ? WHERE id = ?', (name, cid))
+        flash('Category updated')
+        return redirect(url_for('category_list'))
+    return render_template('edit_category.html', cat=cat)
+
+@app.route('/categories/<int:cid>/delete', methods=['POST'])
+@login_required
+def delete_category(cid):
+    if not has_permission('chief_engineer'):
+        flash('Unauthorized')
+        return redirect(url_for('dashboard'))
+    execute('DELETE FROM categories WHERE id = ?', (cid,))
+    flash('Category deleted')
+    return redirect(url_for('category_list'))
+
 # ── Department & Ward Management ───────────────────────────────────────────────
 @app.route('/departments')
 @login_required
@@ -796,54 +849,7 @@ def delete_department(did):
     flash('Department deleted')
     return redirect(url_for('department_list'))
 
-@app.route('/locations')
-@login_required
-def location_list():
-    if not has_permission('chief_engineer'):
-        flash('Unauthorized')
-        return redirect(url_for('dashboard'))
-    locations = query('SELECT * FROM locations')
-    return render_template('location_list.html', locations=locations)
-
-@app.route('/locations/add', methods=['GET', 'POST'])
-@login_required
-def add_location():
-    if not has_permission('chief_engineer'):
-        flash('Unauthorized')
-        return redirect(url_for('dashboard'))
-    if request.method == 'POST':
-        name = request.form['name']
-        execute('INSERT INTO locations (name) VALUES (?)', (name,))
-        flash('Location created')
-        return redirect(url_for('location_list'))
-    return render_template('add_location.html')
-
-@app.route('/locations/<int:lid>/edit', methods=['GET', 'POST'])
-@login_required
-def edit_location(lid):
-    if not has_permission('chief_engineer'):
-        flash('Unauthorized')
-        return redirect(url_for('dashboard'))
-    loc = query('SELECT * FROM locations WHERE id = ?', (lid,), one=True)
-    if not loc:
-        flash('Location not found')
-        return redirect(url_for('location_list'))
-    if request.method == 'POST':
-        name = request.form['name']
-        execute('UPDATE locations SET name = ? WHERE id = ?', (name, lid))
-        flash('Location updated')
-        return redirect(url_for('location_list'))
-    return render_template('edit_location.html', loc=loc)
-
-@app.route('/locations/<int:lid>/delete', methods=['POST'])
-@login_required
-def delete_location(lid):
-    if not has_permission('chief_engineer'):
-        flash('Unauthorized')
-        return redirect(url_for('dashboard'))
-    execute('DELETE FROM locations WHERE id = ?', (lid,))
-    flash('Location deleted')
-    return redirect(url_for('location_list'))
+# --- Area routes have been removed as Locations were merged into Departments ---
 
 
 if __name__ == '__main__':
