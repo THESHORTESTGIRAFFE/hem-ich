@@ -37,7 +37,7 @@ canvas { max-height:240px; }
     <div class="glow" style="background:var(--accent)"></div>
     <div class="kpi-label">Total Asset Value</div>
     <div class="kpi-val" style="color:var(--accent); font-size:1.5rem">
-      ${{ '{:,.0f}'.format(kpis['total_asset_value'] or 0) }}
+      ${{ '{:,.0f}'.format((kpis['total_asset_value'] or 0)|float) }}
     </div>
     <div class="kpi-sub">Across {{ kpis['total_assets'] }} active assets</div>
   </div>
@@ -45,7 +45,7 @@ canvas { max-height:240px; }
     <div class="glow" style="background:var(--accent-2)"></div>
     <div class="kpi-label">Avg. Asset Value</div>
     <div class="kpi-val" style="color:var(--accent-2); font-size:1.5rem">
-      ${{ '{:,.0f}'.format(kpis['avg_asset_value'] or 0) }}
+      ${{ '{:,.0f}'.format((kpis['avg_asset_value'] or 0)|float) }}
     </div>
     <div class="kpi-sub">Per equipment item</div>
   </div>
@@ -53,7 +53,7 @@ canvas { max-height:240px; }
     <div class="glow" style="background:var(--warn)"></div>
     <div class="kpi-label">Total Maintenance Spend</div>
     <div class="kpi-val" style="color:var(--warn); font-size:1.5rem">
-      ${{ '{:,.0f}'.format(total_maint_cost['total'] or 0) }}
+      ${{ '{:,.0f}'.format((total_maint_cost['total'] or 0)|float) }}
     </div>
     <div class="kpi-sub">All recorded maintenance</div>
   </div>
@@ -128,7 +128,7 @@ canvas { max-height:240px; }
           <span class="badge {{ cond_badge(row['condition']) }}" style="min-width:72px;text-align:center">{{ row['condition'] }}</span>
           <span style="color:var(--text-dim);font-size:0.8rem">{{ row['count'] }} items</span>
           <div style="flex:1"></div>
-          <span style="font-size:0.82rem;font-weight:600;color:var(--text)">${{ '{:,.0f}'.format(row['total_value']) }}</span>
+          <span style="font-size:0.82rem;font-weight:600;color:var(--text)">${{ '{:,.0f}'.format(row['total_value']|float) }}</span>
         </div>
         {% endfor %}
       </div>
