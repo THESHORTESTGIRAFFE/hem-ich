@@ -106,7 +106,7 @@ canvas { max-height:240px; }
           <div style="font-size:0.7rem;color:var(--text-muted)">{{ eq['department'] or '—' }} · {{ eq['asset_number'] }}</div>
         </div>
         <div class="cost-bar-outer">
-          <div class="cost-bar-inner" style="width:{{ ((eq['purchase_cost'] / max_cost) * 100)|int }}%"></div>
+          <div class="cost-bar-inner" style="width:{{ ((eq['purchase_cost']|float / max_cost|float) * 100)|int }}%"></div>
         </div>
         <div style="font-size:0.8rem;font-weight:700;color:var(--accent);white-space:nowrap;min-width:70px;text-align:right">
           ${{ '{:,.0f}'.format(eq['purchase_cost']) }}
