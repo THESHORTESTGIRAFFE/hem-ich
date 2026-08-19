@@ -31,8 +31,9 @@
         <div class="form-group">
           <label>Category</label>
           <select name="category" class="form-control">
-            {% for cat in ['Respiratory','Monitoring','Imaging','Emergency','Infusion','Cardiology','Sterilization','Surgical','Laboratory','Diagnostic','Other'] %}
-            <option value="{{ cat }}" {{ 'selected' if eq['category']==cat }}>{{ cat }}</option>
+            <option value="">— Select a category —</option>
+            {% for cat in categories %}
+            <option value="{{ cat['name'] }}" {{ 'selected' if eq['category']==cat['name'] }}>{{ cat['name'] }}</option>
             {% endfor %}
           </select>
         </div>
@@ -42,15 +43,6 @@
             <option value="">— Select a department —</option>
             {% for d in departments %}
             <option value="{{ d['id'] }}" {{ 'selected' if eq['department_id']==d['id'] }}>{{ d['name'] }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Department</label>
-          <select name="department_id" class="form-control">
-            <option value="">— Select a department —</option>
-            {% for l in departments %}
-            <option value="{{ l['id'] }}" {{ 'selected' if eq['department_id']==l['id'] }}>{{ l['name'] }}</option>
             {% endfor %}
           </select>
         </div>
