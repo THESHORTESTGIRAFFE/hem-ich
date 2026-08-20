@@ -471,9 +471,14 @@ def import_equipment():
             # Map CSV rows to database columns based on the cleaned format
             if not row.get('name') or not row.get('asset_number'):
                 continue
+            
+            serial = row.get('serial_number') or 'N/A'
                 
-            # Check if asset exists
-            if query('SELECT id FROM equipment WHERE asset_number = ?', (row['asset_number'],), one=True):
+            # Check if asset exists by asset_number OR serial_number
+            existing = query('SELECT id FROM equipment WHERE asset_number = ? OR serial_number = ?', 
+                             (row['asset_number'], serial), one=True)
+            
+            if existing:
                 continue
                 
             execute('''INSERT INTO equipment (asset_number, name, model, manufacturer, serial_number, category,
@@ -481,7 +486,7 @@ def import_equipment():
                             purchase_date, purchase_cost, received_by_id, quantity)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                      (row.get('asset_number'), row.get('name'), row.get('model'), row.get('manufacturer'), 
-                      row.get('serial_number'), row.get('category'), row.get('department_id'), 
+                      serial, row.get('category'), row.get('department_id'), 
                       row.get('country_of_origin'), row.get('donor_name'), row.get('state', 'Active'), 
                       row.get('condition'), row.get('purchase_date'), row.get('purchase_cost'), 
                       session['user_id'], row.get('quantity', 1)))
