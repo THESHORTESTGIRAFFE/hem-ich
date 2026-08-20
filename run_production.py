@@ -196,16 +196,18 @@ def equipment_list():
     category = request.args.get('category', '')
     sort = request.args.get('sort', 'name')
     order = request.args.get('order', 'asc')
-    
+    page = int(request.args.get('page', 1))
+    per_page = 20
+
     # Whitelist sort columns
     if sort not in ['name', 'asset_number', 'manufacturer', 'category', 'state', 'condition', 'next_maintenance']:
         sort = 'name'
     if order not in ['asc', 'desc']:
         order = 'asc'
-    
-    sql = '''SELECT e.*, d.name as department_name 
-             FROM equipment e 
-             LEFT JOIN departments d ON e.department_id = d.id 
+
+    sql = '''SELECT e.*, d.name as department_name
+             FROM equipment e
+             LEFT JOIN departments d ON e.department_id = d.id
              WHERE 1=1'''
     params = []
     if q:
@@ -217,16 +219,22 @@ def equipment_list():
     if category:
         sql += ' AND e.category = ?'
         params.append(category)
-        
+
+    # Count for pagination
+    count_sql = sql.replace('SELECT e.*, d.name as department_name', 'SELECT COUNT(*)')
+    total_count = query(count_sql, params, one=True)['COUNT(*)']
+    total_pages = (total_count + per_page - 1) // per_page
+
     # Map sort column to actual column name
     order_by = sort
-    
     sql += f' ORDER BY {order_by} {order}'
-        
+    sql += ' LIMIT ? OFFSET ?'
+    params.extend([per_page, (page - 1) * per_page])
+
     equipment = query(sql, params)
     categories = [r['category'] for r in query('SELECT DISTINCT category FROM equipment WHERE category IS NOT NULL')]
-    
-    return render_template('equipment_list.html', equipment=equipment, q=q, state=state, cat=category, categories=categories, sort=sort, order=order)
+
+    return render_template('equipment_list.html', equipment=equipment, q=q, state=state, cat=category, categories=categories, sort=sort, order=order, page=page, total_pages=total_pages)
 
 @app.route('/equipment/<int:eq_id>')
 @login_required
@@ -447,7 +455,39 @@ def import_equipment():
         return redirect(url_for('dashboard'))
     
     if request.method == 'POST':
-        flash('Bulk import processed')
+        file = request.files.get('csv_file')
+        if not file or file.filename == '':
+            flash('No file selected')
+            return redirect(url_for('import_equipment'))
+            
+        import csv
+        import io
+        
+        stream = io.StringIO(file.stream.read().decode("UTF-8"), newline=None)
+        reader = csv.DictReader(stream)
+        
+        count = 0
+        for row in reader:
+            # Map CSV rows to database columns based on the cleaned format
+            if not row.get('name') or not row.get('asset_number'):
+                continue
+                
+            # Check if asset exists
+            if query('SELECT id FROM equipment WHERE asset_number = ?', (row['asset_number'],), one=True):
+                continue
+                
+            execute('''INSERT INTO equipment (asset_number, name, model, manufacturer, serial_number, category,
+                            department_id, country_of_origin, donor_name, state, condition,
+                            purchase_date, purchase_cost, received_by_id, quantity)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                     (row.get('asset_number'), row.get('name'), row.get('model'), row.get('manufacturer'), 
+                      row.get('serial_number'), row.get('category'), row.get('department_id'), 
+                      row.get('country_of_origin'), row.get('donor_name'), row.get('state', 'Active'), 
+                      row.get('condition'), row.get('purchase_date'), row.get('purchase_cost'), 
+                      session['user_id'], row.get('quantity', 1)))
+            count += 1
+        
+        flash(f'Bulk import processed: {count} records added.')
         return redirect(url_for('equipment_list'))
         
     return render_template('import_equipment.html')

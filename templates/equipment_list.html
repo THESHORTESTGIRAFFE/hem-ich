@@ -12,12 +12,13 @@
 .filters input:focus, .filters select:focus { outline:none; border-color:var(--accent); }
 .filters input { width:240px; }
 .asset-tag { font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--accent); }
+.pagination { display: flex; justify-content: center; gap: 10px; margin-top: 20px; align-items: center; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-  <div style="color:var(--text-muted);font-size:0.83rem">{{ equipment|length }} records found</div>
+  <div style="color:var(--text-muted);font-size:0.83rem">Page {{ page }} of {{ total_pages }}</div>
   {% if has_permission('technician') %}
   <a href="{{ url_for('receive_equipment') }}" class="btn btn-primary">+ Receive Equipment</a>
   {% endif %}
@@ -81,6 +82,16 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
+  
+  <div class="pagination">
+    {% if page > 1 %}
+    <a href="?page={{ page - 1 }}&q={{ q }}&state={{ state }}&category={{ cat }}&sort={{ sort }}&order={{ order }}" class="btn btn-ghost">← Previous</a>
+    {% endif %}
+    <span>Page {{ page }} of {{ total_pages }}</span>
+    {% if page < total_pages %}
+    <a href="?page={{ page + 1 }}&q={{ q }}&state={{ state }}&category={{ cat }}&sort={{ sort }}&order={{ order }}" class="btn btn-ghost">Next →</a>
+    {% endif %}
   </div>
   {% else %}
   <div class="empty">
