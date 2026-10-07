@@ -3,12 +3,31 @@
 {% block page_title %}Inventory Overview{% endblock %}
 
 {% block content %}
+<div class="stat-grid" style="margin-bottom: 24px;">
+  <div class="stat-card teal"><div class="glow"></div>
+    <div class="label">Total Items</div>
+    <div class="value">{{ total_items }}</div>
+    <div class="sub">Registered equipment records</div>
+  </div>
+  <div class="stat-card blue"><div class="glow"></div>
+    <div class="label">Total Quantity</div>
+    <div class="value">{{ total_quantity }}</div>
+    <div class="sub">Combined item quantity</div>
+  </div>
+  <div class="stat-card green"><div class="glow"></div>
+    <div class="label">Categories</div>
+    <div class="value">{{ total_categories }}</div>
+    <div class="sub">Active equipment categories</div>
+  </div>
+</div>
+
 <div class="card" style="margin-bottom: 24px;">
     <div class="card-header"><h2>🏥 Total Inventory by Category</h2></div>
     <table class="data-table">
         <thead>
             <tr>
                 <th>Category</th>
+                <th>Total Items</th>
                 <th>Total Quantity</th>
             </tr>
         </thead>
@@ -16,6 +35,7 @@
             {% for row in total_by_cat %}
             <tr>
                 <td>{{ row['category'] or 'Uncategorized' }}</td>
+                <td>{{ row['total_items'] }}</td>
                 <td>{{ row['total_quantity'] }}</td>
             </tr>
             {% endfor %}
@@ -24,21 +44,27 @@
 </div>
 
 <div class="card">
-    <div class="card-header"><h2>🏢 Inventory by Department & Category</h2></div>
+    <div class="card-header"><h2>🏢 Inventory by Department & Equipment</h2></div>
     <table class="data-table">
         <thead>
             <tr>
                 <th>Department</th>
-                <th>Category</th>
+                <th>Asset Number</th>
+                <th>Equipment Name</th>
+                <th>Model</th>
+                <th>State</th>
                 <th>Quantity</th>
             </tr>
         </thead>
         <tbody>
-            {% for row in by_dept_cat %}
+            {% for row in dept_equipment %}
             <tr>
                 <td><a href="{{ url_for('department_detail', dept=row['department']) }}" style="color: var(--accent); text-decoration: none;">{{ row['department'] }}</a></td>
-                <td>{{ row['category'] or 'Uncategorized' }}</td>
-                <td>{{ row['total_quantity'] }}</td>
+                <td><span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent)">{{ row['asset_number'] }}</span></td>
+                <td><a href="{{ url_for('equipment_detail', eq_id=row['id']) }}" style="color: var(--text); text-decoration: none; font-weight: 600;">{{ row['equipment_name'] }}</a></td>
+                <td style="color:var(--text-dim)">{{ row['model'] or '—' }}</td>
+                <td><span class="badge badge-green">{{ row['state'] }}</span></td>
+                <td>{{ row['quantity'] }}</td>
             </tr>
             {% endfor %}
         </tbody>

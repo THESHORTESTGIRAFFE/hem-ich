@@ -590,16 +590,25 @@ def analytics():
 @app.route('/inventory')
 @login_required
 def inventory_stats():
+    total_items = query('SELECT COUNT(*) as count FROM equipment', one=True)['count']
+    total_quantity = query('SELECT SUM(quantity) as total FROM equipment', one=True)['total'] or 0
+    total_categories = query('SELECT COUNT(DISTINCT category) as count FROM equipment WHERE category IS NOT NULL', one=True)['count']
+    
     # Total count per category
-    total_by_cat = query('''SELECT category, SUM(quantity) as total_quantity 
+    total_by_cat = query('''SELECT category, COUNT(*) as total_items, SUM(quantity) as total_quantity 
                             FROM equipment 
                             GROUP BY category''')
-    # Count per category per department
-    by_dept_cat = query('''SELECT d.name as department, e.category, SUM(e.quantity) as total_quantity
-                           FROM equipment e
-                           JOIN departments d ON e.department_id = d.id
-                           GROUP BY d.name, e.category''')
-    return render_template('inventory.html', total_by_cat=total_by_cat, by_dept_cat=by_dept_cat)
+    # Inventory by department and item/equipment
+    dept_equipment = query('''SELECT e.id, d.name as department, e.name as equipment_name, e.asset_number, e.model, e.manufacturer, e.state, e.condition, e.quantity
+                              FROM equipment e
+                              JOIN departments d ON e.department_id = d.id
+                              ORDER BY d.name, e.name''')
+    return render_template('inventory.html', 
+                           total_items=total_items,
+                           total_quantity=total_quantity,
+                           total_categories=total_categories,
+                           total_by_cat=total_by_cat, 
+                           dept_equipment=dept_equipment)
 
 @app.route('/audit')
 @login_required
