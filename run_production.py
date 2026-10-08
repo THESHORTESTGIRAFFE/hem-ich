@@ -600,7 +600,7 @@ def inventory_stats():
                             GROUP BY category''')
     # Inventory by department and item/equipment
     dept_equipment = query('''SELECT e.id, d.name as department, e.name as equipment_name, e.asset_number, 
-                                     e.model, e.manufacturer, e.serial_number, e.category, e.condition, 
+                                     e.model, e.manufacturer, e.serial_number, e.country_of_origin, e.category, e.condition, 
                                      e.state, e.quantity, e.purchase_cost
                               FROM equipment e
                               JOIN departments d ON e.department_id = d.id
