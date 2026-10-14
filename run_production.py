@@ -550,7 +550,21 @@ def add_maintenance(eq_id):
         if data.get('update_state'):
             execute('UPDATE equipment SET state = ? WHERE id = ?', (data.get('update_state'), eq_id))
             
-        flash('Maintenance record added and next maintenance date updated')
+        # Handle job card / document upload if provided
+        file = request.files.get('job_card') or request.files.get('file')
+        if file and file.filename != '':
+            Path(app.config['UPLOAD_FOLDER']).mkdir(parents=True, exist_ok=True)
+            original_name = file.filename
+            ext = original_name.rsplit('.', 1)[-1].lower() if '.' in original_name else ''
+            safe_name = f"{eq_id}_{secrets.token_hex(8)}_{secure_filename(original_name)}"
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], safe_name))
+            file_size = os.path.getsize(os.path.join(app.config['UPLOAD_FOLDER'], safe_name))
+
+            execute('''INSERT INTO attachments (equipment_id, uploaded_by_id, filename, original_name, file_type, file_size, description)
+                       VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                    (eq_id, session['user_id'], safe_name, original_name, ext, file_size, f"Job Card — {data.get('maintenance_type')}"))
+
+        flash('Maintenance record added, job card attached (if uploaded), and next maintenance date updated')
         return redirect(url_for('equipment_detail', eq_id=eq_id))
     
     return render_template('add_maintenance.html', eq=eq, today=date.today().isoformat())
