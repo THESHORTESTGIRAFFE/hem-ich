@@ -15,7 +15,7 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY']                = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
 app.config['UPLOAD_FOLDER']             = os.environ.get('UPLOAD_FOLDER', os.path.join(BASE_DIR, 'uploads'))
-app.config['MAX_CONTENT_LENGTH']        = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH']        = 50 * 1024 * 1024
 app.config['PERMANENT_SESSION_LIFETIME']= timedelta(hours=int(os.environ.get('SESSION_HOURS', '8')))
 
 DATABASE = os.environ.get('DATABASE_PATH', os.path.join(BASE_DIR, 'instance', 'hem.db'))
